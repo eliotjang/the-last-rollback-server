@@ -37,9 +37,15 @@ export const serialize = (packetType, data, withoutHeader) => {
  * @param {Bytes} data
  * @returns decoded data
  */
-export const deserialize = (data) => {
+export const deserialize = (packetType, data) => {
   const MessageType = getProtoMessage();
   const decoded = MessageType.decode(data);
 
-  return decoded;
+  const packetName = getPacketNameByPacketType(packetType);
+  console.log('decoded:', decoded);
+  const deserialized = {
+    payload: decoded[packetName],
+  };
+
+  return deserialized;
 };
