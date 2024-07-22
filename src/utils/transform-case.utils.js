@@ -1,4 +1,16 @@
-import camelCase from 'lodash/camelCase.js';
+import lodash from 'lodash';
+
+/**
+ *
+ * @param {string} string
+ * @returns camelCase string, or original if it wasn't a string.
+ */
+export const stringToCamelCase = (string) => {
+  if (typeof string === 'string') {
+    return lodash.camelCase(string);
+  }
+  return string;
+};
 
 export const toCamelCase = (obj) => {
   if (Array.isArray(obj)) {
@@ -7,7 +19,7 @@ export const toCamelCase = (obj) => {
   } else if (obj !== null && typeof obj === 'object' && obj.constructor === Object) {
     // 객체인 경우, 객체의 키를 카멜케이스로 변환하고, 값에 대해서도 재귀적으로 toCamelCase 함수를 호출
     return Object.keys(obj).reduce((result, key) => {
-      result[camelCase(key)] = toCamelCase(obj[key]);
+      result[lodash.camelCase(key)] = toCamelCase(obj[key]);
       return result;
     }, {});
   }

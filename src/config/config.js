@@ -16,8 +16,8 @@ import {
   DB2_PASSWORD,
   DB2_HOST,
   DB2_PORT,
-} from '../constants/env.js';
-import { PACKET_TYPE_LENGTH, TOTAL_LENGTH } from '../constants/header.js';
+} from '../constants/env.constants.js';
+import { headerConstants } from '../constants/packet.constants.js';
 
 export const config = {
   server: {
@@ -28,8 +28,8 @@ export const config = {
     version: CLIENT_VERSION,
   },
   packet: {
-    totalLength: TOTAL_LENGTH,
-    typeLength: PACKET_TYPE_LENGTH,
+    totalLength: headerConstants.TOTAL_LENGTH,
+    typeLength: headerConstants.PACKET_TYPE_LENGTH,
   },
   databases: {
     GAME_DB: {
