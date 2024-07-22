@@ -1,0 +1,12 @@
+{
+  "name": "item",
+  "version": "1.0.0",
+  "data": [
+    { "id": 1, "score": 10, "responseTime": 11 },
+    { "id": 2, "score": 20, "responseTime": 12 },
+    { "id": 3, "score": 30, "responseTime": 13 },
+    { "id": 4, "score": 40, "responseTime": 14 },
+    { "id": 5, "score": 50, "responseTime": 15 },
+    { "id": 6, "score": 60, "responseTime": 16 }
+  ]
+}

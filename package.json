@@ -2,19 +2,25 @@
   "name": "the-last-rollback-server",
   "version": "1.0.0",
   "description": "action morpg server",
-  "main": "index.js",
+  "main": "src/server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "migrate": "node src/db/migrations/createSchemas.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "type": "module",
   "dependencies": {
+    "bcrypt": "^5.1.1",
     "dotenv": "^16.4.5",
+    "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",
     "long": "^5.2.3",
     "mysql2": "^3.10.3",
     "protobufjs": "^7.3.2",
+    "redis": "^4.6.15",
     "uuid": "^10.0.0"
   },
   "devDependencies": {

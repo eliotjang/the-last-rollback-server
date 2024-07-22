@@ -1,0 +1,13 @@
+{
+  "name": "stage",
+  "version": "1.0.0",
+  "data": [
+    { "id": 1000, "score": 0, "scorePerSecond": 1 },
+    { "id": 1001, "score": 100, "scorePerSecond": 2 },
+    { "id": 1002, "score": 200, "scorePerSecond": 4 },
+    { "id": 1003, "score": 300, "scorePerSecond": 8 },
+    { "id": 1004, "score": 400, "scorePerSecond": 16 },
+    { "id": 1005, "score": 500, "scorePerSecond": 32 },
+    { "id": 1006, "score": 600, "scorePerSecond": 64 }
+  ]
+}
