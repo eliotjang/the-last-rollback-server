@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import pools from '../database.js';
 import { SQL_QUERIES } from './user.queries.js';
-import { toCamelCase } from '../../utils/transformCase.js';
+import { toCamelCase } from '../../utils/transform-case.utils.js';
 
 export const findUserByDeviceID = async (deviceId) => {
   const [rows] = await pools.USER_DB.query(SQL_QUERIES.FIND_USER_BY_DEVICE_ID, [deviceId]);

@@ -1,0 +1,275 @@
+syntax = 'proto3';
+
+// enum Enum {
+//     C_Enter = 0;
+//     S_Enter = 1;
+//     S_Spawn = 2;
+//     S_Despawn = 5;
+//     C_Move = 6;
+//     S_Move = 7;
+//     C_Animation = 8;
+//     S_Animation = 9;
+//     C_Chat = 12;
+//     S_Chat = 13;
+//     C_EnterDungeon = 14;
+//     C_PlayerResponse = 15;
+//     S_EnterDungeon = 16;
+//     S_LeaveDungeon = 17;
+//     S_ScreenText = 18;
+//     S_ScreenDone = 19;
+//     S_BattleLog = 20;
+//     S_SetPlayerHp = 21;
+//     S_SetPlayerMp = 22;
+//     S_SetMonsterHp = 23;
+//     S_PlayerAction = 24;
+//     S_MonsterAction = 25;
+// }
+
+// 응답 패킷 - S_Enter, S_Spawn
+message C_Enter{
+  string nickname = 1;
+  int32 class = 2;
+}
+
+// MINE
+message S_Enter {
+  PlayerInfo player = 1;
+}
+
+// OTHERS
+message S_Spawn {
+  repeated PlayerInfo players = 1;
+}
+
+
+
+// 접속상태를 서버에서 판단해서 끊기도 다른 플레이어들 정보 전달
+// 응답 패킷 - S_Leave, S_Despawn
+message S_Despawn {
+  repeated int32 playerIds = 2; // PlayerInfo 전부 말고 아이디만 받는다.
+}
+
+
+// 응답 패킷 - S_Move
+message C_Move {
+  TransformInfo transform = 1;
+}
+
+// ALL
+message S_Move {
+  int32 playerId = 1;
+  TransformInfo transform = 2;
+}
+
+// 응답 패킷 - S_Animation
+message C_Animation {
+  int32 animCode = 1;
+}
+
+// ALL
+message S_Animation {
+  int32 playerId = 1;
+  int32 animCode = 2;
+}
+
+
+// 응답 패킷 - C_Chat
+message S_Chat{
+  int32 playerId = 1;
+  string chatMsg = 2;
+}
+
+
+// ALL
+message C_Chat{
+  int32 playerId = 1;
+  string senderName = 2;
+  string chatMsg = 3;
+}
+
+// 응답 패킷 - S_EnterDungeon
+message C_EnterDungeon{
+  int32 dungeonCode = 1;
+}
+
+message C_PlayerResponse{
+  int32 responseCode = 1;
+}
+
+
+// Me
+message S_EnterDungeon{
+  DungeonInfo dungeonInfo = 1;
+  PlayerStatus player = 2;
+  optional ScreenText screenText = 3;
+  optional BattleLog battleLog = 4;
+}
+
+// Me
+message S_LeaveDungeon { }
+
+// Me
+message S_ScreenText{
+  ScreenText screenText = 1;
+}
+
+// Me
+message S_ScreenDone { }
+
+// Me
+message S_BattleLog {
+  BattleLog battleLog = 1;
+}
+
+// Me
+message S_SetPlayerHp {
+  float hp = 1;
+}
+
+// Me
+message S_SetPlayerMp {
+  float mp = 1;
+}
+
+// Me
+message S_SetMonsterHp {
+  int32 monsterIdx = 1;
+  float hp = 2;
+}
+
+// Me
+message S_PlayerAction {
+  int32 targetMonsterIdx = 1;
+  ActionSet actionSet = 2;
+}
+
+// Me
+message S_MonsterAction {
+  int32 actionMonsterIdx = 1;
+  ActionSet actionSet = 2;
+}
+
+
+// 정보 구조체
+
+message PlayerInfo {
+  int32 playerId = 1;   // 입장할때 서버 내부에서 생성한 관리코드
+  string nickname = 2;  // C_EnterGame 에서 지정한 이름
+  int32 class = 3;      // C_EnterGame 에서 지정한 직업 정보, 이 정보를 통해 캐릭터가 결정
+  TransformInfo transform = 4;
+  StatInfo statInfo = 5;
+}
+
+// C_Enter 를 통해 입장했을때는 서버에서 랜덤으로 위치값 생성 / 기본값은 하단 밸류 참조
+// C_Move 를 통해 전달된 데이터는 그대로 다른 사용자에게 릴레이
+message TransformInfo {
+  float posX = 1; // 기본값 : -9 ~ 9
+  float posY = 2; // 기본값 : 1
+  float posZ = 3; // 기본값 : -8 ~ 8
+  float rot = 4; // 기본값 : 0~360
+}
+
+message StatInfo {
+  int32 level = 1;
+  float hp = 2;
+  float maxHp = 3;
+  float mp = 4;
+  float maxMp = 5;
+  float atk = 6;
+  float def = 7;
+  float magic = 8;
+  float speed = 9; 
+}
+
+message ScreenText{
+  string msg = 1;
+  bool typingAnimation = 2;
+  optional ScreenTextAlignment alignment = 3;
+  optional Color textColor = 4;
+  optional Color screenColor = 5;
+}
+
+message ScreenTextAlignment {
+  int32 x = 1;
+  int32 y = 2;
+}
+
+message Color {
+  int32 r = 1;
+  int32 g = 2;
+  int32 b = 3;
+}
+
+message DungeonInfo {
+  int32 dungeonCode = 1;
+  repeated MonsterStatus monsters = 2;
+}
+
+message MonsterStatus {
+  int32 monsterIdx = 1;
+  int32 monsterModel = 2;
+  string monsterName = 3;
+  float monsterHp = 4;
+}
+
+message ActionSet {
+  int32 animCode = 1;
+  int32 effectCode = 2;
+}
+
+message PlayerStatus {
+  int32 playerClass = 1;
+  int32 playerLevel = 2;
+  string playerName = 3;
+  float playerFullHp = 4;
+  float playerFullMp = 5;
+  float playerCurHp = 6;
+  float playerCurMp = 7;
+}
+
+message BattleLog {
+  string msg = 1;
+  bool typingAnimation = 2;
+  repeated BtnInfo btns = 3;
+}
+
+message BtnInfo {
+  string msg = 1;
+  bool enable = 2;
+}
+
+// 패킷
+message Packet {
+    oneof payload {
+      // 로비 접속
+      C_Enter cEnter = 1;
+      S_Enter sEnter = 2;
+      // 로비 캐릭터 소환/제거
+      S_Spawn sSpawn = 3;
+      S_Despawn sDespawn = 4;
+      // 로비 이동
+      C_Move cMove = 5;
+      S_Move sMove = 6;
+      // 로비 감정표현
+      C_Animation cAnimation = 7;
+      S_Animation sAnimation = 8;
+      // 채팅
+      C_Chat cChat = 9;
+      S_Chat sChat = 10;
+      // 턴제 전투
+      C_EnterDungeon cEnterDungeon = 11;
+      C_PlayerResponse cPlayerResponse = 12;
+      S_EnterDungeon sEnterDungeon = 13;
+      S_LeaveDungeon sLeaveDungeon = 14;
+      S_ScreenText sScreenText = 15;
+      S_ScreenDone sScreenDone = 16;
+      S_BattleLog sBattleLog = 17;
+      S_SetPlayerHp sSetPlayerHp = 18;
+      S_SetPlayerMp sSetPlayerMp = 19;
+      S_SetMonsterHp sSetMonsterHp = 20;
+      S_PlayerAction sPlayerAction = 21;
+      S_MonsterAction sMonsterAction = 22;
+      // 실시간 전투
+      
+    }
+}
