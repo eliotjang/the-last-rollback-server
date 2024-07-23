@@ -16,10 +16,16 @@ import {
   DB2_PASSWORD,
   DB2_HOST,
   DB2_PORT,
+  SALT_ROUNDS,
+  JWT_SECRET,
 } from '../constants/env.constants.js';
 import { headerConstants } from '../constants/packet.constants.js';
 
 export const config = {
+  account: {
+    saltRounds: +SALT_ROUNDS,
+    jwtSecret: JWT_SECRET,
+  },
   server: {
     port: PORT,
     host: HOST,

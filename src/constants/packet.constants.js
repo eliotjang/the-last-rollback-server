@@ -31,6 +31,10 @@ export const packetTypes = {
   S_SET_MONSTER_HP: 23,
   S_PLAYER_ACTION: 24,
   S_MONSTER_ACTION: 25,
+  C_SIGNUP: 26,
+  S_SIGNUP: 27,
+  C_LOGIN: 28,
+  S_LOGIN: 29,
 };
 
 export const packetNames = Object.fromEntries(

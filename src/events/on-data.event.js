@@ -1,8 +1,10 @@
-import { headerConstants } from '../constants/packet.constants.js';
+import { verifyToken } from '../auth/auth.js';
+import { headerConstants, packetTypes } from '../constants/packet.constants.js';
 import { getHandlerByPacketType } from '../handlers/index.js';
+import { ErrorCodes } from '../utils/error/errorCodes.js';
 import { handleError } from '../utils/error/errorHandler.js';
 import { readHeader } from '../utils/packet-header.utils.js';
-import { deserialize } from '../utils/packet-serializer.utils.js';
+import { deserialize, serialize } from '../utils/packet-serializer.utils.js';
 
 const headerSize = headerConstants.TOTAL_LENGTH + headerConstants.PACKET_TYPE_LENGTH;
 
@@ -18,6 +20,20 @@ const onData = (socket) => async (data) => {
       socket.buffer = socket.buffer.subarray(totalLength);
 
       const decodedPacket = deserialize(packetType, packet);
+      console.log('packetType, decodedPacket : ', packetType, decodedPacket);
+
+      if (packetType !== packetTypes.C_SIGNUP && packetType !== packetTypes.C_LOGIN) {
+        console.log(socket.token);
+        const user = await verifyToken(socket.token);
+        if (!user) {
+          const responsePacket = serialize(packetType, {
+            code: ErrorCodes.TOKEN_VERIFY_ERROR,
+            msg: '토큰 검증 에러',
+          });
+          socket.write(responsePacket);
+          throw new CustomError(ErrorCodes.EXISTED_USER, '토큰 검증 에러');
+        }
+      }
 
       const handler = getHandlerByPacketType(packetType);
       const result = await handler({ socket, userId: null, packet: decodedPacket });
