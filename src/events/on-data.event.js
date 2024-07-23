@@ -18,7 +18,7 @@ const onData = (socket) => async (data) => {
       socket.buffer = socket.buffer.subarray(totalLength);
 
       const decodedPacket = deserialize(packetType, packet);
-
+      console.log('decode', decodedPacket);
       const handler = getHandlerByPacketType(packetType);
       const result = await handler({ socket, userId: null, packet: decodedPacket });
       if (result) {
