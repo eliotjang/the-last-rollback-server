@@ -12,6 +12,13 @@ export const stringToCamelCase = (string) => {
   return string;
 };
 
+export const stringToPascalCase = (string) => {
+  if (typeof string === 'string') {
+    return lodash.upperFirst(lodash.camelCase(string));
+  }
+  return string;
+};
+
 export const toCamelCase = (obj) => {
   if (Array.isArray(obj)) {
     // 배열인 경우, 배열의 각 요소에 대해 재귀적으로 toCamelCase 함수를 호출

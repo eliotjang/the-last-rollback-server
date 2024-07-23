@@ -1,4 +1,6 @@
-import { stringToCamelCase } from '../utils/transform-case.utils.js';
+import { stringToCamelCase, stringToPascalCase } from '../utils/transform-case.utils.js';
+
+const packagePrefix = 'Google.Protobuf.Protocol.';
 
 export const headerConstants = {
   // bytes
@@ -31,11 +33,31 @@ export const packetTypes = {
   S_MONSTER_ACTION: 25,
 };
 
-const packetNames = Object.fromEntries(
+export const packetNames = Object.fromEntries(
   Object.entries(packetTypes).map(([key, value]) => {
-    return [value, stringToCamelCase(key)];
+    const str = packagePrefix + key.substring(0, 2) + stringToPascalCase(key.substring(2));
+    return [value, str];
   }),
 );
+
+/**
+ *
+ * @param {number} packetType packetTypes에 매핑된 타입
+ * @returns packetType에 맞는 Message 이름 반환
+ */
+export const getPacketNameByPacketType = (packetType) => {
+  if (Object.values(packetNames).includes(packetType)) {
+    return packetNames[packetType];
+  }
+  return null;
+};
+
+// const payloadNames = Object.fromEntries(
+//   Object.entries(packetTypes).map(([key, value]) => {
+//     return [value, stringToCamelCase(key)];
+//   }),
+// );
+
 // [packetTypes.C_ENTER]: "cEnter",
 // [packetTypes.S_ENTER]: "sEnter",
 // [packetTypes.S_SPAWN]: "sSpawn",
@@ -59,14 +81,14 @@ const packetNames = Object.fromEntries(
 // [packetTypes.S_PLAYER_ACTION]: "sPlayerAction",
 // [packetTypes.S_MONSTER_ACTION]: "sMonsterAction",
 
-/**
- *
- * @param {number} packetType
- * @returns proto message's payload field name, or null if dne.
- */
-export const getPacketNameByPacketType = (packetType) => {
-  if (Object.values(packetTypes).includes(packetType)) {
-    return packetNames[packetType];
-  }
-  return null;
-};
+// /**
+//  *
+//  * @param {number} packetType
+//  * @returns proto message's payload field name, or null if dne.
+//  */
+// export const getPacketNameByPacketType = (packetType) => {
+//   if (Object.values(payloadNames).includes(packetType)) {
+//     return packetNames[packetType];
+//   }
+//   return null;
+// };
