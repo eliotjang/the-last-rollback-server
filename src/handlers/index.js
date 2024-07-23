@@ -9,8 +9,7 @@ const dummyHandler = () => {};
 const handlers = {
   [packetTypes.C_ENTER]: enterTownHandler,
   [packetTypes.S_ENTER]: dummyHandler,
-  [packetTypes.C_MOVE]: dummyHandler,
-  [packetTypes.S_MOVE]: locationUpdateHandler,
+  [packetTypes.C_MOVE]: locationUpdateHandler,
 };
 
 export const getHandlerByPacketType = (packetType) => {

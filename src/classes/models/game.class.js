@@ -33,9 +33,13 @@ class Game {
   }
 
   getAllLocation(userId) {
-    const locationData = this.users.map((user) => {
-      if (user.id !== userId) {
-        return { id: user.id, TransformInfo: user.PlayerInfo.transformInfo };
+    const locationData = [];
+    this.users.forEach((user) => {
+      if (user.playerInfo.playerId === userId) {
+        locationData.push({
+          playerId: user.playerInfo.playerId,
+          TransformInfo: user.playerInfo.transform,
+        });
       }
     });
     return locationData;
