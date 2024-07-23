@@ -1,29 +1,31 @@
 syntax = 'proto3';
 
-// enum Enum {
-//     C_Enter = 0;
-//     S_Enter = 1;
-//     S_Spawn = 2;
-//     S_Despawn = 5;
-//     C_Move = 6;
-//     S_Move = 7;
-//     C_Animation = 8;
-//     S_Animation = 9;
-//     C_Chat = 12;
-//     S_Chat = 13;
-//     C_EnterDungeon = 14;
-//     C_PlayerResponse = 15;
-//     S_EnterDungeon = 16;
-//     S_LeaveDungeon = 17;
-//     S_ScreenText = 18;
-//     S_ScreenDone = 19;
-//     S_BattleLog = 20;
-//     S_SetPlayerHp = 21;
-//     S_SetPlayerMp = 22;
-//     S_SetMonsterHp = 23;
-//     S_PlayerAction = 24;
-//     S_MonsterAction = 25;
-// }
+package Google.Protobuf.Protocol;
+
+enum MsgId {
+    C_ENTER = 0;
+    S_ENTER = 1;
+    S_SPAWN = 2;
+    S_DESPAWN = 5;
+    C_MOVE = 6;
+    S_MOVE = 7;
+    C_ANIMATION = 8;
+    S_ANIMATION = 9;
+    C_CHAT = 12;
+    S_CHAT = 13;
+    C_ENTER_DUNGEON = 14;
+    C_PLAYER_RESPONSE = 15;
+    S_ENTER_DUNGEON = 16;
+    S_LEAVE_DUNGEON = 17;
+    S_SCREEN_TEXT = 18;
+    S_SCREEN_DONE = 19;
+    S_BATTLE_LOG = 20;
+    S_SET_PLAYER_HP = 21;
+    S_SET_PLAYER_MP = 22;
+    S_SET_MONSTER_HP = 23;
+    S_PLAYER_ACTION = 24;
+    S_MONSTER_ACTION = 25;
+}
 
 // 응답 패킷 - S_Enter, S_Spawn
 message C_Enter{
@@ -239,37 +241,45 @@ message BtnInfo {
 }
 
 // 패킷
-message Packet {
-    oneof payload {
-      // 로비 접속
-      C_Enter cEnter = 1;
-      S_Enter sEnter = 2;
-      // 로비 캐릭터 소환/제거
-      S_Spawn sSpawn = 3;
-      S_Despawn sDespawn = 4;
-      // 로비 이동
-      C_Move cMove = 5;
-      S_Move sMove = 6;
-      // 로비 감정표현
-      C_Animation cAnimation = 7;
-      S_Animation sAnimation = 8;
-      // 채팅
-      C_Chat cChat = 9;
-      S_Chat sChat = 10;
-      // 턴제 전투
-      C_EnterDungeon cEnterDungeon = 11;
-      C_PlayerResponse cPlayerResponse = 12;
-      S_EnterDungeon sEnterDungeon = 13;
-      S_LeaveDungeon sLeaveDungeon = 14;
-      S_ScreenText sScreenText = 15;
-      S_ScreenDone sScreenDone = 16;
-      S_BattleLog sBattleLog = 17;
-      S_SetPlayerHp sSetPlayerHp = 18;
-      S_SetPlayerMp sSetPlayerMp = 19;
-      S_SetMonsterHp sSetMonsterHp = 20;
-      S_PlayerAction sPlayerAction = 21;
-      S_MonsterAction sMonsterAction = 22;
-      // 실시간 전투
+// message Packet {
+//     oneof payload {
+//       // 로비 접속
+//       C_Enter cEnter = 1;
+//       S_Enter sEnter = 2;
+//       // 로비 캐릭터 소환/제거
+//       S_Spawn sSpawn = 3;
+//       S_Despawn sDespawn = 4;
+//       // 로비 이동
+//       C_Move cMove = 5;
+//       S_Move sMove = 6;
+//       // 로비 감정표현
+//       C_Animation cAnimation = 7;
+//       S_Animation sAnimation = 8;
+//       // 채팅
+//       C_Chat cChat = 9;
+//       S_Chat sChat = 10;
+//       // 턴제 전투
+//       C_EnterDungeon cEnterDungeon = 11;
+//       C_PlayerResponse cPlayerResponse = 12;
+//       S_EnterDungeon sEnterDungeon = 13;
+//       S_LeaveDungeon sLeaveDungeon = 14;
+//       S_ScreenText sScreenText = 15;
+//       S_ScreenDone sScreenDone = 16;
+//       S_BattleLog sBattleLog = 17;
+//       S_SetPlayerHp sSetPlayerHp = 18;
+//       S_SetPlayerMp sSetPlayerMp = 19;
+//       S_SetMonsterHp sSetMonsterHp = 20;
+//       S_PlayerAction sPlayerAction = 21;
+//       S_MonsterAction sMonsterAction = 22;
       
-    }
-}
+//       // 실시간 전투
+//       // 몬스터 소환
+//       // 몬스터가 건물 공격
+//       // 몬스터가 플레이어 공격
+//       // 플레이어가 몬스터 공격
+//       // 기지 파괴
+//       // 몬스터 사망
+//       // 게임 종료 (승리 패배 bool)
+//       // 
+//     }
+// }

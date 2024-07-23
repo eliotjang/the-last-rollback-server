@@ -20,14 +20,15 @@ class Town extends Game {
       const data = allPlayerInfo.filter(
         (playerInfo) => playerInfo.playerId !== curUser.playerInfo.playerId,
       );
-      this.sendPacketToUser(curUser.playerInfo.playerId, packetTypes.S_SPAWN, { payload: data });
+      this.sendPacketToUser(curUser.playerInfo.playerId, packetTypes.S_SPAWN, { players: data });
     });
+    console.log('town', this.users);
   }
 
   removeUser(userId) {
     super.removeUser(userId);
 
-    this.sendPacketToAll(packetTypes.S_DESPAWN, { payload: userId });
+    this.sendPacketToAll(packetTypes.S_DESPAWN, { playerIds: userId });
   }
 }
 

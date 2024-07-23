@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import url from 'url';
 import protobuf from 'protobufjs';
+import { packetNames } from '../constants/packet.constants.js';
 
 const __filename = url.fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -24,20 +25,27 @@ const getAllProtoFilePaths = (dir, fileList = []) => {
 
 const protoFiles = getAllProtoFilePaths(protoDirname);
 const root = new protobuf.Root();
+const protoMessages = {};
 
 export const loadProtoFiles = async () => {
   try {
     protoFiles.forEach((file) => root.loadSync(file));
+
+    for (const [packetType, messageName] of Object.entries(packetNames)) {
+      protoMessages[packetType] = root.lookupType(messageName);
+    }
+
+    Object.freeze(protoMessages);
     console.log(`Successfully loaded protobuf files.`);
-    return root.lookupType('Packet'); //
+    // return root.lookupType('Packet'); //
   } catch (err) {
     console.error(err);
   }
 };
 
-const Packet = await loadProtoFiles();
+// const Packet = await loadProtoFiles();
 // Object.freeze(Packet);
 
-export const getProtoMessage = () => Packet;
+export const getProtoMessages = () => protoMessages;
 
 // export const getProtoMessages = () => protoMessages;
