@@ -1,3 +1,4 @@
+import PlayerInfo from '../../protobuf/classes/info/player-info.proto.js';
 import { serialize } from '../../utils/packet-serializer.utils.js';
 
 class Game {
@@ -31,7 +32,14 @@ class Game {
     return this.users.length >= this.maxUser;
   }
 
-  getAllLocation() {}
+  getAllLocation(userId) {
+    const locationData = this.users.map((user) => {
+      if (user.id !== userId) {
+        return { id: user.id, TransformInfo: user.PlayerInfo.transformInfo };
+      }
+    });
+    return locationData;
+  }
 
   sendPacketToUser(userId, packetType, data) {
     const user = this.users.find((user) => user.playerInfo.playerId === userId);
