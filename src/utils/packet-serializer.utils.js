@@ -1,5 +1,7 @@
 import { getPacketNameByPacketType } from '../constants/packet.constants.js';
-import { getProtoMessage } from '../init/proto.init.js';
+import { getProtoMessages } from '../init/proto.init.js';
+import CustomError from './error/customError.js';
+import { ErrorCodes } from './error/errorCodes.js';
 import { writeHeader } from './packet-header.utils.js';
 
 /**
@@ -10,19 +12,22 @@ import { writeHeader } from './packet-header.utils.js';
  * @returns 버퍼 바이트 배열 반환
  */
 export const serialize = (packetType, data, withoutHeader) => {
-  const payloadKey = getPacketNameByPacketType(packetType);
-  if (!payloadKey) {
-    throw new Error(`직렬화 에러: 잘 못된 packetType ${packetType}`);
+  const MessageType = getProtoMessages()[packetType];
+  if (!MessageType) {
+    throw new CustomError(
+      ErrorCodes.INVALID_PACKET,
+      `직렬화 에러: 잘 못된 packetType ${packetType}`,
+    );
   }
 
-  const keyName = getPacketNameByPacketType(packetType);
-  data[keyName] = data.payload;
-  data.payload = null;
+  // const keyName = getPacketNameByPacketType(packetType);
+  // data[keyName] = data.payload;
+  // data.payload = null;
 
-  const MessageType = getProtoMessage();
+  // const MessageType = getProtoMessages();
   const msg = MessageType.verify(data);
   if (msg) {
-    throw new Error('직렬화 에러:', msg);
+    throw new CustomError(ErrorCodes.INVALID_PACKET, '직렬화 에러:', msg);
   }
   const encoded = MessageType.encode(data).finish();
   if (withoutHeader) {
@@ -38,14 +43,17 @@ export const serialize = (packetType, data, withoutHeader) => {
  * @returns decoded data
  */
 export const deserialize = (packetType, data) => {
-  const MessageType = getProtoMessage();
+  const MessageType = getProtoMessages()[packetType];
+  if (!MessageType) {
+    throw new CustomError(ErrorCodes.INVALID_PACKET, `잘 못된 packetType: ${packetType}`);
+  }
   const decoded = MessageType.decode(data);
 
-  const packetName = getPacketNameByPacketType(packetType);
-  console.log('decoded:', decoded);
-  const deserialized = {
-    payload: decoded[packetName],
-  };
+  // const packetName = getPacketNameByPacketType(packetType);
+  // console.log('decoded:', decoded);
+  // const deserialized = {
+  //   payload: decoded[packetName],
+  // };
 
-  return deserialized;
+  return decoded;
 };
