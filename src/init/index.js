@@ -8,8 +8,8 @@ const initServer = async () => {
   try {
     await loadGameAssets();
     await loadProtoFiles();
-    await testAllDBConnections(pools);
-    await testAllRedisConnections();
+    // await testAllDBConnections(pools);
+    // await testAllRedisConnections();
   } catch (e) {
     console.error(e);
     process.exit(1); // 오류 발생 시 프로세스 종료

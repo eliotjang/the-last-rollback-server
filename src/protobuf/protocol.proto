@@ -240,6 +240,24 @@ message BtnInfo {
   bool enable = 2;
 }
 
+message C_Signup {
+  string accountId = 1;
+  string password = 2;
+}
+
+message S_Signup {
+  string msg = 1;
+}
+
+message C_Login {
+  string accountId = 1;
+  string password = 2;
+}
+
+message S_Login {
+  string msg = 1;
+}
+
 // 패킷
 // message Packet {
 //     oneof payload {
