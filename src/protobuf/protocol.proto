@@ -25,6 +25,10 @@ enum MsgId {
     S_SET_MONSTER_HP = 23;
     S_PLAYER_ACTION = 24;
     S_MONSTER_ACTION = 25;
+    C_SIGNUP = 26;
+    S_SIGNUP = 27;
+    C_LOGIN = 28;
+    S_LOGIN = 29; 
 }
 
 // 응답 패킷 - S_Enter, S_Spawn
@@ -151,6 +155,25 @@ message S_MonsterAction {
   ActionSet actionSet = 2;
 }
 
+message C_Signup {
+  string accountId = 1;
+  string password = 2;
+}
+
+message S_Signup {
+  string accountId = 1;
+  string password = 2;
+}
+
+message C_Login {
+  string accountId = 1;
+  string password = 2;
+}
+
+message S_Login {
+  string accountId = 1;
+  string password = 2;
+}
 
 // 정보 구조체
 
