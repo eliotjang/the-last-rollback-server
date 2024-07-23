@@ -1,15 +1,15 @@
-import { packetTypes } from '../constants/packet.constants.js';
+import { payloadTypes } from '../constants/packet.constants.js';
 import CustomError from '../utils/error/customError.js';
 import { ErrorCodes } from '../utils/error/errorCodes.js';
 
 const dummyHandler = () => {};
 
 const handlers = {
-  [packetTypes.C_ENTER]: dummyHandler,
-  [packetTypes.S_ENTER]: dummyHandler,
+  [payloadTypes.C_ENTER]: dummyHandler,
+  [payloadTypes.S_ENTER]: dummyHandler,
 };
 
-export const getHandlerByPacketType = (packetType) => {
+export const getHandlerByPayloadType = (packetType) => {
   if (!handlers[packetType]) {
     throw new CustomError(
       ErrorCodes.UNKNOWN_HANDLER_ID,
