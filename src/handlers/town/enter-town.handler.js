@@ -1,16 +1,31 @@
 import { packetTypes } from '../../constants/packet.constants.js';
 import { addTownSession, getAllTownSessions } from '../../session/town.session.js';
-import CustomError from '../../utils/error/customError.js';
-import { ErrorCodes } from '../../utils/error/errorCodes.js';
 import { handleError } from '../../utils/error/errorHandler.js';
 import { serialize } from '../../utils/packet-serializer.utils.js';
+import TransformInfo from '../../protobuf/classes/info/transform-info.proto.js';
+import StatInfo from '../../protobuf/classes/info/stat-info.proto.js';
+import PlayerInfo from '../../protobuf/classes/info/player-info.proto.js';
 
-const enterTownHandler = ({ socket, userId, payload }) => {
+const enterTownHandler = async ({ socket, userId, _ }) => {
   try {
-    const user = getUserById(userId);
-    if (!user) {
-      throw new CustomError(ErrorCodes.USER_NOT_FOUND, '유저를 찾을 수 없습니다.');
-    }
+    // userId로 DB에서 유저 찾기
+    const userInfo = await findUserByID(userId); // DB에서 조회
+
+    // 없으면 캐릭터 생성 창으로
+    // if (!user) {
+    //   캐릭터 생성 창으로
+    // }
+
+    // 있으면 바로 타운 입장
+    const transform = new TransformInfo(userInfo.xCoord, userInfo.yCoord, 0, 0);
+    const statInfo = new StatInfo(1, 100);
+    const playerInfo = new PlayerInfo(
+      userId,
+      userInfo.nickname,
+      userInfo.characterClass,
+      transform,
+      statInfo,
+    );
 
     const townSessions = getAllTownSessions();
     let townSession = townSessions.find((townSession) => !townSession.isFull());
@@ -18,11 +33,15 @@ const enterTownHandler = ({ socket, userId, payload }) => {
       townSession = addTownSession();
     }
 
+    const user = { playerInfo, socket };
     townSession.addUser(user);
 
-    const response = serialize(packetTypes.S_ENTER, { payload: user.playerInfo });
+    const sSpawnPacket = serialize(packetTypes.S_SPAWN, {
+      payload: playerInfo,
+    });
+    socket.write(sSpawnPacket);
 
-    socket.write(response);
+    townSession.sendPacketToOthers(userId, packetTypes.S_ENTER, playerInfo);
   } catch (e) {
     handleError(socket, e);
   }

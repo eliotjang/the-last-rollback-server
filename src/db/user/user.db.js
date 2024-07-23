@@ -1,19 +1,20 @@
-import { v4 as uuidv4 } from 'uuid';
 import pools from '../database.js';
 import { SQL_QUERIES } from './user.queries.js';
 import { toCamelCase } from '../../utils/transform-case.utils.js';
 
-export const findUserByDeviceID = async (deviceId) => {
-  const [rows] = await pools.USER_DB.query(SQL_QUERIES.FIND_USER_BY_DEVICE_ID, [deviceId]);
+export const findUserByID = async (userId) => {
+  const [rows] = await pools.USER_DB.query(SQL_QUERIES.FIND_USER_BY_ID, [userId]);
   return toCamelCase(rows[0]);
 };
 
-export const createUser = async (deviceId) => {
-  const id = uuidv4();
-  const playerId = Math.floor(Math.random() * 4);
-  await pools.USER_DB.query(SQL_QUERIES.CREATE_USER, [id, deviceId, playerId]);
-  const [rows] = await pools.USER_DB.query(SQL_QUERIES.FIND_USER_BY_DEVICE_ID, [deviceId]);
-  return toCamelCase(rows[0]);
+export const createUser = async (userId, nickname, characterClass, posX, posY) => {
+  await pools.USER_DB.query(SQL_QUERIES.CREATE_USER, [
+    userId,
+    nickname,
+    characterClass,
+    posX,
+    posY,
+  ]);
 };
 
 export const updateUserLogin = async (id) => {
