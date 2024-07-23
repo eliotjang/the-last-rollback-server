@@ -10,12 +10,24 @@ class Town extends Game {
 
   addUser(user) {
     super.addUser(user);
+
+    const allPlayerInfo = this.users.reduce((data, curUser) => {
+      data.push(curUser.playerInfo);
+      return data;
+    }, []);
+
+    this.users.forEach((curUser) => {
+      const data = allPlayerInfo.filter(
+        (playerInfo) => playerInfo.playerId !== curUser.playerInfo.playerId,
+      );
+      this.sendPacketToUser(curUser.playerInfo.playerId, packetTypes.S_SPAWN, { players: data });
+    });
   }
 
   removeUser(userId) {
     super.removeUser(userId);
 
-    this.sendPacketToAll(packetTypes.S_DESPAWN, { payload: userId });
+    this.sendPacketToAll(packetTypes.S_DESPAWN, { playerIds: userId });
   }
 }
 
