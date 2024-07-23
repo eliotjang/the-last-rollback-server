@@ -1,4 +1,4 @@
-import { packetTypes } from '../constants/packet.constants.js';
+import { payloadTypes } from '../constants/packet.constants.js';
 import CustomError from '../utils/error/customError.js';
 import { ErrorCodes } from '../utils/error/errorCodes.js';
 import loginAccountHandler from './account/login-account.handler.js';
@@ -13,7 +13,7 @@ const handlers = {
   [packetTypes.C_LOGIN]: loginAccountHandler,
 };
 
-export const getHandlerByPacketType = (packetType) => {
+export const getHandlerByPayloadType = (packetType) => {
   if (!handlers[packetType]) {
     throw new CustomError(
       ErrorCodes.UNKNOWN_HANDLER_ID,

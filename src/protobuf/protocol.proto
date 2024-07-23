@@ -28,7 +28,7 @@ enum MsgId {
     C_SIGNUP = 26;
     S_SIGNUP = 27;
     C_LOGIN = 28;
-    S_LOGIN = 29;
+    S_LOGIN = 29; 
 }
 
 // 응답 패킷 - S_Enter, S_Spawn
@@ -154,7 +154,6 @@ message S_MonsterAction {
   int32 actionMonsterIdx = 1;
   ActionSet actionSet = 2;
 }
-
 
 // 정보 구조체
 
