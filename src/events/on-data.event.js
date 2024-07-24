@@ -39,7 +39,7 @@ const onData = (socket) => async (data) => {
           verifyClientVersion(clientVersion);
           verifySequence(sequence);
           const handler = getHandlerByPayloadType(payloadType);
-          const result = await handler({ socket, userId: null, packet: payload });
+          const result = await handler({ socket, userId: socket.userId, payload });
           if (result) {
             // result가 있다면 추가 작업
           }

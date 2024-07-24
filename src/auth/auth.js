@@ -16,8 +16,6 @@ export const verifyToken = async (token) => {
     if (!user) {
       throw new CustomError(ErrorCodes.USER_NOT_FOUND, '유효하지 않은 유저');
     }
-
-    return user;
   } catch (error) {
     switch (error.name) {
       case 'TokenExpiredError':
