@@ -266,3 +266,44 @@ message S_Login {
   string accountId = 3;
   string accountPwd = 4;
 }
+
+// 패킷
+message RequestPacket {
+  string clientVersion = 1;
+  uint32 sequence = 2;
+  string token = 3;
+  uint32 payloadType = 4;
+  oneof payload {
+    C_Enter cEnter = 5;
+    C_Move cMove = 6;
+    C_Animation cAnimation = 7;
+    C_Chat cChat = 8;
+    C_EnterDungeon cEnterDungeon = 9;
+    C_PlayerResponse cPlayerResponse = 10;
+  }
+}
+
+message ResponsePacket {
+  uint32 code = 1;
+  uint32 message = 2;
+  uint64 timestamp = 3;
+  uint32 payloadType = 4;
+  oneof payload {
+    S_Enter sEnter = 5;
+    S_Spawn sSpawn = 6;
+    S_Despawn sDespawn = 7;
+    S_Move sMove = 8;
+    S_Animation sAnimation = 9;
+    S_Chat sChat = 10;
+    S_EnterDungeon sEnterDungeon = 11;
+    S_LeaveDungeon sLeaveDungeon = 12;
+    S_ScreenText sScreenText = 13;
+    S_ScreenDone sScreenDone = 14;
+    S_BattleLog sBattleLog = 15;
+    S_SetPlayerHp sSetPlayerHp = 16;
+    S_SetPlayerMp sSetPlayerMp = 17;
+    S_SetMonsterHp sSetMonsterHp = 18;
+    S_PlayerAction sPlayerAction = 19;
+    S_MonsterAction sMonsterAction = 20;
+  }
+}
