@@ -24,7 +24,7 @@ export const sendPacket = (packetType, data) => {
  * @param {uint32} payloadType
  * @param {Object} data key-value pair
  */
-export const sendResponse = (code, message, payloadType, payload) => {
+export const sendResponse = function (code, message, payloadType, payload) {
   const serializedPayload = serialize(payloadType, payload, true);
   const packetData = {
     code,
@@ -45,7 +45,7 @@ export const sendResponse = (code, message, payloadType, payload) => {
  * @param {uint32} payloadType
  * @param {Object} payload key-value pair
  */
-export const sendNotification = (timestamp, message, payloadType, payload) => {
+export const sendNotification = function (timestamp, message, payloadType, payload) {
   const serializedPayload = serialize(payloadType, payload, true);
   const packetData = {
     timestamp,
