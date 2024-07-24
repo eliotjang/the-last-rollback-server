@@ -27,14 +27,14 @@ class Town extends Game {
 
       // 현재 들어온 유저에게 다른 모든 유저 정보를 전송
       if (curUser === user) {
-        const response = serialize(packetTypes.S_SPAWN, {
+        const response = serialize(payloadTypes.S_SPAWN, {
           players: data,
         });
         console.log('data:', data);
         user.socket.write(response);
       } else {
         // 기존 유저에게 새로 들어온 유저 정보를 전송
-        this.sendPacketToOthers(curUser.playerInfo.playerId, packetTypes.S_ENTER, {
+        this.sendPacketToOthers(curUser.playerInfo.playerId, payloadTypes.S_ENTER, {
           player: user.playerInfo,
         });
         console.log('user:', user.playerInfo);

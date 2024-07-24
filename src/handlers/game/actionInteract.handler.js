@@ -8,7 +8,6 @@ const actionInteractHandler = ({ socket, userId, packet }) => {
   try {
     const { animCode } = packet;
     const townSession = getTownSessionByUserSocket(socket);
-    console.log('#####', animCode);
     if (!townSession) {
       throw new CustomError(ErrorCodes.GAME_NOT_FOUND, '타운 세션을 찾을 수 없습니다.');
     }

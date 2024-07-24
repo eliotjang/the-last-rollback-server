@@ -18,11 +18,10 @@ const locationUpdateHandler = ({ socket, userId, packet }) => {
     if (!user) {
       throw new CustomError(ErrorCodes.USER_NOT_FOUND, '유저를 찾을 수 없습니다.');
     }
-
     //user.updatePosition(TransformInfo);
     user.playerInfo.transform = transform;
     const data = { playerId: user.playerInfo.playerId, transform };
-
+    console.log('####', data);
     //const TransformInfos = townSession.getAllLocation(user.playerInfo.playerId);
 
     townSession.sendPacketToAll(payloadTypes.S_MOVE, data);

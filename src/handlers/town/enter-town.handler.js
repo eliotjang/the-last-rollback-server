@@ -27,8 +27,10 @@ const enterTownHandler = async ({ socket, userId, packet }) => {
 
     townSession.addUser(user);
 
-    const response = serialize(packetTypes.S_ENTER, { player: plainPlayerInfo });
-    socket.write(response);
+    // const response = serialize(packetTypes.S_ENTER, { player: plainPlayerInfo });
+    // socket.write(response);
+
+    socket.sendPacket(payloadTypes.S_ENTER, { player: plainPlayerInfo });
   } catch (error) {
     handleError(socket, error);
   }

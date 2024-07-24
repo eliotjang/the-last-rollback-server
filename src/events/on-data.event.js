@@ -20,10 +20,10 @@ const onData = (socket) => async (data) => {
       const packet = socket.buffer.subarray(headerSize, totalLength);
       socket.buffer = socket.buffer.subarray(totalLength);
 
-      if (payloadType !== payloadTypes.C_SIGNUP && payloadType !== payloadTypes.C_LOGIN) {
-        console.log(socket.token);
-        await verifyToken(socket.token);
-      }
+      // if (payloadType !== payloadTypes.C_SIGNUP && payloadType !== payloadTypes.C_LOGIN) {
+      //   console.log(socket.token);
+      //   await verifyToken(socket.token);
+      // }
 
       // switch (packetType) {
       //   case packetTypes.PING: {
