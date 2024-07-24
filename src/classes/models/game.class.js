@@ -68,6 +68,21 @@ class Game {
       }
     });
   }
+
+  /**
+   *
+   * @param {*} userId
+   * @param {string} message
+   * @param {uint32} payloadType
+   * @param {Object} data
+   */
+  notifyOthers(userId, message, payloadType, data) {
+    this.users.forEach((user) => {
+      if (user.playerInfo.playerId !== userId) {
+        user.socket.sendNotification(Date.now(), message, payloadType, data);
+      }
+    });
+  }
 }
 
 export default Game;

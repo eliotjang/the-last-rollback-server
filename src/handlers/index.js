@@ -1,4 +1,4 @@
-import { packetTypes } from '../constants/packet.constants.js';
+import { payloadTypes } from '../constants/packet.constants.js';
 import CustomError from '../utils/error/customError.js';
 import { ErrorCodes } from '../utils/error/errorCodes.js';
 import locationUpdateHandler from './game/locationUpdate.handler.js';
@@ -12,7 +12,7 @@ const handlers = {
   [packetTypes.C_MOVE]: locationUpdateHandler,
 };
 
-export const getHandlerByPacketType = (packetType) => {
+export const getHandlerByPayloadType = (packetType) => {
   if (!handlers[packetType]) {
     throw new CustomError(
       ErrorCodes.UNKNOWN_HANDLER_ID,
