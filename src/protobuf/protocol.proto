@@ -249,10 +249,8 @@ message C_SignUp {
 }
 
 message S_SignUp {
-  uint32 code = 1;
-  string msg = 2;
-  string accountId = 3;
-  string accountPwd = 4;
+  string accountId = 1;
+  string accountPwd = 2;
 }
 
 message C_LogIn {
@@ -261,10 +259,8 @@ message C_LogIn {
 }
 
 message S_LogIn {
-  uint32 code = 1;
-  string msg = 2;
-  string accountId = 3;
-  string accountPwd = 4;
+  string accountId = 1;
+  string accountPwd = 2;
 }
 
 // 패킷
@@ -287,7 +283,7 @@ message RequestPacket {
 
 message ResponsePacket {
   uint32 code = 1;
-  uint32 message = 2;
+  string message = 2;
   uint64 timestamp = 3;
   uint32 payloadType = 4;
   oneof payload {
