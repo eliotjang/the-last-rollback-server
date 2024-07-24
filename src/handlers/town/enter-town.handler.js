@@ -1,4 +1,4 @@
-import { packetTypes } from '../../constants/packet.constants.js';
+import { payloadTypes } from '../../constants/packet.constants.js';
 import { addTownSession, getAllTownSessions } from '../../session/town.session.js';
 import CustomError from '../../utils/error/customError.js';
 import { ErrorCodes } from '../../utils/error/errorCodes.js';
@@ -47,7 +47,7 @@ const enterTownHandler = ({ socket, userId, packet }) => {
 
     townSession.addUser(user);
 
-    const response = serialize(packetTypes.S_ENTER, { player: user.playerInfo });
+    const response = serialize(payloadTypes.S_ENTER, { player: user.playerInfo });
 
     socket.write(response);
     console.log('enterTown', response);

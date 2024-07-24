@@ -1,4 +1,4 @@
-import { packetTypes } from '../../constants/packet.constants.js';
+import { payloadTypes } from '../../constants/packet.constants.js';
 import { getTownSessionByUserSocket } from '../../session/town.session.js';
 import CustomError from '../../utils/error/customError.js';
 import { ErrorCodes } from '../../utils/error/errorCodes.js';
@@ -25,7 +25,7 @@ const locationUpdateHandler = ({ socket, userId, packet }) => {
 
     //const TransformInfos = townSession.getAllLocation(user.playerInfo.playerId);
 
-    townSession.sendPacketToAll(packetTypes.S_MOVE, data);
+    townSession.sendPacketToAll(payloadTypes.S_MOVE, data);
   } catch (error) {
     handleError(socket, error);
   }

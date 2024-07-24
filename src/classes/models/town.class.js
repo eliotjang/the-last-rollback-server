@@ -1,4 +1,4 @@
-import { packetTypes } from '../../constants/packet.constants.js';
+import { payloadTypes } from '../../constants/packet.constants.js';
 import Game from './game.class.js';
 
 const MAX_USERS = 20;
@@ -20,7 +20,7 @@ class Town extends Game {
       const data = allPlayerInfo.filter(
         (playerInfo) => playerInfo.playerId !== curUser.playerInfo.playerId,
       );
-      this.sendPacketToUser(curUser.playerInfo.playerId, packetTypes.S_SPAWN, { players: data });
+      this.sendPacketToUser(curUser.playerInfo.playerId, payloadTypes.S_SPAWN, { players: data });
     });
     console.log('town', this.users);
   }
@@ -28,7 +28,7 @@ class Town extends Game {
   removeUser(userId) {
     super.removeUser(userId);
 
-    this.sendPacketToAll(packetTypes.S_DESPAWN, { playerIds: userId });
+    this.sendPacketToAll(payloadTypes.S_DESPAWN, { playerIds: userId });
   }
 }
 
