@@ -1,4 +1,8 @@
-import { getPayloadNameByPayloadType, packetTypes } from '../constants/packet.constants.js';
+import {
+  getPayloadNameByPayloadType,
+  packetTypes,
+  payloadTypes,
+} from '../constants/packet.constants.js';
 import { getProtoMessages } from '../init/proto.init.js';
 import CustomError from './error/customError.js';
 import { ErrorCodes } from './error/errorCodes.js';
@@ -54,6 +58,16 @@ export const deserialize = (packetType, data) => {
     throw new CustomError(ErrorCodes.INVALID_PACKET, `잘 못된 payloadType: ${decoded.payloadType}`);
   }
   decoded.payload = PayloadMessageType.decode(decoded.payload);
+
+  return decoded;
+};
+
+export const deserializeTemp = (payloadType, data) => {
+  const PayloadMessageType = getProtoMessages().payload[payloadType];
+  if (!PayloadMessageType) {
+    throw new CustomError(ErrorCodes.INVALID_PACKET, `잘 못된 payloadType: ${payloadType}`);
+  }
+  const decoded = PayloadMessageType.decode(data);
 
   return decoded;
 };

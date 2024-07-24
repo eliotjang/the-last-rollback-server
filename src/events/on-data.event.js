@@ -2,7 +2,7 @@ import { headerConstants, packetTypes } from '../constants/packet.constants.js';
 import { getHandlerByPayloadType } from '../handlers/index.js';
 import { handleError } from '../utils/error/errorHandler.js';
 import { readHeader } from '../utils/packet-header.utils.js';
-import { deserialize } from '../utils/packet-serializer.utils.js';
+import { deserialize, deserializeTemp } from '../utils/packet-serializer.utils.js';
 
 const headerSize = headerConstants.TOTAL_LENGTH + headerConstants.PACKET_TYPE_LENGTH;
 
@@ -41,7 +41,7 @@ const onData = (socket) => async (data) => {
       // }
       console.log('payloadType: ', payloadType);
       const handler = getHandlerByPayloadType(payloadType);
-      await handler({ socket, userId: 'temp', packet });
+      await handler({ socket, userId: 'temp', packet: deserializeTemp(payloadType, packet) });
     }
   } catch (err) {
     handleError(socket, err);
