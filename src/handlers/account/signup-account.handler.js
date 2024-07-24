@@ -1,5 +1,5 @@
 import { config } from '../../config/config.js';
-import { packetTypes } from '../../constants/packet.constants.js';
+import { packetTypes, payloadTypes } from '../../constants/packet.constants.js';
 import { createUser, findUserByAccountID } from '../../db/user/user.db.js';
 import CustomError from '../../utils/error/customError.js';
 import { ErrorCodes, SuccessCode } from '../../utils/error/errorCodes.js';
@@ -33,9 +33,12 @@ const signupAccountHandler = async ({ socket, userId, packet }) => {
       accountPwd: hashedPwd,
     };
 
-    const responsePacket = serialize(packetTypes.S_SIGNUP, payload);
+    console.log('payload : ', payload);
 
-    socket.write(responsePacket);
+    socket.sendPacket(payloadTypes.S_SIGNUP, payload);
+    // const responsePacket = serialize(packetTypes.S_SIGNUP, payload);
+
+    // socket.write(responsePacket);
   } catch (error) {
     handleError(socket, error);
   }

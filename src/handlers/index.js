@@ -7,10 +7,10 @@ import signupAccountHandler from './account/signup-account.handler.js';
 const dummyHandler = () => {};
 
 const handlers = {
-  [packetTypes.C_ENTER]: dummyHandler,
-  [packetTypes.S_ENTER]: dummyHandler,
-  [packetTypes.C_SIGNUP]: signupAccountHandler,
-  [packetTypes.C_LOGIN]: loginAccountHandler,
+  [payloadTypes.C_ENTER]: dummyHandler,
+  [payloadTypes.S_ENTER]: dummyHandler,
+  [payloadTypes.C_SIGNUP]: signupAccountHandler,
+  [payloadTypes.C_LOGIN]: loginAccountHandler,
 };
 
 export const getHandlerByPayloadType = (packetType) => {
