@@ -1,5 +1,6 @@
 import { payloadTypes } from '../../constants/packet.constants.js';
 import Game from './game.class.js';
+import { serialize } from '../../utils/packet-serializer.utils.js';
 
 const MAX_USERS = 20;
 
@@ -20,9 +21,25 @@ class Town extends Game {
       const data = allPlayerInfo.filter(
         (playerInfo) => playerInfo.playerId !== curUser.playerInfo.playerId,
       );
-      this.sendPacketToUser(curUser.playerInfo.playerId, payloadTypes.S_SPAWN, { players: data });
+      if (data.length === 0) {
+        return;
+      }
+
+      // 현재 들어온 유저에게 다른 모든 유저 정보를 전송
+      if (curUser === user) {
+        const response = serialize(packetTypes.S_SPAWN, {
+          players: data,
+        });
+        console.log('data:', data);
+        user.socket.write(response);
+      } else {
+        // 기존 유저에게 새로 들어온 유저 정보를 전송
+        this.sendPacketToOthers(curUser.playerInfo.playerId, packetTypes.S_ENTER, {
+          player: user.playerInfo,
+        });
+        console.log('user:', user.playerInfo);
+      }
     });
-    console.log('town', this.users);
   }
 
   removeUser(userId) {

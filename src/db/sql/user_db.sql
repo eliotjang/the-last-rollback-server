@@ -15,3 +15,14 @@ CREATE TABLE IF NOT EXISTS game_end (
     score INT DEFAULT 0,
     FOREIGN KEY (user_id) REFERENCES user (id)
 );
+
+-- CREATE TABLE IF NOT EXISTS user_info (
+--     id         VARCHAR(36) PRIMARY KEY,
+--     `password` VARCHAR(255) NOT NULL,
+--     nickname   VARCHAR(255) NOT NULL DEFAULT '',
+--     class      INT NOT NULL DEFAULT 0,
+--     x_coord    DOUBLE NOT NULL DEFAULT 0,
+--     y_coord    DOUBLE NOT NULL DEFAULT 0,
+--     last_login TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+--     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+-- )
