@@ -8,8 +8,8 @@ import signupAccountHandler from './account/signup-account.handler.js';
 
 const handlers = {
   [payloadTypes.C_ENTER]: enterTownHandler,
-  [payloadTypes.C_SIGNUP]: signupAccountHandler,
-  [payloadTypes.C_LOGIN]: loginAccountHandler,
+  [payloadTypes.C_SIGN_UP]: signupAccountHandler,
+  [payloadTypes.C_LOG_IN]: loginAccountHandler,
   [payloadTypes.C_MOVE]: locationUpdateHandler,
 };
 

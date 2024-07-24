@@ -1,4 +1,4 @@
-import { packetTypes } from '../constants/packet.constants.js';
+import { packetTypes, payloadTypes } from '../constants/packet.constants.js';
 import { writeHeader } from './packet-header.utils.js';
 import { deserializeTemp, serialize, serializeEx } from './packet-serializer.utils.js';
 
@@ -24,6 +24,7 @@ export function sendPacket(payloadType, data) {
  * @param {string} message
  * @param {uint32} payloadType
  * @param {Object} data key-value pair
+ * @param {boolean} dontSend true면 안보내고 packet 반환
  */
 export const sendResponse = function (code, message, payloadType, payload, dontSend) {
   // const serializedPayload = serialize(payloadType, payload);
@@ -31,19 +32,20 @@ export const sendResponse = function (code, message, payloadType, payload, dontS
   const packetData = {
     code,
     message,
+    timestamp: Date.now(),
     payloadType,
-    payload: payload ? Buffer.from(JSON.stringify(payload)) : null,
+    payload,
   };
-  const serializedPacket = serialize(packetTypes.RESPONSE, packetData, true);
-  const header = writeHeader(serializedPacket.length, packetTypes.RESPONSE);
+  const serializedPacket = serializeEx(payloadType, packetData);
+  const header = writeHeader(serializedPacket.length, payloadType);
   const packet = Buffer.concat([header, serializedPacket]);
-  console.log('---- packet:', packet);
-  let value = '';
-  for (const byte of packet) {
-    value += byte + ' ';
-  }
-  console.log('---- value: ', value);
-  console.log('---- packet length:', packet.length);
+  // console.log('---- packet:', packet);
+  // let value = '';
+  // for (const byte of packet) {
+  //   value += byte + ' ';
+  // }
+  // console.log('---- value: ', value);
+  // console.log('---- packet length:', packet.length);
   if (dontSend) {
     return packet;
   }

@@ -40,10 +40,10 @@ export const payloadTypes = {
   S_SET_MONSTER_HP: 23,
   S_PLAYER_ACTION: 24,
   S_MONSTER_ACTION: 25,
-  C_SIGNUP: 26,
-  S_SIGNUP: 27,
-  C_LOGIN: 28,
-  S_LOGIN: 29,
+  C_SIGN_UP: 26,
+  S_SIGN_UP: 27,
+  C_LOG_IN: 28,
+  S_LOG_IN: 29,
 };
 
 export const packetNames = Object.fromEntries(

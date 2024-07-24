@@ -39,10 +39,9 @@ export const serialize = (type, data, isPacket, withoutHeader) => {
 };
 
 export const serializeEx = (payloadType, data) => {
-  console.log('!', typeMappings[payloadType]);
   const MessageType = getProtoMessages().packet[typeMappings[payloadType]];
-  console.log('??,', MessageType.name);
   data[payloadKeyNames[payloadType]] = data.payload;
+  data.payload = null;
   if (!MessageType) {
     throw new CustomError(
       ErrorCodes.INVALID_PACKET,
@@ -86,7 +85,13 @@ export const deserializeEx = (payloadType, data) => {
     throw new CustomError('역직렬화 문제 발생');
   }
   const decoded = MessageType.decode(data);
-  return decoded;
+  const obj = {
+    ...decoded,
+  };
+  obj.payload = decoded[payloadKeyNames[payloadType]];
+  delete obj[payloadKeyNames[payloadType]];
+
+  return obj;
 };
 
 export const deserializeTemp = (payloadType, data) => {
