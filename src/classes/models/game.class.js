@@ -12,6 +12,7 @@ class Game {
   }
 
   addUser(user) {
+    user.sessionId = this.id;
     this.users.push(user);
   }
 

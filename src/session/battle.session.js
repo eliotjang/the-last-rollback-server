@@ -20,6 +20,10 @@ export const getBattleSession = (id) => {
   return battleSessions.find((session) => session.id === id);
 };
 
+export const getBattleSessionByUserId = (accountId) => {
+  return battleSessions.find((session) => session.getUser(accountId));
+};
+
 export const getBattleSessionByUserSocket = (socket) => {
   return battleSessions.find((session) => session.getUserBySocket(socket));
 };
