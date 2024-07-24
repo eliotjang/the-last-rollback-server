@@ -1,16 +1,16 @@
 import { payloadTypes } from '../constants/packet.constants.js';
 import CustomError from '../utils/error/customError.js';
 import { ErrorCodes } from '../utils/error/errorCodes.js';
+import locationUpdateHandler from './game/locationUpdate.handler.js';
+import enterTownHandler from './town/enter-town.handler.js';
 import loginAccountHandler from './account/login-account.handler.js';
 import signupAccountHandler from './account/signup-account.handler.js';
 
-const dummyHandler = () => {};
-
 const handlers = {
-  [payloadTypes.C_ENTER]: dummyHandler,
-  [payloadTypes.S_ENTER]: dummyHandler,
+  [payloadTypes.C_ENTER]: enterTownHandler,
   [payloadTypes.C_SIGNUP]: signupAccountHandler,
   [payloadTypes.C_LOGIN]: loginAccountHandler,
+  [payloadTypes.C_MOVE]: locationUpdateHandler,
 };
 
 export const getHandlerByPayloadType = (packetType) => {

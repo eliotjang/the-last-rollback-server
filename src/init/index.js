@@ -1,6 +1,6 @@
 import pools from '../db/database.js';
-import { testAllDBConnections } from '../utils/db/testConnection.js';
-import { testAllRedisConnections } from '../utils/redis/testConnection.js';
+// import { testAllDBConnections } from '../utils/db/testConnection.js';
+// import { testAllRedisConnections } from '../utils/redis/testConnection.js';
 import { loadGameAssets } from './assets.js';
 import { loadProtoFiles } from './proto.init.js';
 
