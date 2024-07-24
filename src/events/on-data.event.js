@@ -1,4 +1,6 @@
-import { headerConstants, packetTypes } from '../constants/packet.constants.js';
+import { verifyToken } from '../auth/auth.js';
+import { headerConstants, packetTypes, payloadTypes } from '../constants/packet.constants.js';
+import { ErrorCodes } from '../utils/error/errorCodes.js';
 import { getHandlerByPayloadType } from '../handlers/index.js';
 import { handleError } from '../utils/error/errorHandler.js';
 import { readHeader } from '../utils/packet-header.utils.js';
@@ -8,7 +10,6 @@ const headerSize = headerConstants.TOTAL_LENGTH + headerConstants.PACKET_TYPE_LE
 
 const onData = (socket) => async (data) => {
   try {
-    console.log('DATA RECEIVED');
     socket.buffer = Buffer.concat([socket.buffer, data]);
     while (socket.buffer.length >= headerSize) {
       const { totalLength, packetType: payloadType } = readHeader(socket.buffer);
@@ -18,6 +19,11 @@ const onData = (socket) => async (data) => {
       }
       const packet = socket.buffer.subarray(headerSize, totalLength);
       socket.buffer = socket.buffer.subarray(totalLength);
+
+      if (payloadType !== payloadTypes.C_SIGNUP && payloadType !== payloadTypes.C_LOGIN) {
+        console.log(socket.token);
+        await verifyToken(socket.token);
+      }
 
       // switch (packetType) {
       //   case packetTypes.PING: {
@@ -39,9 +45,12 @@ const onData = (socket) => async (data) => {
       //     break;
       //   }
       // }
-      console.log('payloadType: ', payloadType);
       const handler = getHandlerByPayloadType(payloadType);
-      await handler({ socket, userId: 'temp', packet: deserializeTemp(payloadType, packet) });
+      await handler({
+        socket,
+        userId: socket.userId,
+        packet: deserializeTemp(payloadType, packet),
+      });
     }
   } catch (err) {
     handleError(socket, err);

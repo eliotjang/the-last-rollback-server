@@ -1,10 +1,13 @@
 export const userRedisFields = {
-  UUID: 'uuid',
-  TOKEN: 'token',
+  NICKNAME: 'nickname',
+  CLASS: 'class',
+  TRANSFORM: 'transform',
 };
 
 export const gameRedisFields = {
   GOLD: 'user_gold',
+  LEVEL: 'level',
+  EXP: 'experience',
 };
 
 Object.freeze(userRedisFields);
