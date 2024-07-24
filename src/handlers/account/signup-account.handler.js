@@ -33,12 +33,7 @@ const signupAccountHandler = async ({ socket, userId, packet }) => {
       accountPwd: hashedPwd,
     };
 
-    console.log('payload : ', payload);
-
     socket.sendPacket(payloadTypes.S_SIGNUP, payload);
-    // const responsePacket = serialize(packetTypes.S_SIGNUP, payload);
-
-    // socket.write(responsePacket);
   } catch (error) {
     handleError(socket, error);
   }

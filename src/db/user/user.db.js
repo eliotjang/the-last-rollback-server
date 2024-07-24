@@ -19,6 +19,22 @@ export const updateUserLogin = async (accountId) => {
   await pools.USER_DB.query(SQL_QUERIES.UPDATE_USER_LOGIN, [accountId]);
 };
 
-export const updateLastPosition = async (x, y, id) => {
-  await pools.USER_DB.query(SQL_QUERIES.UPDATE_LAST_POSITION, [x, y, id]);
+export const updateLastPosition = async (x, y, accountId) => {
+  await pools.USER_DB.query(SQL_QUERIES.UPDATE_LAST_POSITION, [x, y, accountId]);
+};
+
+export const updateClass = async (accountClass, accountId) => {
+  await pools.USER_DB.query(SQL_QUERIES.UPDATE_CLASS, [accountClass, accountId]);
+};
+
+export const updateNickname = async (nickname, accountId) => {
+  await pools.USER_DB.query(SQL_QUERIES.UPDATE_NICKNAME, [nickname, accountId]);
+};
+
+export const updateLevel = async (level, accountId) => {
+  await pools.USER_DB.query(SQL_QUERIES.UPDATE_LEVEL, [level, accountId]);
+};
+
+export const updateExp = async (exp, accountId) => {
+  await pools.USER_DB.query(SQL_QUERIES.UPDATE_EXPERIENCE, [exp, accountId]);
 };

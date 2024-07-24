@@ -24,7 +24,7 @@ const loginAccountHandler = async ({ socket, userId, packet }) => {
 
     const token = jwt.sign(accountId, config.account.jwtSecret);
     socket.token = token;
-    socket.userId = userDB.accountId;
+    socket.accountId = userDB.accountId;
 
     await updateUserLogin(accountId);
 
