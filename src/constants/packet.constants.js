@@ -1,4 +1,4 @@
-import { stringToPascalCase } from '../utils/transform-case.utils.js';
+import { stringToCamelCase, stringToPascalCase } from '../utils/transform-case.utils.js';
 
 const PROTOCOL_PREFIX = 'Google.Protobuf.Protocol.';
 const TYPE_PREFIX = 'Google.Protobuf.Type.';
@@ -57,6 +57,21 @@ export const payloadNames = Object.fromEntries(
   Object.entries(payloadTypes).map(([key, value]) => {
     const str = PROTOCOL_PREFIX + key.substring(0, 2) + stringToPascalCase(key.substring(2));
     return [value, str];
+  }),
+);
+
+export const typeMappings = Object.fromEntries(
+  Object.entries(payloadTypes).map(([key, value]) => {
+    if (key.charAt(0) === 'S') {
+      return [value, 'ResponsePacket'];
+    }
+    return [value, 'RequestPacket'];
+  }),
+);
+
+export const payloadKeyNames = Object.fromEntries(
+  Object.entries(payloadTypes).map(([key, value]) => {
+    return [value, stringToCamelCase(key)];
   }),
 );
 

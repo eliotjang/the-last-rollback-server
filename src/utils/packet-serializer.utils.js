@@ -1,7 +1,9 @@
 import {
   getPayloadNameByPayloadType,
   packetTypes,
+  payloadKeyNames,
   payloadTypes,
+  typeMappings,
 } from '../constants/packet.constants.js';
 import { getProtoMessages } from '../init/proto.init.js';
 import CustomError from './error/customError.js';
@@ -36,6 +38,22 @@ export const serialize = (type, data, isPacket, withoutHeader) => {
   return Buffer.concat([header, encoded]);
 };
 
+export const serializeEx = (payloadType, data) => {
+  console.log('!', typeMappings[payloadType]);
+  const MessageType = getProtoMessages()[typeMappings[payloadType]];
+  console.log('??,', MessageType.name);
+  data[payloadKeyNames[payloadType]] = data.payload;
+  if (!MessageType) {
+    throw new CustomError(
+      ErrorCodes.INVALID_PACKET,
+      `직렬화 에러: 잘 못된 payloadType ${payloadType}`,
+    );
+  }
+  const encoded = MessageType.encode(data).finish();
+  console.log('ex deserialize:', deserializeEx(payloadType, encoded));
+  return encoded;
+};
+
 /**
  *
  * @param {Bytes} data
@@ -51,19 +69,29 @@ export const deserialize = (packetType, data) => {
     // PING인 경우 payload 없으므로 그냥 반환
     return decoded;
   }
-
+  return decoded;
   // 다른 타입은 payload 역직렬화 시도
-  const PayloadMessageType = getProtoMessages().payload[decoded.payloadType];
-  if (!PayloadMessageType) {
-    throw new CustomError(ErrorCodes.INVALID_PACKET, `잘 못된 payloadType: ${decoded.payloadType}`);
-  }
-  decoded.payload = PayloadMessageType.decode(decoded.payload);
+  // const PayloadMessageType = getProtoMessages().payload[decoded.payloadType];
+  // if (!PayloadMessageType) {
+  //   throw new CustomError(ErrorCodes.INVALID_PACKET, `잘 못된 payloadType: ${decoded.payloadType}`);
+  // }
+  // decoded.payload = PayloadMessageType.decode(decoded.payload);
 
+  // return decoded;
+};
+
+export const deserializeEx = (payloadType, data) => {
+  const MessageType = getProtoMessages()[typeMappings[payloadType]];
+  if (!MessageType) {
+    throw new CustomError('역직렬화 문제 발생');
+  }
+  const decoded = MessageType.decode(data);
   return decoded;
 };
 
 export const deserializeTemp = (payloadType, data) => {
   const PayloadMessageType = getProtoMessages().payload[payloadType];
+  console.log('payloadType:', PayloadMessageType.name);
   if (!PayloadMessageType) {
     throw new CustomError(ErrorCodes.INVALID_PACKET, `잘 못된 payloadType: ${payloadType}`);
   }

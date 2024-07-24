@@ -1,6 +1,6 @@
 import { packetTypes } from '../constants/packet.constants.js';
 import { writeHeader } from './packet-header.utils.js';
-import { serialize } from './packet-serializer.utils.js';
+import { deserializeTemp, serialize, serializeEx } from './packet-serializer.utils.js';
 
 /**
  * 소켓 쓰기용 함수. 소켓을 bind하여 사용한다.
@@ -14,6 +14,7 @@ export function sendPacket(payloadType, data) {
   const serialized = serialize(payloadType, data);
   const header = writeHeader(serialized.length, payloadType);
   const packet = Buffer.concat([header, serialized]);
+  console.log('deserialized:', deserializeTemp(payloadType, serialized));
   this.write(packet);
 }
 
@@ -24,13 +25,14 @@ export function sendPacket(payloadType, data) {
  * @param {uint32} payloadType
  * @param {Object} data key-value pair
  */
-export const sendResponse = function (code, message, payloadType, payload) {
-  const serializedPayload = serialize(payloadType, payload);
+export const sendResponse = function (code, message, payloadType, payload, dontSend) {
+  // const serializedPayload = serialize(payloadType, payload);
+  // console.log('deserialized:', deserializeTemp(payloadType, serializedPayload));
   const packetData = {
     code,
     message,
     payloadType,
-    payload: serializedPayload,
+    payload: payload ? Buffer.from(JSON.stringify(payload)) : null,
   };
   const serializedPacket = serialize(packetTypes.RESPONSE, packetData, true);
   const header = writeHeader(serializedPacket.length, packetTypes.RESPONSE);
@@ -42,6 +44,34 @@ export const sendResponse = function (code, message, payloadType, payload) {
   }
   console.log('---- value: ', value);
   console.log('---- packet length:', packet.length);
+  if (dontSend) {
+    return packet;
+  }
+  this.write(packet);
+};
+
+/**
+ *
+ * @param {*} code
+ * @param {*} message
+ * @param {*} payloadType
+ * @param {*} payload
+ * @param {boolean} dontSend
+ * @returns
+ */
+export const sendResponseEx = function (code, message, payloadType, payload, dontSend) {
+  const packetData = {
+    code,
+    message,
+    payloadType,
+    payload,
+  };
+  const serialized = serializeEx(payloadType, packetData);
+  const header = writeHeader(serialized.length, payloadType); // 2 is placeholder
+  const packet = Buffer.concat([header, serialized]);
+  if (dontSend) {
+    return packet;
+  }
   this.write(packet);
 };
 
@@ -54,6 +84,7 @@ export const sendResponse = function (code, message, payloadType, payload) {
  */
 export const sendNotification = function (timestamp, message, payloadType, payload) {
   const serializedPayload = serialize(payloadType, payload);
+  console.log('deserialized:', deserializeTemp(payloadType, serializedPayload));
   const packetData = {
     timestamp,
     message,

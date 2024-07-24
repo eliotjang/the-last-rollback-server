@@ -31,6 +31,9 @@ export const loadProtoFiles = async () => {
   try {
     protoFiles.forEach((file) => root.loadSync(file));
 
+    // protoMessages['RequestPacket'] = root.lookupType('Google.Protobuf.Protocol.RequestPacket');
+    // protoMessages['ResponsePacket'] = root.lookupType('Google.Protobuf.Protocol.ResponsePacket');
+
     protoMessages.packet = {};
     protoMessages.payload = {};
     for (const [packetType, messageName] of Object.entries(packetNames)) {
@@ -43,6 +46,7 @@ export const loadProtoFiles = async () => {
 
     Object.freeze(protoMessages);
     console.log(`Successfully loaded protobuf files.`);
+    console.log(Object.values(protoMessages.packet).map((message) => message.name));
   } catch (err) {
     console.error(err);
   }
