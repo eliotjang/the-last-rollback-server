@@ -7,12 +7,12 @@ import { serialize } from './packet-serializer.utils.js';
  * 예) socket.sendPacket = sendPacket.bind(socket);
  * socket.sendPacket(packetType, data);
  * @deprecated
- * @param {number} packetType packetType as mapped in packetTypes
+ * @param {number} payloadType packetType as mapped in packetTypes
  * @param {Object} data key-value object to be serialized
  */
-export const sendPacket = (packetType, data) => {
-  const serialized = serialize(packetType, data, true);
-  const header = writeHeader(serialized.length, packetType);
+export const sendPacket = (payloadType, data) => {
+  const serialized = serialize(payloadType, data);
+  const header = writeHeader(serialized.length, payloadType);
   const packet = Buffer.concat([header, serialized]);
   this.write(packet);
 };
@@ -25,7 +25,7 @@ export const sendPacket = (packetType, data) => {
  * @param {Object} data key-value pair
  */
 export const sendResponse = function (code, message, payloadType, payload) {
-  const serializedPayload = serialize(payloadType, payload, true);
+  const serializedPayload = serialize(payloadType, payload);
   const packetData = {
     code,
     message,
@@ -35,6 +35,13 @@ export const sendResponse = function (code, message, payloadType, payload) {
   const serializedPacket = serialize(packetTypes.RESPONSE, packetData, true);
   const header = writeHeader(serializedPacket.length, packetTypes.RESPONSE);
   const packet = Buffer.concat([header, serializedPacket]);
+  console.log('---- packet:', packet);
+  let value = '';
+  for (const byte of packet) {
+    value += byte + ' ';
+  }
+  console.log('---- value: ', value);
+  console.log('---- packet length:', packet.length);
   this.write(packet);
 };
 
@@ -46,7 +53,7 @@ export const sendResponse = function (code, message, payloadType, payload) {
  * @param {Object} payload key-value pair
  */
 export const sendNotification = function (timestamp, message, payloadType, payload) {
-  const serializedPayload = serialize(payloadType, payload, true);
+  const serializedPayload = serialize(payloadType, payload);
   const packetData = {
     timestamp,
     message,
