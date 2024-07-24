@@ -10,23 +10,24 @@ const USER_PREFIX = 'user:';
 const GAME_DATA_PREFIX = 'game:';
 
 export const userRedis = {
-  createUserData: async function (uuid, token) {
+  createUserData: async function (accountId, nickname, accountClass, transform) {
     try {
-      const keyUUID = `${USER_PREFIX}${uuid}:${urf.UUID}`;
-      const keyToken = `${USER_PREFIX}${uuid}:${urf.TOKEN}`;
-
-      await redisClient.set(keyUUID, JSON.stringify(uuid));
-      await redisClient.set(keyToken, JSON.stringify(token));
+      const keyNickname = `${USER_PREFIX}${accountId}:${urf.NICKNAME}`;
+      const keyClass = `${USER_PREFIX}${accountId}:${urf.CLASS}`;
+      const keyTransform = `${USER_PREFIX}${accountId}:${urf.TRANSFORM}`;
+      await redisClient.set(keyNickname, JSON.stringify(nickname));
+      await redisClient.set(keyClass, JSON.stringify(accountClass));
+      await redisClient.set(keyTransform, JSON.stringify(transform));
     } catch (error) {
       console.error('createUserData Error Message : ', error);
     }
   },
 
-  setUserData: async function (uuid, obj) {
+  setUserData: async function (accountId, obj) {
     try {
       for (const [key, value] of Object.entries(obj)) {
         if (isUserRedisField(key)) {
-          const redisKey = `${USER_PREFIX}${uuid}:${key}`;
+          const redisKey = `${USER_PREFIX}${accountId}:${key}`;
           await redisClient.set(redisKey, JSON.stringify(value));
         }
       }
@@ -35,14 +36,14 @@ export const userRedis = {
     }
   },
 
-  getUserData: async function (uuid) {
+  getUserData: async function (accountId) {
     try {
-      const pattern = `${USER_PREFIX}${uuid}*`;
+      const pattern = `${USER_PREFIX}${accountId}*`;
       const keys = await redisClient.keys(pattern);
 
       const values = {};
       for (let i = 0; i < keys.length; i++) {
-        const key = keys[i].replace(`${USER_PREFIX}${uuid}:`, '');
+        const key = keys[i].replace(`${USER_PREFIX}${accountId}:`, '');
         values[key] = JSON.parse(await redisClient.get(keys[i]));
       }
       if (Object.keys(values).length === 0) {
@@ -54,12 +55,12 @@ export const userRedis = {
     }
   },
 
-  getUserDataEx: async function (uuid, arr) {
+  getUserDataEx: async function (accountId, arr) {
     try {
       const userData = {};
       for (const keyName of arr) {
         if (isUserRedisField(keyName)) {
-          const redisKey = `${USER_PREFIX}${uuid}:${keyName}`;
+          const redisKey = `${USER_PREFIX}${accountId}:${keyName}`;
           const result = JSON.parse(await redisClient.get(redisKey));
           userData[keyName] = result;
         }
@@ -70,10 +71,10 @@ export const userRedis = {
     }
   },
 
-  removeUserData: async function (uuid) {
+  removeUserData: async function (accountId) {
     try {
       // TODO: 유저 정보 제거 작업
-      const keys = await redisClient.keys(`${USER_PREFIX}${uuid}:*`);
+      const keys = await redisClient.keys(`${USER_PREFIX}${accountId}:*`);
       for (const key of keys) {
         await redisClient.del(key);
       }
@@ -84,20 +85,20 @@ export const userRedis = {
 };
 
 export const gameRedis = {
-  createGameData: async function (uuid, gold) {
+  createGameData: async function (accountId, gold) {
     try {
-      const keyGold = `${GAME_DATA_PREFIX}${uuid}:${grf.GOLD}`;
+      const keyGold = `${GAME_DATA_PREFIX}${accountId}:${grf.GOLD}`;
       await redisClient.set(keyGold, `${gold}`);
     } catch (error) {
       console.error('createGameData Error Message : ', error);
     }
   },
 
-  setGameData: async function (uuid, obj) {
+  setGameData: async function (accountId, obj) {
     try {
       for (const [key, value] of Object.entries(obj)) {
         if (isGameRedisField(key)) {
-          const redisKey = `${GAME_DATA_PREFIX}${uuid}:${key}`;
+          const redisKey = `${GAME_DATA_PREFIX}${accountId}:${key}`;
           await redisClient.set(redisKey, JSON.stringify(value));
         }
       }
@@ -106,14 +107,14 @@ export const gameRedis = {
     }
   },
 
-  getGameData: async function (uuid) {
+  getGameData: async function (accountId) {
     try {
-      const pattern = `${GAME_DATA_PREFIX}${uuid}:*`;
+      const pattern = `${GAME_DATA_PREFIX}${accountId}:*`;
       const keys = await redisClient.keys(pattern);
 
       const values = {};
       for (let i = 0; i < keys.length; i++) {
-        const key = keys[i].replace(`${GAME_DATA_PREFIX}${uuid}:`, '');
+        const key = keys[i].replace(`${GAME_DATA_PREFIX}${accountId}:`, '');
         values[key] = JSON.parse(await redisClient.get(keys[i]));
       }
       if (Object.keys(values).length === 0) {
@@ -126,12 +127,12 @@ export const gameRedis = {
     }
   },
 
-  getUserDataEx: async function (uuid, arr) {
+  getUserDataEx: async function (accountId, arr) {
     try {
       const gameData = {};
       for (const keyName of arr) {
         if (isUserRedisField(keyName)) {
-          const redisKey = `${GAME_DATA_PREFIX}${uuid}:${keyName}`;
+          const redisKey = `${GAME_DATA_PREFIX}${accountId}:${keyName}`;
           const result = JSON.parse(await redisClient.get(redisKey));
           gameData[transformCase(keyName, caseTypes.CAMEL_CASE)] = result;
         }
@@ -142,21 +143,21 @@ export const gameRedis = {
     }
   },
 
-  patchGameDataGold: async function (uuid, byAmount) {
+  patchGameDataGold: async function (accountId, byAmount) {
     try {
       if (typeof byAmount !== 'number') {
         throw new CustomError(ErrorCodes.GAME_REDIS_DATA_ERROR, 'byAmount 값 에러');
       }
-      const key = `${GAME_DATA_PREFIX}${uuid}:${grf.GOLD}`;
+      const key = `${GAME_DATA_PREFIX}${accountId}:${grf.GOLD}`;
       await redisClient.incrBy(key, byAmount);
     } catch (err) {
       console.error('patchGameDataGold failed:', err);
     }
   },
 
-  removeGameData: async function (uuid) {
+  removeGameData: async function (accountId) {
     try {
-      const keys = await redisClient.keys(`${GAME_DATA_PREFIX}${uuid}:*`);
+      const keys = await redisClient.keys(`${GAME_DATA_PREFIX}${accountId}:*`);
       for (const key of keys) {
         await redisClient.del(key);
       }

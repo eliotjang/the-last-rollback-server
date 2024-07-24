@@ -10,12 +10,12 @@ import { serialize } from './packet-serializer.utils.js';
  * @param {number} payloadType packetType as mapped in packetTypes
  * @param {Object} data key-value object to be serialized
  */
-export const sendPacket = (payloadType, data) => {
+export function sendPacket(payloadType, data) {
   const serialized = serialize(payloadType, data);
   const header = writeHeader(serialized.length, payloadType);
   const packet = Buffer.concat([header, serialized]);
   this.write(packet);
-};
+}
 
 /**
  *

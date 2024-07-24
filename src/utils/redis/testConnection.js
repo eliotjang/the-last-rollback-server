@@ -3,11 +3,13 @@ import { gameRedis, userRedis } from './redis.js';
 
 const testUserRedisConnection = async () => {
   try {
-    const uuid = uuidv4();
-    const token = 'token';
+    const accountId = uuidv4();
+    const nickname = 'eliot';
+    const accountClass = 1001;
+    const transform = { x: 12, y: 23 };
 
-    await userRedis.createUserData(uuid, token);
-    const userRD = await userRedis.getUserData(uuid);
+    await userRedis.createUserData(accountId, nickname, accountClass, transform);
+    const userRD = await userRedis.getUserData(accountId);
     console.log('유저 레디스 테스트 결과:', userRD);
   } catch (error) {
     console.error('유저 레디스 실행 중 오류 발생: ', error);

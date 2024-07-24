@@ -155,26 +155,6 @@ message S_MonsterAction {
   ActionSet actionSet = 2;
 }
 
-message C_Signup {
-  string accountId = 1;
-  string password = 2;
-}
-
-message S_Signup {
-  string accountId = 1;
-  string password = 2;
-}
-
-message C_Login {
-  string accountId = 1;
-  string password = 2;
-}
-
-message S_Login {
-  string accountId = 1;
-  string password = 2;
-}
-
 // 정보 구조체
 
 message PlayerInfo {
@@ -261,6 +241,30 @@ message BattleLog {
 message BtnInfo {
   string msg = 1;
   bool enable = 2;
+}
+
+message C_Signup {
+  string accountId = 1;
+  string accountPwd = 2;
+}
+
+message S_Signup {
+  uint32 code = 1;
+  string msg = 2;
+  string accountId = 3;
+  string accountPwd = 4;
+}
+
+message C_Login {
+  string accountId = 1;
+  string accountPwd = 2;
+}
+
+message S_Login {
+  uint32 code = 1;
+  string msg = 2;
+  string accountId = 3;
+  string accountPwd = 4;
 }
 
 // 패킷
