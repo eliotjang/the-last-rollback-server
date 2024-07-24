@@ -40,7 +40,7 @@ export const serialize = (type, data, isPacket, withoutHeader) => {
 
 export const serializeEx = (payloadType, data) => {
   console.log('!', typeMappings[payloadType]);
-  const MessageType = getProtoMessages()[typeMappings[payloadType]];
+  const MessageType = getProtoMessages().packet[typeMappings[payloadType]];
   console.log('??,', MessageType.name);
   data[payloadKeyNames[payloadType]] = data.payload;
   if (!MessageType) {
@@ -81,7 +81,7 @@ export const deserialize = (packetType, data) => {
 };
 
 export const deserializeEx = (payloadType, data) => {
-  const MessageType = getProtoMessages()[typeMappings[payloadType]];
+  const MessageType = getProtoMessages().packet[typeMappings[payloadType]];
   if (!MessageType) {
     throw new CustomError('역직렬화 문제 발생');
   }
