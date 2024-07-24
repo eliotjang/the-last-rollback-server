@@ -1,7 +1,7 @@
-import { packetTypes } from '../../constants/packet.constants.js';
+import { packetTypes, payloadTypes } from '../../constants/packet.constants.js';
 import { findUserByAccountID, updateUserLogin } from '../../db/user/user.db.js';
 import CustomError from '../../utils/error/customError.js';
-import { ErrorCodes } from '../../utils/error/errorCodes.js';
+import { ErrorCodes, SuccessCode } from '../../utils/error/errorCodes.js';
 import { handleError } from '../../utils/error/errorHandler.js';
 import { serialize } from '../../utils/packet-serializer.utils.js';
 import jwt from 'jsonwebtoken';
@@ -28,8 +28,14 @@ const loginAccountHandler = async ({ socket, userId, packet }) => {
 
     await updateUserLogin(accountId);
 
-    const responsePacket = serialize(packetTypes.S_LOGIN, { msg: '계정 로그인 성공' });
-    socket.write(responsePacket);
+    const payload = {
+      code: SuccessCode.Success,
+      msg: '계정 로그인 성공',
+      accountId,
+      accountPwd,
+    };
+
+    socket.sendPacket(payloadTypes.S_LOGIN, payload);
   } catch (error) {
     handleError(socket, error);
   }

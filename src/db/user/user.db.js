@@ -8,8 +8,7 @@ export const findUserByAccountID = async (accountId) => {
 };
 
 export const createUser = async (accountId, accountPwd) => {
-  const id = uuidv4();
-  await pools.USER_DB.query(SQL_QUERIES.CREATE_USER, [id, accountId, accountPwd]);
+  await pools.USER_DB.query(SQL_QUERIES.CREATE_USER, [accountId, accountPwd]);
   const [rows] = await pools.USER_DB.query(SQL_QUERIES.FIND_USER_BY_ACCOUNT_ID, [accountId]);
   return toCamelCase(rows[0]);
 };
