@@ -19,5 +19,5 @@ export const getHandlerByPayloadType = (packetType) => {
       `핸들러를 찾을 수 없습니다: ID ${packetType}`,
     );
   }
-  return handlers[packetType].handler;
+  return handlers[packetType];
 };
