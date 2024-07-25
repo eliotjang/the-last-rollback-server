@@ -10,30 +10,41 @@ import bcrypt from 'bcrypt';
 const signupAccountHandler = async ({ socket, userId, packet }) => {
   try {
     const { accountId, accountPwd } = packet;
-    const hashedPwd = await bcrypt.hash(accountPwd, config.account.saltRounds);
+    // const hashedPwd = await bcrypt.hash(accountPwd, config.account.saltRounds);
 
-    console.log(hashedPwd);
+    // console.log(hashedPwd);
 
     let userDB = await findUserByAccountID(accountId);
     if (!userDB) {
-      userDB = await createUser(accountId, hashedPwd);
+      userDB = await createUser(accountId, accountPwd);
     } else {
-      const responsePacket = serialize(packetTypes.S_SIGNUP, {
-        code: ErrorCodes.EXISTED_USER,
-        msg: '이미 존재하는 계정입니다',
-      });
-      socket.write(responsePacket);
+      socket.sendResponse(
+        ErrorCodes.EXISTED_USER,
+        '이미 존재하는 계정입니다',
+        payloadTypes.S_SIGN_UP,
+      );
+      // const responsePacket = serialize(packetTypes.S_SIGNUP, {
+      //   code: ErrorCodes.EXISTED_USER,
+      //   message: '이미 존재하는 계정입니다',
+      //   timestamp: Date.now(),
+      //   payloadType: packetTypes.S_SIGNUP
+      // });
+      // socket.write(responsePacket);
       throw new CustomError(ErrorCodes.EXISTED_USER, '이미 존재하는 계정입니다.');
     }
-
     const payload = {
-      code: SuccessCode.Success,
-      msg: '계정 생성 성공',
       accountId,
-      accountPwd: hashedPwd,
+      accountPwd: accountPwd,
     };
+    socket.sendResponse(SuccessCode.Success, '계정 생성 성공', payloadTypes.S_SIGN_UP, payload);
+    // const payload = {
+    //   code: SuccessCode.Success,
+    //   msg: '계정 생성 성공',
+    //   accountId,
+    //   accountPwd: hashedPwd,
+    // };
 
-    socket.sendPacket(payloadTypes.S_SIGNUP, payload);
+    // socket.sendPacket(payloadTypes.S_SIGNUP, payload);
   } catch (error) {
     handleError(socket, error);
   }
