@@ -1,3 +1,4 @@
+import { sessionTypes } from '../../constants/session.constants.js';
 import PlayerInfo from '../../protobuf/classes/info/player-info.proto.js';
 import { serialize } from '../../utils/packet-serializer.utils.js';
 
@@ -8,17 +9,24 @@ class Game {
     }
 
     this.id = id;
+    this.type = sessionTypes.NULL;
     this.users = [];
     this.maxUser = maxUser;
   }
 
   addUser(user) {
-    user.sessionId = this.id;
+    user.setSession(this.type, this.id);
     this.users.push(user);
   }
 
   removeUser(userId) {
-    this.users = this.users.filter((user) => user.playerInfo.playerId !== userId);
+    this.users = this.users.filter((user) => {
+      if (user.playerInfo.playerId === userId) {
+        user.removeSession();
+        return false;
+      }
+      return true;
+    });
   }
 
   getUser(userId) {
