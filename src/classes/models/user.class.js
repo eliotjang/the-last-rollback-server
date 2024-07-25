@@ -19,7 +19,7 @@ class User {
     return ++this.sequence;
   }
 
-  getSessionId() {
+  getSession() {
     switch (this.sessionInfo.type) {
       case sessionTypes.TOWN:
         return getTownSession(this.sessionInfo.id);
