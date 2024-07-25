@@ -1,4 +1,4 @@
-import { packetTypes } from '../../constants/packet.constants.js';
+import { payloadTypes } from '../../constants/packet.constants.js';
 import Game from './game.class.js';
 import { serialize } from '../../utils/packet-serializer.utils.js';
 
@@ -27,17 +27,20 @@ class Town extends Game {
 
       // 현재 들어온 유저에게 다른 모든 유저 정보를 전송
       if (curUser === user) {
-        const response = serialize(packetTypes.S_SPAWN, {
-          players: data,
-        });
-        console.log('data:', data);
-        user.socket.write(response);
+        // const response = serialize(packetTypes.S_SPAWN, {
+        //   players: data,
+        // });
+        // user.socket.write(response);
+        user.socket.sendResponse(2, 'tempp', payloadTypes.S_SPAWN, { players: data });
+        console.log('현재 들어온 유저에게 다른 모든 유저 정보를 전송:', data);
       } else {
         // 기존 유저에게 새로 들어온 유저 정보를 전송
-        this.sendPacketToOthers(curUser.playerInfo.playerId, packetTypes.S_ENTER, {
-          player: user.playerInfo,
-        });
-        console.log('user:', user.playerInfo);
+        // this.sendPacketToOthers(curUser.playerInfo.playerId, packetTypes.S_ENTER, {
+        //   player: user.playerInfo,
+        // });
+        const userInfo = [user.playerInfo];
+        user.socket.sendResponse(2, 'temp', payloadTypes.S_SPAWN, { players: userInfo });
+        console.log('기존 유저에게 새로 들어온 유저 정보를 전송:', userInfo);
       }
     });
   }
