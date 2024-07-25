@@ -51,7 +51,7 @@ const onData = (socket) => async (data) => {
       const handler = getHandlerByPayloadType(payloadType);
       await handler({
         socket,
-        userId: socket.userId,
+        accountId: socket.accountId,
         packet: deserialized.payload,
       });
     }
