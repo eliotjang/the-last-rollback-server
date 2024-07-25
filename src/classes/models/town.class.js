@@ -45,10 +45,10 @@ class Town extends Game {
     });
   }
 
-  removeUser(userId) {
-    super.removeUser(userId);
+  removeUser(accountId) {
+    super.removeUser(accountId);
 
-    this.sendPacketToAll(packetTypes.S_DESPAWN, { playerIds: userId });
+    this.sendPacketToAll(packetTypes.S_DESPAWN, { playerIds: accountId });
   }
 }
 
