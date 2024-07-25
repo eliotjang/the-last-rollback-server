@@ -7,6 +7,7 @@ import { serialize } from '../../utils/packet-serializer.utils.js';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import { config } from '../../config/config.js';
+import { addUser } from '../../session/user.session.js';
 
 const loginAccountHandler = async ({ socket, userId, packet }) => {
   try {
@@ -24,9 +25,11 @@ const loginAccountHandler = async ({ socket, userId, packet }) => {
 
     const token = jwt.sign(accountId, config.account.jwtSecret);
     socket.token = token;
-    socket.accountId = userDB.accountId;
+    // socket.accountId = userDB.accountId;
 
     await updateUserLogin(accountId);
+
+    addUser(socket, accountId);
 
     const payload = {
       accountId,
