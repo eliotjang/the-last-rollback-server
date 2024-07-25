@@ -19,9 +19,9 @@ class Game {
     this.users.push(user);
   }
 
-  removeUser(userId) {
+  removeUser(accountId) {
     this.users = this.users.filter((user) => {
-      if (user.playerInfo.playerId === userId) {
+      if (user.accountId === accountId) {
         user.removeSession();
         return false;
       }
@@ -29,8 +29,8 @@ class Game {
     });
   }
 
-  getUser(userId) {
-    return this.users.find((user) => user.playerInfo.playerId === userId);
+  getUser(accountId) {
+    return this.users.find((user) => user.accountId === accountId);
   }
 
   getUserBySocket(socket) {
@@ -41,12 +41,12 @@ class Game {
     return this.users.length >= this.maxUser;
   }
 
-  getAllLocation(userId) {
+  getAllLocation(accountId) {
     const locationData = [];
     this.users.forEach((user) => {
-      if (user.playerInfo.playerId === userId) {
+      if (user.accountId === accountId) {
         locationData.push({
-          playerId: user.playerInfo.playerId,
+          playerId: user.accountId,
           TransformInfo: user.playerInfo.transform,
         });
       }
@@ -54,8 +54,8 @@ class Game {
     return locationData;
   }
 
-  sendPacketToUser(userId, packetType, data) {
-    const user = this.users.find((user) => user.playerInfo.playerId === userId);
+  sendPacketToUser(accountId, packetType, data) {
+    const user = this.users.find((user) => user.accountId === accountId);
     if (user) {
       const packet = serialize(packetType, data);
       user.socket.write(packet);
@@ -69,9 +69,9 @@ class Game {
     });
   }
 
-  sendPacketToOthers(userId, packetType, data) {
+  sendPacketToOthers(accountId, packetType, data) {
     this.users.forEach((user) => {
-      if (user.playerInfo.playerId !== userId) {
+      if (user.accountId !== accountId) {
         const packet = serialize(packetType, data);
         user.socket.write(packet);
       }
@@ -80,14 +80,14 @@ class Game {
 
   /**
    *
-   * @param {*} userId
+   * @param {*} accountId
    * @param {string} message
    * @param {uint32} payloadType
    * @param {Object} data
    */
-  notifyOthers(userId, message, payloadType, data) {
+  notifyOthers(accountId, message, payloadType, data) {
     this.users.forEach((user) => {
-      if (user.playerInfo.playerId !== userId) {
+      if (user.accountId !== accountId) {
         user.socket.sendNotification(Date.now(), message, payloadType, data);
       }
     });
