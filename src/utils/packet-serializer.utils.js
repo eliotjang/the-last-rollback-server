@@ -49,7 +49,7 @@ export const serializeEx = (payloadType, data) => {
     );
   }
   const encoded = MessageType.encode(data).finish();
-  console.log('ex deserialize:', deserializeEx(payloadType, encoded));
+  // console.log('ex deserialize:', deserializeEx(payloadType, encoded));
   return encoded;
 };
 
