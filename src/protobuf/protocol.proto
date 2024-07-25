@@ -25,10 +25,10 @@ enum MsgId {
     S_SET_MONSTER_HP = 23;
     S_PLAYER_ACTION = 24;
     S_MONSTER_ACTION = 25;
-    C_SIGNUP = 26;
-    S_SIGNUP = 27;
-    C_LOGIN = 28;
-    S_LOGIN = 29; 
+    C_SIGN_UP = 26;
+    S_SIGN_UP = 27;
+    C_LOG_IN = 28;
+    S_LOG_IN = 29; 
 }
 
 // 응답 패킷 - S_Enter, S_Spawn
@@ -155,26 +155,6 @@ message S_MonsterAction {
   ActionSet actionSet = 2;
 }
 
-message C_Signup {
-  string accountId = 1;
-  string password = 2;
-}
-
-message S_Signup {
-  string accountId = 1;
-  string password = 2;
-}
-
-message C_Login {
-  string accountId = 1;
-  string password = 2;
-}
-
-message S_Login {
-  string accountId = 1;
-  string password = 2;
-}
-
 // 정보 구조체
 
 message PlayerInfo {
@@ -263,46 +243,67 @@ message BtnInfo {
   bool enable = 2;
 }
 
+message C_SignUp {
+  string accountId = 1;
+  string accountPwd = 2;
+}
+
+message S_SignUp {
+  string accountId = 1;
+  string accountPwd = 2;
+}
+
+message C_LogIn {
+  string accountId = 1;
+  string accountPwd = 2;
+}
+
+message S_LogIn {
+  string accountId = 1;
+  string accountPwd = 2;
+}
+
 // 패킷
-// message Packet {
-//     oneof payload {
-//       // 로비 접속
-//       C_Enter cEnter = 1;
-//       S_Enter sEnter = 2;
-//       // 로비 캐릭터 소환/제거
-//       S_Spawn sSpawn = 3;
-//       S_Despawn sDespawn = 4;
-//       // 로비 이동
-//       C_Move cMove = 5;
-//       S_Move sMove = 6;
-//       // 로비 감정표현
-//       C_Animation cAnimation = 7;
-//       S_Animation sAnimation = 8;
-//       // 채팅
-//       C_Chat cChat = 9;
-//       S_Chat sChat = 10;
-//       // 턴제 전투
-//       C_EnterDungeon cEnterDungeon = 11;
-//       C_PlayerResponse cPlayerResponse = 12;
-//       S_EnterDungeon sEnterDungeon = 13;
-//       S_LeaveDungeon sLeaveDungeon = 14;
-//       S_ScreenText sScreenText = 15;
-//       S_ScreenDone sScreenDone = 16;
-//       S_BattleLog sBattleLog = 17;
-//       S_SetPlayerHp sSetPlayerHp = 18;
-//       S_SetPlayerMp sSetPlayerMp = 19;
-//       S_SetMonsterHp sSetMonsterHp = 20;
-//       S_PlayerAction sPlayerAction = 21;
-//       S_MonsterAction sMonsterAction = 22;
-      
-//       // 실시간 전투
-//       // 몬스터 소환
-//       // 몬스터가 건물 공격
-//       // 몬스터가 플레이어 공격
-//       // 플레이어가 몬스터 공격
-//       // 기지 파괴
-//       // 몬스터 사망
-//       // 게임 종료 (승리 패배 bool)
-//       // 
-//     }
-// }
+message RequestPacket {
+  string clientVersion = 1;
+  uint32 sequence = 2;
+  string token = 3;
+  uint32 payloadType = 4;
+  oneof payload {
+    C_Enter cEnter = 5;
+    C_Move cMove = 6;
+    C_Animation cAnimation = 7;
+    C_Chat cChat = 8;
+    C_EnterDungeon cEnterDungeon = 9;
+    C_PlayerResponse cPlayerResponse = 10;
+    C_SignUp cSignUp = 11;
+    C_LogIn cLogIn = 12;
+  }
+}
+
+message ResponsePacket {
+  uint32 code = 1;
+  string message = 2;
+  uint64 timestamp = 3;
+  uint32 payloadType = 4;
+  oneof payload {
+    S_Enter sEnter = 5;
+    S_Spawn sSpawn = 6;
+    S_Despawn sDespawn = 7;
+    S_Move sMove = 8;
+    S_Animation sAnimation = 9;
+    S_Chat sChat = 10;
+    S_EnterDungeon sEnterDungeon = 11;
+    S_LeaveDungeon sLeaveDungeon = 12;
+    S_ScreenText sScreenText = 13;
+    S_ScreenDone sScreenDone = 14;
+    S_BattleLog sBattleLog = 15;
+    S_SetPlayerHp sSetPlayerHp = 16;
+    S_SetPlayerMp sSetPlayerMp = 17;
+    S_SetMonsterHp sSetMonsterHp = 18;
+    S_PlayerAction sPlayerAction = 19;
+    S_MonsterAction sMonsterAction = 20;
+    S_SignUp sSignUp = 21;
+    S_LogIn sLogIn = 22;
+  }
+}

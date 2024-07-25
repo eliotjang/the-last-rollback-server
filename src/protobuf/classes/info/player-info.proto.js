@@ -9,7 +9,13 @@ class PlayerInfo {
    * @param {TransformInfo} transform
    * @param {*} statInfo
    */
-  constructor(playerId, nickname, characterClass, transform, statInfo) {}
+  constructor(playerId, nickname, characterClass, transform, statInfo) {
+    this.playerId = playerId++;
+    this.nickname = nickname;
+    this.characterClass = characterClass;
+    this.transform = transform;
+    this.statInfo = statInfo;
+  }
 }
 
 export default PlayerInfo;
