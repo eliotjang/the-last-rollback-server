@@ -3,11 +3,10 @@ import { getTownSessionByUserSocket } from '../../session/town.session.js';
 import CustomError from '../../utils/error/customError.js';
 import { ErrorCodes } from '../../utils/error/errorCodes.js';
 import { handleError } from '../../utils/error/errorHandler.js';
-//import { updatePosition } from '../../classes/models/user.class.js';
 
-const locationUpdateHandler = ({ socket, userId, packet }) => {
+const chattingHandler = ({ socket, userId, packet }) => {
   try {
-    const { transform } = packet;
+    const { playerId, chatMsg } = packet;
     const townSession = getTownSessionByUserSocket(socket);
 
     if (!townSession) {
@@ -18,15 +17,14 @@ const locationUpdateHandler = ({ socket, userId, packet }) => {
     if (!user) {
       throw new CustomError(ErrorCodes.USER_NOT_FOUND, '유저를 찾을 수 없습니다.');
     }
-    //user.updatePosition(TransformInfo);
-    user.playerInfo.transform = transform;
-    const data = { playerId: user.playerInfo.playerId, transform };
+
+    const data = { playerId: playerId, chatMsg };
     //const TransformInfos = townSession.getAllLocation(user.playerInfo.playerId);
 
-    townSession.sendPacketToAll(payloadTypes.S_MOVE, data);
+    townSession.sendPacketToAll(payloadTypes.S_CHAT, data);
   } catch (error) {
     handleError(socket, error);
   }
 };
 
-export default locationUpdateHandler;
+export default chattingHandler;
