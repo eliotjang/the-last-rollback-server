@@ -13,14 +13,14 @@ const loginAccountHandler = async ({ socket, userId, packet }) => {
     const { accountId, accountPwd } = packet;
 
     const userDB = await findUserByAccountID(accountId);
-    if (!userDB || !(await bcrypt.compare(accountPwd, userDB.accountPwd))) {
-      const responsePacket = serialize(packetTypes.S_LOGIN, {
-        code: ErrorCodes.USER_NOT_FOUND,
-        msg: '유효하지 않은 계정입니다.',
-      });
-      socket.write(responsePacket);
-      throw new CustomError(ErrorCodes.USER_NOT_FOUND, '유효하지 않은 계정입니다.');
-    }
+    // if (!userDB || !(await bcrypt.compare(accountPwd, userDB.accountPwd))) {
+    //   const responsePacket = serialize(packetTypes.S_LOGIN, {
+    //     code: ErrorCodes.USER_NOT_FOUND,
+    //     msg: '유효하지 않은 계정입니다.',
+    //   });
+    //   socket.write(responsePacket);
+    //   throw new CustomError(ErrorCodes.USER_NOT_FOUND, '유효하지 않은 계정입니다.');
+    // }
 
     const token = jwt.sign(accountId, config.account.jwtSecret);
     socket.token = token;
@@ -29,13 +29,11 @@ const loginAccountHandler = async ({ socket, userId, packet }) => {
     await updateUserLogin(accountId);
 
     const payload = {
-      code: SuccessCode.Success,
-      msg: '계정 로그인 성공',
       accountId,
       accountPwd,
     };
 
-    socket.sendPacket(payloadTypes.S_LOGIN, payload);
+    socket.sendResponse(SuccessCode.Success, '계정 로그인 성공', payloadTypes.S_LOG_IN, payload);
   } catch (error) {
     handleError(socket, error);
   }
