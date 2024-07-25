@@ -4,19 +4,16 @@ import { createUser, findUserByAccountID } from '../../db/user/user.db.js';
 import CustomError from '../../utils/error/customError.js';
 import { ErrorCodes, SuccessCode } from '../../utils/error/errorCodes.js';
 import { handleError } from '../../utils/error/errorHandler.js';
-import { serialize } from '../../utils/packet-serializer.utils.js';
 import bcrypt from 'bcrypt';
 
 const signupAccountHandler = async ({ socket, userId, packet }) => {
   try {
     const { accountId, accountPwd } = packet;
-    // const hashedPwd = await bcrypt.hash(accountPwd, config.account.saltRounds);
-
-    // console.log(hashedPwd);
+    const hashedPwd = await bcrypt.hash(accountPwd, config.account.saltRounds);
 
     let userDB = await findUserByAccountID(accountId);
     if (!userDB) {
-      userDB = await createUser(accountId, accountPwd);
+      userDB = await createUser(accountId, hashedPwd);
     } else {
       socket.sendResponse(
         ErrorCodes.EXISTED_USER,
@@ -28,7 +25,7 @@ const signupAccountHandler = async ({ socket, userId, packet }) => {
 
     const payload = {
       accountId,
-      accountPwd: accountPwd,
+      accountPwd: hashedPwd,
     };
 
     socket.sendResponse(SuccessCode.Success, '계정 생성 성공', payloadTypes.S_SIGN_UP, payload);

@@ -14,14 +14,14 @@ const loginAccountHandler = async ({ socket, userId, packet }) => {
     const { accountId, accountPwd } = packet;
 
     const userDB = await findUserByAccountID(accountId);
-    // if (!userDB || !(await bcrypt.compare(accountPwd, userDB.accountPwd))) {
-    //   const responsePacket = serialize(packetTypes.S_LOGIN, {
-    //     code: ErrorCodes.USER_NOT_FOUND,
-    //     msg: '유효하지 않은 계정입니다.',
-    //   });
-    //   socket.write(responsePacket);
-    //   throw new CustomError(ErrorCodes.USER_NOT_FOUND, '유효하지 않은 계정입니다.');
-    // }
+    if (!userDB || !(await bcrypt.compare(accountPwd, userDB.accountPwd))) {
+      socket.sendResponse(
+        ErrorCodes.USER_NOT_FOUND,
+        '계정을 찾을 수 없습니다.',
+        payloadTypes.S_LOG_IN,
+      );
+      throw new CustomError(ErrorCodes.USER_NOT_FOUND, '계정을 찾을 수 없습니다.');
+    }
 
     const token = jwt.sign(accountId, config.account.jwtSecret);
     socket.token = token;
