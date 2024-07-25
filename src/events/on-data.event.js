@@ -16,7 +16,6 @@ const onData = (socket) => async (data) => {
       if (totalLength > socket.buffer.length) {
         break;
       }
-      console.log('PACKET RECEIVED');
       const packet = socket.buffer.subarray(headerSize, totalLength);
       socket.buffer = socket.buffer.subarray(totalLength);
 
@@ -45,9 +44,8 @@ const onData = (socket) => async (data) => {
       //     break;
       //   }
       // }
-      console.log('-----', totalLength, payloadType);
       const deserialized = deserializeEx(payloadType, packet);
-      console.log(deserialized);
+      console.log('payloadType, payload : ', payloadType, deserialized);
       const handler = getHandlerByPayloadType(payloadType);
       await handler({
         socket,
