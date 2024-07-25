@@ -18,9 +18,7 @@ class Town extends Game {
     }, []);
 
     this.users.forEach((curUser) => {
-      const data = allPlayerInfo.filter(
-        (playerInfo) => playerInfo.playerId !== curUser.playerInfo.playerId,
-      );
+      const data = allPlayerInfo.filter((playerInfo) => playerInfo.playerId !== curUser.playerInfo.playerId);
       if (data.length === 0) {
         return;
       }
@@ -31,7 +29,7 @@ class Town extends Game {
         //   players: data,
         // });
         // user.socket.write(response);
-        user.socket.sendResponse(2, 'tempp', payloadTypes.S_SPAWN, { players: data });
+        user.socket.sendResponse(2, 'temp', payloadTypes.S_SPAWN, { players: data });
         console.log('현재 들어온 유저에게 다른 모든 유저 정보를 전송:', data);
       } else {
         // 기존 유저에게 새로 들어온 유저 정보를 전송

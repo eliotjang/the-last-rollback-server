@@ -1,0 +1,11 @@
+{
+  "name": "statInfo",
+  "version": "1.0.0",
+  "data": [
+    { "id": 10001, "level": 1, "hp": 100, "maxHp": 100, "mp": 100, "maxMp": 100, "atk": 10, "def": 10, "magic": 10, "speed": 3 },
+    { "id": 10002, "level": 1, "hp": 100, "maxHp": 100, "mp": 100, "maxMp": 100, "atk": 10, "def": 10, "magic": 10, "speed": 3 },
+    { "id": 10003, "level": 1, "hp": 100, "maxHp": 100, "mp": 100, "maxMp": 100, "atk": 10, "def": 10, "magic": 10, "speed": 3 },
+    { "id": 10004, "level": 1, "hp": 100, "maxHp": 100, "mp": 100, "maxMp": 100, "atk": 10, "def": 10, "magic": 10, "speed": 3 },
+    { "id": 10005, "level": 1, "hp": 100, "maxHp": 100, "mp": 100, "maxMp": 100, "atk": 10, "def": 10, "magic": 10, "speed": 3 }
+  ]
+}

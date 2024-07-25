@@ -42,7 +42,7 @@ enum MsgId {
 // 응답 패킷 - S_Enter, S_Spawn
 message C_Enter{
   string nickname = 1;
-  int32 class = 2;
+  int32 charClass = 2;
 }
 
 // MINE
@@ -258,7 +258,6 @@ message C_SignUp {
 
 message S_SignUp {
   string accountId = 1;
-  string accountPwd = 2;
 }
 
 message C_LogIn {
@@ -268,7 +267,6 @@ message C_LogIn {
 
 message S_LogIn {
   string accountId = 1;
-  string accountPwd = 2;
 }
 
 // 임시

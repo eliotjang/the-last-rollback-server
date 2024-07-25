@@ -27,12 +27,13 @@ const readFileAsync = (filename) => {
 
 export const loadGameAssets = async () => {
   try {
-    const [stages, items, itemUnlocks] = await Promise.all([
+    const [stages, items, itemUnlocks, statInfo] = await Promise.all([
       readFileAsync('stage.json'),
       readFileAsync('item.json'),
       readFileAsync('item_unlock.json'),
+      readFileAsync('stat_info.json'),
     ]);
-    gameAssets = { stages, items, itemUnlocks };
+    gameAssets = { stages, items, itemUnlocks, statInfo };
     console.log('JSON 데이터 파일이 로드되었습니다.');
     return gameAssets;
   } catch (error) {

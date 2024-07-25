@@ -1,10 +1,5 @@
 import redisClient from '../../init/redis.js';
-import {
-  userRedisFields as urf,
-  gameRedisFields as grf,
-  isUserRedisField,
-  isGameRedisField,
-} from '../../constants/redis.js';
+import { userRedisFields as urf, gameRedisFields as grf, isUserRedisField, isGameRedisField } from '../../constants/redis.js';
 
 const USER_PREFIX = 'user:';
 const GAME_DATA_PREFIX = 'game:';
@@ -126,6 +121,14 @@ export const gameRedis = {
       return null;
     }
   },
+
+  // getPlayerInfo (accountId)
+
+  // getNickName (accountId)
+
+  // const test = await gameRedis.getPlayerInfo(accountId)
+  // test.hp;
+  // test.mp;
 
   getUserDataEx: async function (accountId, arr) {
     try {
