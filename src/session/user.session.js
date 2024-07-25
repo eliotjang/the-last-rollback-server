@@ -15,7 +15,13 @@ export const addUser = (socket, accountId) => {
 export const removeUser = (socket) => {
   const index = userSession.findIndex((user) => user.socket === socket);
   if (index !== -1) {
-    return userSession.splice(index, 1)[0];
+    const user = userSession.splice(index, 1)[0];
+    const gameSession = user.getSession();
+    if (gameSession) {
+      gameSession.removeUser(user.accountId);
+    }
+
+    return user;
   }
 };
 
