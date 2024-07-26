@@ -9,15 +9,6 @@ import { gameCharRedis } from '../../utils/redis/game.char.redis.js';
 
 const enterTownHandler = async ({ socket, accountId, packet }) => {
   try {
-    if (packet.class < 10001 || packet.class > 10005) {
-      socket.sendResponse(
-        ErrorCodes.INVALID_PACKET,
-        '존재하지 않는 캐릭터입니다.',
-        payloadTypes.S_ENTER,
-      );
-      throw new CustomError(ErrorCodes.INVALID_PACKET, '존재하지 않는 캐릭터입니다.');
-    }
-
     const { nickname, charClass } = packet;
     const transform = new TransformInfo().getTransform();
     const gameChar = await gameCharRedis.createGameChar(
@@ -27,6 +18,15 @@ const enterTownHandler = async ({ socket, accountId, packet }) => {
       accountId,
       true,
     );
+
+    if (charClass < 1001 || charClass > 1005) {
+      socket.sendResponse(
+        ErrorCodes.INVALID_PACKET,
+        '존재하지 않는 캐릭터입니다.',
+        payloadTypes.S_ENTER,
+      );
+      throw new CustomError(ErrorCodes.INVALID_PACKET, '존재하지 않는 캐릭터입니다.');
+    }
 
     // const plainPlayerInfo = playerInfoToObject(playerInfo);
     // const user = { playerInfo: gameChar, socket };
