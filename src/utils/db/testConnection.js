@@ -29,7 +29,7 @@ const testAllDBConnections = async (pools) => {
 const testUserDBQueries = async () => {
   try {
     const accountId = uuidv4();
-    const accountPwd = '1q2w3e4r!';
+    const accountPwd = 'waldo';
     const userLevel = '3';
     const userExperience = 83;
 
