@@ -15,11 +15,7 @@ const loginAccountHandler = async ({ socket, userId, packet }) => {
 
     const userDB = await findUserByAccountID(accountId);
     if (!userDB || !(await bcrypt.compare(accountPwd, userDB.accountPwd))) {
-      socket.sendResponse(
-        ErrorCodes.USER_NOT_FOUND,
-        '계정을 찾을 수 없습니다.',
-        payloadTypes.S_LOG_IN,
-      );
+      socket.sendResponse(ErrorCodes.USER_NOT_FOUND, '계정을 찾을 수 없습니다.', payloadTypes.S_LOG_IN);
       throw new CustomError(ErrorCodes.USER_NOT_FOUND, '계정을 찾을 수 없습니다.');
     }
 
@@ -33,7 +29,6 @@ const loginAccountHandler = async ({ socket, userId, packet }) => {
 
     const payload = {
       accountId,
-      accountPwd,
     };
 
     socket.sendResponse(SuccessCode.Success, '계정 로그인 성공', payloadTypes.S_LOG_IN, payload);

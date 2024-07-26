@@ -2,6 +2,13 @@ syntax = 'proto3';
 
 package Google.Protobuf.Protocol;
 
+enum PacketId {
+    PING = 0;
+    REQUEST = 1;
+    RESPONSE = 2;
+    NOTIFICATION = 3;
+}
+
 enum MsgId {
     C_ENTER = 0;
     S_ENTER = 1;
@@ -29,12 +36,13 @@ enum MsgId {
     S_SIGN_UP = 27;
     C_LOG_IN = 28;
     S_LOG_IN = 29; 
+    S_SOME_NOTIFICATION = 300;
 }
 
 // 응답 패킷 - S_Enter, S_Spawn
 message C_Enter{
   string nickname = 1;
-  int32 class = 2;
+  int32 charClass = 2;
 }
 
 // MINE
@@ -52,7 +60,7 @@ message S_Spawn {
 // 접속상태를 서버에서 판단해서 끊기도 다른 플레이어들 정보 전달
 // 응답 패킷 - S_Leave, S_Despawn
 message S_Despawn {
-  repeated int32 playerIds = 2; // PlayerInfo 전부 말고 아이디만 받는다.
+  repeated int32 playerIds = 1; // PlayerInfo 전부 말고 아이디만 받는다.
 }
 
 
@@ -63,7 +71,7 @@ message C_Move {
 
 // ALL
 message S_Move {
-  int32 playerId = 1;
+  int32 accountId = 1;
   TransformInfo transform = 2;
 }
 
@@ -74,21 +82,21 @@ message C_Animation {
 
 // ALL
 message S_Animation {
-  int32 playerId = 1;
+  int32 accountId = 1;
   int32 animCode = 2;
 }
 
 
 // 응답 패킷 - C_Chat
 message S_Chat{
-  int32 playerId = 1;
+  int32 accountId = 1;
   string chatMsg = 2;
 }
 
 
 // ALL
 message C_Chat{
-  int32 playerId = 1;
+  int32 accountId = 1;
   string senderName = 2;
   string chatMsg = 3;
 }
@@ -158,11 +166,10 @@ message S_MonsterAction {
 // 정보 구조체
 
 message PlayerInfo {
-  int32 playerId = 1;   // 입장할때 서버 내부에서 생성한 관리코드
+  int32 accountId = 1;   // 입장할때 서버 내부에서 생성한 관리코드
   string nickname = 2;  // C_EnterGame 에서 지정한 이름
-  int32 class = 3;      // C_EnterGame 에서 지정한 직업 정보, 이 정보를 통해 캐릭터가 결정
+  int32 charClass = 3;      // C_EnterGame 에서 지정한 직업 정보, 이 정보를 통해 캐릭터가 결정
   TransformInfo transform = 4;
-  StatInfo statInfo = 5;
 }
 
 // C_Enter 를 통해 입장했을때는 서버에서 랜덤으로 위치값 생성 / 기본값은 하단 밸류 참조
@@ -250,7 +257,6 @@ message C_SignUp {
 
 message S_SignUp {
   string accountId = 1;
-  string accountPwd = 2;
 }
 
 message C_LogIn {
@@ -260,10 +266,18 @@ message C_LogIn {
 
 message S_LogIn {
   string accountId = 1;
-  string accountPwd = 2;
+}
+
+// 임시
+message S_SomeNotification {
+  string value = 1;
 }
 
 // 패킷
+message PingPacket {
+  uint64 timestamp = 1;
+}
+
 message RequestPacket {
   string clientVersion = 1;
   uint32 sequence = 2;
@@ -305,5 +319,14 @@ message ResponsePacket {
     S_MonsterAction sMonsterAction = 20;
     S_SignUp sSignUp = 21;
     S_LogIn sLogIn = 22;
+  }
+}
+
+message NotificationPacket {
+  uint64 timestamp = 1;
+  uint32 payloadType = 2;
+  oneof payload {
+    S_Move sMove = 4;
+    S_SomeNotification sSomeNotification = 3;
   }
 }
