@@ -1,11 +1,10 @@
 import { payloadTypes } from '../../constants/packet.constants.js';
 import { addTownSession, getAllTownSessions } from '../../session/town.session.js';
 import CustomError from '../../utils/error/customError.js';
-import { ErrorCodes, SuccessCode } from '../../utils/error/errorCodes.js';
 import { handleError } from '../../utils/error/errorHandler.js';
 import TransformInfo from '../../protobuf/classes/info/transform-info.proto.js';
 import { playerInfoToObject } from '../../utils/transform-object.utils.js';
-import { SuccessCode } from '../../utils/error/errorCodes.js';
+import { ErrorCodes, SuccessCode } from '../../utils/error/errorCodes.js';
 import { gameCharRedis } from '../../utils/redis/game.char.redis.js';
 
 const enterTownHandler = async ({ socket, accountId, packet }) => {
