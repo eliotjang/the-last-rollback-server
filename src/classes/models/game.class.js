@@ -53,12 +53,12 @@ class Game {
   // socket.write() in session
   notifyUser(accountId, payloadType, data) {
     const user = this.users.find((user) => user.accountId === accountId);
-    user.socket.sendNotification(Date.now(), payloadType, data);
+    user.socket.sendNotification(payloadType, data);
   }
 
   notifyAll(payloadType, data) {
     this.users.forEach((user) => {
-      user.socket.sendNotification(Date.now(), payloadType, data);
+      user.socket.sendNotification(payloadType, data);
     });
   }
 
@@ -72,7 +72,7 @@ class Game {
   notifyOthers(accountId, payloadType, data) {
     this.users.forEach((user) => {
       if (user.accountId !== accountId) {
-        user.socket.sendNotification(Date.now(), payloadType, data);
+        user.socket.sendNotification(payloadType, data);
       }
     });
   }

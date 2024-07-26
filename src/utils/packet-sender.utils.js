@@ -1,11 +1,6 @@
 import { packetTypes, payloadTypes } from '../constants/packet.constants.js';
 import { writeHeader } from './packet-header.utils.js';
-import {
-  deserialieTest,
-  deserializeTemp,
-  serialize,
-  serializeEx,
-} from './packet-serializer.utils.js';
+import { deserializeTest, serializeEx } from './packet-serializer.utils.js';
 
 /**
  * 소켓 쓰기용 함수. 소켓을 bind하여 사용한다.
@@ -15,11 +10,10 @@ import {
  * @param {Object} data key-value object to be serialized
  */
 export function sendPacket(payloadType, data) {
-  const serialized = serialize(payloadType, data, true);
-  const header = writeHeader(serialized.length, payloadType);
-  const packet = Buffer.concat([header, serialized]);
-  console.log('deserialized:', deserializeTemp(payloadType, serialized));
-  this.write(packet);
+  // const serialized = serialize(payloadType, data, true);
+  // const header = writeHeader(serialized.length, payloadType);
+  // const packet = Buffer.concat([header, serialized]);
+  // this.write(packet);
 }
 
 /**
@@ -38,8 +32,8 @@ export const sendResponse = function (code, message, payloadType, payload, dontS
     payloadType,
     payload,
   };
-  const serializedPacket = serializeEx(payloadType, packetData);
-  console.log('deserialize test:', deserialieTest(payloadType, serializedPacket));
+  const serializedPacket = serializeEx(packetTypes.RESPONSE, payloadType, packetData);
+  console.log('deserialize test:', deserializeTest(packetTypes.RESPONSE, serializedPacket));
   const header = writeHeader(serializedPacket.length, packetTypes.RESPONSE);
   const packet = Buffer.concat([header, serializedPacket]);
 
@@ -57,14 +51,14 @@ export const sendResponse = function (code, message, payloadType, payload, dontS
  * @param {uint32} payloadType
  * @param {Object} payload key-value pair
  */
-export const sendNotification = function (timestamp, payloadType, payload) {
+export const sendNotification = function (payloadType, payload) {
   const packetData = {
-    timestamp,
+    timestamp: Date.now(),
     payloadType,
     payload,
   };
-  const serializedPacket = serializeEx(payloadType, packetData);
-  console.log('deserialize test:', deserialieTest(payloadType, serializedPacket));
+  const serializedPacket = serializeEx(packetTypes.NOTIFICATION, payloadType, packetData);
+  console.log('deserialize test:', deserializeTest(packetTypes.NOTIFICATION, serializedPacket));
   const header = writeHeader(serializedPacket.length, packetTypes.NOTIFICATION);
   const packet = Buffer.concat([header, serializedPacket]);
   this.write(packet);

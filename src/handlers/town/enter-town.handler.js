@@ -28,7 +28,7 @@ const enterTownHandler = async ({ socket, accountId, packet }) => {
       );
       throw new CustomError(ErrorCodes.INVALID_PACKET, '존재하지 않는 캐릭터입니다.');
     }
-
+    gameChar.charClass = +gameChar.charClass;
     // const plainPlayerInfo = playerInfoToObject(playerInfo);
     // const user = { playerInfo: gameChar, socket };
     const user = getUserById(accountId);

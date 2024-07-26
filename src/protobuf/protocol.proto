@@ -60,7 +60,7 @@ message S_Spawn {
 // 접속상태를 서버에서 판단해서 끊기도 다른 플레이어들 정보 전달
 // 응답 패킷 - S_Leave, S_Despawn
 message S_Despawn {
-  repeated int32 playerIds = 1; // PlayerInfo 전부 말고 아이디만 받는다.
+  repeated string playerIds = 1; // PlayerInfo 전부 말고 아이디만 받는다.
 }
 
 
@@ -71,7 +71,7 @@ message C_Move {
 
 // ALL
 message S_Move {
-  int32 playerId = 1;
+  string playerId = 1;
   TransformInfo transform = 2;
 }
 
@@ -82,21 +82,21 @@ message C_Animation {
 
 // ALL
 message S_Animation {
-  int32 playerId = 1;
+  string playerId = 1;
   int32 animCode = 2;
 }
 
 
 // 응답 패킷 - C_Chat
 message S_Chat{
-  int32 playerId = 1;
+  string playerId = 1;
   string chatMsg = 2;
 }
 
 
 // ALL
 message C_Chat{
-  int32 playerId = 1;
+  string playerId = 1;
   string senderName = 2;
   string chatMsg = 3;
 }
@@ -166,7 +166,7 @@ message S_MonsterAction {
 // 정보 구조체
 
 message PlayerInfo {
-  int32 playerId = 1;   // 입장할때 서버 내부에서 생성한 관리코드
+  string playerId = 1;   // 입장할때 서버 내부에서 생성한 관리코드
   string nickname = 2;  // C_EnterGame 에서 지정한 이름
   int32 charClass = 3;      // C_EnterGame 에서 지정한 직업 정보, 이 정보를 통해 캐릭터가 결정
   TransformInfo transform = 4;
@@ -266,6 +266,7 @@ message C_LogIn {
 
 message S_LogIn {
   string accountId = 1;
+  string token = 2;
 }
 
 // 임시
@@ -327,6 +328,7 @@ message NotificationPacket {
   uint32 payloadType = 2;
   oneof payload {
     S_Move sMove = 4;
+    S_Spawn sSpawn = 6;
     S_SomeNotification sSomeNotification = 3;
   }
 }

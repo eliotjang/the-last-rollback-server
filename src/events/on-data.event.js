@@ -5,6 +5,8 @@ import { getHandlerByPayloadType } from '../handlers/index.js';
 import { handleError } from '../utils/error/errorHandler.js';
 import { readHeader } from '../utils/packet-header.utils.js';
 import { deserialize, deserializeByPacketType } from '../utils/packet-serializer.utils.js';
+import { config } from '../config/config.js';
+import CustomError from '../utils/error/customError.js';
 
 const headerSize = headerConstants.TOTAL_LENGTH + headerConstants.PACKET_TYPE_LENGTH;
 
@@ -19,11 +21,6 @@ const onData = (socket) => async (data) => {
       const packet = socket.buffer.subarray(headerSize, totalLength);
       socket.buffer = socket.buffer.subarray(totalLength);
 
-      // if (payloadType !== payloadTypes.C_SIGN_UP && payloadType !== payloadTypes.C_LOG_IN) {
-      //   console.log(socket.token);
-      //   await verifyToken(socket.token);
-      // }
-
       switch (packetType) {
         case packetTypes.PING: {
           //
@@ -36,6 +33,12 @@ const onData = (socket) => async (data) => {
             packetType,
             packet,
           );
+
+          // if (payloadType !== payloadTypes.C_SIGN_UP && payloadType !== payloadTypes.C_LOG_IN) {
+          //   console.log(socket.token);
+          //   await verifyToken(socket.token);
+          // }
+
           console.log(clientVersion, sequence, payloadType, payload);
           verifyClientVersion(clientVersion);
           verifySequence(sequence);
@@ -55,7 +58,12 @@ const onData = (socket) => async (data) => {
 };
 
 const verifyClientVersion = (clientVersion) => {
-  // TODO: 버전 체크
+  if (clientVersion !== config.client.version) {
+    throw new CustomError(
+      ErrorCodes.CLIENT_VERSION_MISMATCH,
+      '클라이언트 버전이 일치하지 않습니다.',
+    );
+  }
 };
 
 const verifySequence = (sequence) => {

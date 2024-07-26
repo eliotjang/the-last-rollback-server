@@ -23,6 +23,9 @@ const loginAccountHandler = async ({ socket, userId, packet }) => {
       throw new CustomError(ErrorCodes.USER_NOT_FOUND, '계정을 찾을 수 없습니다.');
     }
 
+    const jwtOptions = {
+      expiresIn: '10h', // 임시
+    };
     const token = jwt.sign(accountId, config.account.jwtSecret);
     socket.token = token;
     socket.accountId = userDB.accountId;
@@ -33,6 +36,8 @@ const loginAccountHandler = async ({ socket, userId, packet }) => {
 
     const payload = {
       accountId,
+      accountPwd,
+      token,
     };
 
     socket.sendResponse(SuccessCode.Success, '계정 로그인 성공', payloadTypes.S_LOG_IN, payload);

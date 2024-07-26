@@ -69,7 +69,9 @@ function changeNullProtoToObj(data) {
   try {
     const result = {};
     for (const [key, value] of Object.entries(data)) {
-      if (isJsonString(value)) {
+      if (key === 'charClass') {
+        result[key] = +value;
+      } else if (isJsonString(value)) {
         result[key] = JSON.parse(value);
       } else {
         result[key] = value;
