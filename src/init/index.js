@@ -1,5 +1,7 @@
 import pools from '../db/database.js';
+import TransformInfo from '../protobuf/classes/info/transform-info.proto.js';
 import { testGameCharDBQueries, testUserDBQueries } from '../utils/db/testConnection.js';
+import { gameCharRedis } from '../utils/redis/game.char.redis.js';
 // import { testAllDBConnections } from '../utils/db/testConnection.js';
 import { testAllRedisConnections } from '../utils/redis/testConnection.js';
 import { loadGameAssets } from './assets.js';
