@@ -1,6 +1,4 @@
 import { sessionTypes } from '../../constants/session.constants.js';
-import PlayerInfo from '../../protobuf/classes/info/player-info.proto.js';
-import { serialize } from '../../utils/packet-serializer.utils.js';
 
 class Game {
   constructor(id, maxUser) {
@@ -13,12 +11,13 @@ class Game {
     this.users = [];
     this.maxUser = maxUser;
   }
-
+  // add to Session
   addUser(user) {
     user.setSession(this.type, this.id);
     this.users.push(user);
   }
 
+  // remove from Session
   removeUser(accountId) {
     this.users = this.users.filter((user) => {
       if (user.accountId === accountId) {
@@ -29,6 +28,7 @@ class Game {
     });
   }
 
+  // get information from session
   getUser(accountId) {
     return this.users.find((user) => user.accountId === accountId);
   }
@@ -37,44 +37,28 @@ class Game {
     return this.users.find((user) => user.socket === socket);
   }
 
-  isFull() {
-    return this.users.length >= this.maxUser;
-  }
-
   getAllLocation(accountId) {
     const locationData = [];
     this.users.forEach((user) => {
       if (user.accountId === accountId) {
         locationData.push({
           playerId: user.accountId,
-          TransformInfo: user.playerInfo.transform,
+          TransformInfo: user.getPlayerInfo().transform,
         });
       }
     });
     return locationData;
   }
 
-  sendPacketToUser(accountId, packetType, data) {
+  // socket.write() in session
+  notifyUser(accountId, message, payloadType, data) {
     const user = this.users.find((user) => user.accountId === accountId);
-    if (user) {
-      const packet = serialize(packetType, data);
-      user.socket.write(packet);
-    }
+    user.socket.sendNotification(Date.now(), message, payloadType, data);
   }
 
-  sendPacketToAll(packetType, data) {
+  notifyAll(message, payloadType, data) {
     this.users.forEach((user) => {
-      const packet = serialize(packetType, data);
-      user.socket.write(packet);
-    });
-  }
-
-  sendPacketToOthers(accountId, packetType, data) {
-    this.users.forEach((user) => {
-      if (user.accountId !== accountId) {
-        const packet = serialize(packetType, data);
-        user.socket.write(packet);
-      }
+      user.socket.sendNotification(Date.now(), message, payloadType, data);
     });
   }
 
@@ -91,6 +75,11 @@ class Game {
         user.socket.sendNotification(Date.now(), message, payloadType, data);
       }
     });
+  }
+
+  // ...etc
+  isFull() {
+    return this.users.length >= this.maxUser;
   }
 }
 

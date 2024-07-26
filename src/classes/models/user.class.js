@@ -20,14 +20,23 @@ class User {
   }
 
   getSession() {
+    let getSessionFunc;
     switch (this.sessionInfo.type) {
       case sessionTypes.TOWN:
-        return getTownSession(this.sessionInfo.id);
+        getSessionFunc = getTownSession;
+        break;
       case sessionTypes.BATTLE:
-        return getBattleSession(this.sessionInfo.id);
+        getSessionFunc = getBattleSession;
+        break;
       default:
         return null;
     }
+    return getSessionFunc(this.sessionInfo.id);
+  }
+
+  // 임시, 의사코드
+  getPlayerInfo() {
+    //return redis.get(this.accountId)
   }
 
   setSession(sessionType, sessionId) {
