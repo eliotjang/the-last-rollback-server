@@ -51,7 +51,7 @@ export const serializeEx = (payloadType, data) => {
       `직렬화 에러: 잘 못된 payloadType ${payloadType}`,
     );
   }
-  const encoded = MessageType.encode(data).finish();
+  const encoded = MessageType.encode(MessageType.create(data)).finish();
   // console.log('ex deserialize:', deserializeEx(payloadType, encoded));
   return encoded;
 };

@@ -1,6 +1,7 @@
 import { sessionTypes } from '../../constants/session.constants.js';
 import { getBattleSession } from '../../session/battle.session.js';
 import { getTownSession } from '../../session/town.session.js';
+import { gameCharRedis } from '../../utils/redis/game.char.redis.js';
 
 class User {
   constructor(accountId, socket) {
@@ -20,14 +21,23 @@ class User {
   }
 
   getSession() {
+    let getSessionFunc;
     switch (this.sessionInfo.type) {
       case sessionTypes.TOWN:
-        return getTownSession(this.sessionInfo.id);
+        getSessionFunc = getTownSession;
+        break;
       case sessionTypes.BATTLE:
-        return getBattleSession(this.sessionInfo.id);
+        getSessionFunc = getBattleSession;
+        break;
       default:
         return null;
     }
+    return getSessionFunc(this.sessionInfo.id);
+  }
+
+  // 임시, 의사코드
+  async getPlayerInfo() {
+    return await gameCharRedis.getGameChar(this.accountId);
   }
 
   setSession(sessionType, sessionId) {
