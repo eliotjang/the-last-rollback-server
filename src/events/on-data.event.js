@@ -36,10 +36,10 @@ const onData = (socket) => async (data) => {
             packetType,
             packet,
           );
-          // console.log(clientVersion, sequence, payloadType, payload);
+          console.log(clientVersion, sequence, payloadType, payload);
           verifyClientVersion(clientVersion);
           verifySequence(sequence);
-          const handler = getHandlerByPayloadType(payloadType);
+          const handler = getHandlerByPayloadType(payloadType || 0);
           const result = await handler({ socket, accountId: socket.accountId, packet: payload });
           if (result) {
             // result가 있다면 추가 작업
