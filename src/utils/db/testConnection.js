@@ -2,6 +2,7 @@ import {
   createGameChar,
   findGameCharByAccountID,
   updateLastPosition,
+  updateStageUnlock,
 } from '../../db/game-char/game-char.db.js';
 import {
   createUser,
@@ -53,7 +54,7 @@ const testGameCharDBQueries = async () => {
     const lastPositionY = 3.14;
     await createGameChar(charNickname, charClass, accountId);
     await updateLastPosition(lastPositionX, lastPositionY, accountId);
-    await findGameCharByAccountID(accountId);
+    await updateStageUnlock(accountId);
     console.log(`GAME CHAR DB 테스트 쿼리 성공`);
   } catch (error) {
     console.error(`GAME CHAR DB 테스트 쿼리 실행 중 오류 발생:`, error);

@@ -24,3 +24,7 @@ export const createGameChar = async (nickname, charClass, accountId) => {
 export const updateLastPosition = async (x, y, accountId) => {
   await pools.GAME_CHAR_DB.query(SQL_GAME_QUERIES.UPDATE_LAST_POSITION, [x, y, accountId]);
 };
+
+export const updateStageUnlock = async (accountId) => {
+  await pools.GAME_CHAR_DB.query(SQL_GAME_QUERIES.UPDATE_STAGE_UNLOCK, [accountId]);
+};
