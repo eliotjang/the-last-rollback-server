@@ -5,6 +5,7 @@ import redisClient from '../../init/redis.js';
 const PREFIX = 'gameChar';
 
 const FIELD = {
+  ACCOUNT_ID: 'accountId',
   NICKNAME: 'nickname',
   CHAR_CLASS: 'charClass',
   TRANSFORM: 'transform',
@@ -14,6 +15,7 @@ export const gameCharRedis = {
   createGameChar: async (nickname, charClass, transform, accountId, wantResult) => {
     try {
       const key = PREFIX + ':' + accountId + ':';
+      await redisClient.hSet(key, FIELD.ACCOUNT_ID, accountId);
       await redisClient.hSet(key, FIELD.NICKNAME, nickname);
       await redisClient.hSet(key, FIELD.CHAR_CLASS, charClass);
       await redisClient.hSet(key, FIELD.TRANSFORM, JSON.stringify(transform));
@@ -34,7 +36,6 @@ export const gameCharRedis = {
       const key = PREFIX + ':' + accountId + ':';
       const data = await redisClient.hGetAll(key);
       const result = changeNullProtoToObj(data);
-      result.accountId = accountId;
       return result;
     } catch (error) {
       console.error('Error in getGameChar : ', error);
