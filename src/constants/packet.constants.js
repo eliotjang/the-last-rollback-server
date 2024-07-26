@@ -1,8 +1,7 @@
 import { stringToCamelCase, stringToPascalCase } from '../utils/transform-case.utils.js';
 
 const PROTOCOL_PREFIX = 'Google.Protobuf.Protocol.';
-const TYPE_PREFIX = 'Google.Protobuf.Type.';
-const TYPE_SUFFIX = 'Packet';
+const PACKET_SUFFIX = 'Packet';
 
 export const headerConstants = {
   // bytes
@@ -44,11 +43,12 @@ export const payloadTypes = {
   S_SIGN_UP: 27,
   C_LOG_IN: 28,
   S_LOG_IN: 29,
+  S_SOME_NOTIFICATION: 300,
 };
 
 export const packetNames = Object.fromEntries(
   Object.entries(packetTypes).map(([key, value]) => {
-    const str = TYPE_PREFIX + stringToPascalCase(key) + TYPE_SUFFIX;
+    const str = PROTOCOL_PREFIX + stringToPascalCase(key) + PACKET_SUFFIX;
     return [value, str];
   }),
 );
@@ -63,15 +63,22 @@ export const payloadNames = Object.fromEntries(
 export const typeMappings = Object.fromEntries(
   Object.entries(payloadTypes).map(([key, value]) => {
     if (key.charAt(0) === 'S') {
-      return [value, 'ResponsePacket'];
+      if (key.endsWith('NOTIFICATION')) {
+        return [value, packetTypes.NOTIFICATION];
+      }
+      return [value, packetTypes.RESPONSE];
     }
-    return [value, 'RequestPacket'];
+    return [value, packetTypes.REQUEST];
   }),
 );
 
+export const payloadKeyToTypes = {};
+
 export const payloadKeyNames = Object.fromEntries(
   Object.entries(payloadTypes).map(([key, value]) => {
-    return [value, stringToCamelCase(key)];
+    const payloadKey = stringToCamelCase(key);
+    payloadKeyToTypes[payloadKey] = value;
+    return [value, payloadKey];
   }),
 );
 
