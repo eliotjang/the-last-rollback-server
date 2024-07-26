@@ -1,6 +1,7 @@
 import { sessionTypes } from '../../constants/session.constants.js';
 import { getBattleSession } from '../../session/battle.session.js';
 import { getTownSession } from '../../session/town.session.js';
+import { gameCharRedis } from '../../utils/redis/game.char.redis.js';
 
 class User {
   constructor(accountId, socket) {
@@ -35,9 +36,8 @@ class User {
   }
 
   // 임시, 의사코드
-  getPlayerInfo() {
-    //return redis.get(this.accountId)
-    return this.playerInfo;
+  async getPlayerInfo() {
+    return await gameCharRedis.getGameChar(this.accountId);
   }
 
   setSession(sessionType, sessionId) {

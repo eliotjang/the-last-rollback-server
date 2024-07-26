@@ -5,6 +5,7 @@ import TransformInfo from '../../protobuf/classes/info/transform-info.proto.js';
 import { playerInfoToObject } from '../../utils/transform-object.utils.js';
 import { SuccessCode } from '../../utils/error/errorCodes.js';
 import { gameCharRedis } from '../../utils/redis/game.char.redis.js';
+import { getUserById } from '../../session/user.session.js';
 
 const enterTownHandler = async ({ socket, accountId, packet }) => {
   try {
@@ -20,14 +21,15 @@ const enterTownHandler = async ({ socket, accountId, packet }) => {
 
     // const plainPlayerInfo = playerInfoToObject(playerInfo);
     // const user = { playerInfo: gameChar, socket };
+    const user = getUserById(accountId);
 
-    // const townSessions = getAllTownSessions();
-    // let townSession = townSessions.find((townSession) => !townSession.isFull());
-    // if (!townSession) {
-    //   townSession = addTownSession();
-    // }
+    const townSessions = getAllTownSessions();
+    let townSession = townSessions.find((townSession) => !townSession.isFull());
+    if (!townSession) {
+      townSession = addTownSession();
+    }
 
-    // townSession.addUser(user);
+    townSession.addUser(user);
 
     socket.sendResponse(SuccessCode.Success, '유저 생성 성공', payloadTypes.S_ENTER, {
       player: gameChar,

@@ -34,6 +34,7 @@ export const gameCharRedis = {
       const key = PREFIX + ':' + accountId + ':';
       const data = await redisClient.hGetAll(key);
       const result = changeNullProtoToObj(data);
+      result.accountId = accountId;
       return result;
     } catch (error) {
       console.error('Error in getGameChar : ', error);
