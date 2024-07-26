@@ -8,7 +8,7 @@ const testUserRedisConnection = async () => {
     const accountClass = 1001;
     const transform = { x: 12, y: 23 };
 
-    await userRedis.createUserData(accountId, nickname, accountClass, transform);
+    userRedis.createUserData(accountId, nickname, accountClass, transform);
     const userRD = await userRedis.getUserData(accountId);
     console.log('유저 레디스 테스트 결과:', userRD);
   } catch (error) {

@@ -7,19 +7,17 @@ import PlayerInfo from '../../protobuf/classes/info/player-info.proto.js';
 import { playerInfoToObject } from '../../utils/transform-object.utils.js';
 import { SuccessCode } from '../../utils/error/errorCodes.js';
 import { getGameAssets } from '../../init/assets.js';
-import { updateUserInfo } from '../../db/user/user.db.js';
+// import { updateUserInfo } from '../../db/user/user.db.js';
 
 const enterTownHandler = async ({ socket, accountId, packet }) => {
   try {
     const { nickname, charClass } = packet;
-    const { statInfo } = getGameAssets();
+    const { charStatInfo } = getGameAssets();
 
-    const classStat = statInfo.data.find((stat) => stat.id === charClass);
+    const charStat = charStatInfo[charClass][0];
     const transform = new TransformInfo(0, 0, 0, 0);
 
-    const playerInfo = new PlayerInfo(accountId, nickname, charClass, transform, classStat);
-
-    await updateUserInfo(nickname, charClass, accountId);
+    const playerInfo = new PlayerInfo(accountId, nickname, charClass, transform);
 
     const plainPlayerInfo = playerInfoToObject(playerInfo);
     const user = { playerInfo: plainPlayerInfo, socket };

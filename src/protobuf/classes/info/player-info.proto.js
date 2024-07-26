@@ -7,14 +7,12 @@ class PlayerInfo {
    * @param {*} nickname
    * @param {*} characterClass
    * @param {TransformInfo} transform
-   * @param {*} statInfo
    */
-  constructor(accountId, nickname, characterClass, transform, statInfo) {
+  constructor(accountId, nickname, characterClass, transform) {
     this.accountId = accountId;
     this.nickname = nickname;
     this.characterClass = characterClass;
     this.transform = transform;
-    this.statInfo = statInfo;
   }
 }
 

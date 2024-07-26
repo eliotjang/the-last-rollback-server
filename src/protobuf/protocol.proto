@@ -71,7 +71,7 @@ message C_Move {
 
 // ALL
 message S_Move {
-  int32 playerId = 1;
+  int32 accountId = 1;
   TransformInfo transform = 2;
 }
 
@@ -82,21 +82,21 @@ message C_Animation {
 
 // ALL
 message S_Animation {
-  int32 playerId = 1;
+  int32 accountId = 1;
   int32 animCode = 2;
 }
 
 
 // 응답 패킷 - C_Chat
 message S_Chat{
-  int32 playerId = 1;
+  int32 accountId = 1;
   string chatMsg = 2;
 }
 
 
 // ALL
 message C_Chat{
-  int32 playerId = 1;
+  int32 accountId = 1;
   string senderName = 2;
   string chatMsg = 3;
 }
@@ -166,11 +166,10 @@ message S_MonsterAction {
 // 정보 구조체
 
 message PlayerInfo {
-  int32 playerId = 1;   // 입장할때 서버 내부에서 생성한 관리코드
+  int32 accountId = 1;   // 입장할때 서버 내부에서 생성한 관리코드
   string nickname = 2;  // C_EnterGame 에서 지정한 이름
-  int32 class = 3;      // C_EnterGame 에서 지정한 직업 정보, 이 정보를 통해 캐릭터가 결정
+  int32 charClass = 3;      // C_EnterGame 에서 지정한 직업 정보, 이 정보를 통해 캐릭터가 결정
   TransformInfo transform = 4;
-  StatInfo statInfo = 5;
 }
 
 // C_Enter 를 통해 입장했을때는 서버에서 랜덤으로 위치값 생성 / 기본값은 하단 밸류 참조

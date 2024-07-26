@@ -1,18 +1,23 @@
 import redisClient from '../../init/redis.js';
-import { userRedisFields as urf, gameRedisFields as grf, isUserRedisField, isGameRedisField } from '../../constants/redis.js';
+import {
+  userRedisFields as urf,
+  gameRedisFields as grf,
+  isUserRedisField,
+  isGameRedisField,
+} from '../../constants/redis.js';
 
 const USER_PREFIX = 'user:';
 const GAME_DATA_PREFIX = 'game:';
 
 export const userRedis = {
-  createUserData: async function (accountId, nickname, accountClass, transform) {
+  createUserData: function (accountId, nickname, accountClass, transform) {
     try {
       const keyNickname = `${USER_PREFIX}${accountId}:${urf.NICKNAME}`;
       const keyClass = `${USER_PREFIX}${accountId}:${urf.CLASS}`;
       const keyTransform = `${USER_PREFIX}${accountId}:${urf.TRANSFORM}`;
-      await redisClient.set(keyNickname, JSON.stringify(nickname));
-      await redisClient.set(keyClass, JSON.stringify(accountClass));
-      await redisClient.set(keyTransform, JSON.stringify(transform));
+      redisClient.set(keyNickname, JSON.stringify(nickname));
+      redisClient.set(keyClass, JSON.stringify(accountClass));
+      redisClient.set(keyTransform, JSON.stringify(transform));
     } catch (error) {
       console.error('createUserData Error Message : ', error);
     }

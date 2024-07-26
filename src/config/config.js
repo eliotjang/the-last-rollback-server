@@ -38,7 +38,7 @@ export const config = {
     typeLength: headerConstants.PACKET_TYPE_LENGTH,
   },
   databases: {
-    GAME_DB: {
+    GAME_CHAR_DB: {
       name: DB1_NAME,
       user: DB1_USER,
       password: DB1_PASSWORD,
