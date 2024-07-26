@@ -22,11 +22,11 @@ const createPool = (dbConfig) => {
   pool.query = (sql, params) => {
     const date = new Date();
     // 쿼리 실행시 로그
-    console.log(
-      `[${formatDate(date)}] Executing query: ${sql} ${
-        params ? `, ${JSON.stringify(params)}` : ``
-      }`,
-    );
+    // console.log(
+    //   `[${formatDate(date)}] Executing query: ${sql} ${
+    //     params ? `, ${JSON.stringify(params)}` : ``
+    //   }`,
+    // );
     return originalQuery.call(pool, sql, params);
   };
 
@@ -35,7 +35,7 @@ const createPool = (dbConfig) => {
 
 // 여러 데이터베이스 커넥션 풀 생성
 const pools = {
-  GAME_DB: createPool(databases.GAME_DB),
+  GAME_CHAR_DB: createPool(databases.GAME_CHAR_DB),
   USER_DB: createPool(databases.USER_DB),
 };
 

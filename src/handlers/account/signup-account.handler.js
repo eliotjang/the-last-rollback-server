@@ -15,17 +15,12 @@ const signupAccountHandler = async ({ socket, userId, packet }) => {
     if (!userDB) {
       userDB = await createUser(accountId, hashedPwd);
     } else {
-      socket.sendResponse(
-        ErrorCodes.EXISTED_USER,
-        '이미 존재하는 계정입니다',
-        payloadTypes.S_SIGN_UP,
-      );
+      socket.sendResponse(ErrorCodes.EXISTED_USER, '이미 존재하는 계정입니다', payloadTypes.S_SIGN_UP);
       throw new CustomError(ErrorCodes.EXISTED_USER, '이미 존재하는 계정입니다.');
     }
 
     const payload = {
       accountId,
-      accountPwd: hashedPwd,
     };
 
     socket.sendResponse(SuccessCode.Success, '계정 생성 성공', payloadTypes.S_SIGN_UP, payload);
