@@ -37,6 +37,7 @@ class User {
   // 임시, 의사코드
   getPlayerInfo() {
     //return redis.get(this.accountId)
+    return this.playerInfo;
   }
 
   setSession(sessionType, sessionId) {

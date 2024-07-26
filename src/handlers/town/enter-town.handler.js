@@ -7,6 +7,7 @@ import PlayerInfo from '../../protobuf/classes/info/player-info.proto.js';
 import { playerInfoToObject } from '../../utils/transform-object.utils.js';
 import { SuccessCode } from '../../utils/error/errorCodes.js';
 import { getGameAssets } from '../../init/assets.js';
+import { getUserById } from '../../session/user.session.js';
 // import { updateUserInfo } from '../../db/user/user.db.js';
 
 const enterTownHandler = async ({ socket, accountId, packet }) => {
@@ -19,8 +20,17 @@ const enterTownHandler = async ({ socket, accountId, packet }) => {
 
     const playerInfo = new PlayerInfo(accountId, nickname, charClass, transform);
 
-    const plainPlayerInfo = playerInfoToObject(playerInfo);
-    const user = { playerInfo: plainPlayerInfo, socket };
+    // const plainPlayerInfo = playerInfoToObject(playerInfo);
+    // const user = { playerInfo: plainPlayerInfo, socket };
+    const plainPlayerInfo = {
+      playerId: accountId,
+      nickname: nickname,
+      class: charClass,
+      transform: transform,
+      statInfo: new StatInfo(1, 10, 10, 10, 10, 10, 10, 10, 10),
+    };
+    const user = getUserById(accountId);
+    user.playerInfo = plainPlayerInfo;
 
     const townSessions = getAllTownSessions();
     let townSession = townSessions.find((townSession) => !townSession.isFull());

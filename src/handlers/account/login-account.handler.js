@@ -15,13 +15,17 @@ const loginAccountHandler = async ({ socket, userId, packet }) => {
 
     const userDB = await findUserByAccountID(accountId);
     if (!userDB || !(await bcrypt.compare(accountPwd, userDB.accountPwd))) {
-      socket.sendResponse(ErrorCodes.USER_NOT_FOUND, '계정을 찾을 수 없습니다.', payloadTypes.S_LOG_IN);
+      socket.sendResponse(
+        ErrorCodes.USER_NOT_FOUND,
+        '계정을 찾을 수 없습니다.',
+        payloadTypes.S_LOG_IN,
+      );
       throw new CustomError(ErrorCodes.USER_NOT_FOUND, '계정을 찾을 수 없습니다.');
     }
 
     const token = jwt.sign(accountId, config.account.jwtSecret);
     socket.token = token;
-    // socket.accountId = userDB.accountId;
+    socket.accountId = userDB.accountId;
 
     await updateUserLogin(accountId);
 

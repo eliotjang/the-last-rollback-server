@@ -30,7 +30,7 @@ export function sendPacket(payloadType, data) {
  * @param {Object} data key-value pair
  * @param {boolean} dontSend true면 안보내고 packet 반환
  */
-export const sendResponse = function (code, message, payloadType, payload, dontSend) {
+export const sendResponse = function (code, message, payloadType, payload, dontSend = false) {
   const packetData = {
     code,
     message,
