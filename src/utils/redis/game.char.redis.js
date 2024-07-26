@@ -11,18 +11,19 @@ const FIELD = {
 };
 
 export const gameCharRedis = {
-  createGameChar: async (nickname, charClass, transform, accountId) => {
+  createGameChar: async (nickname, charClass, transform, accountId, wantResult) => {
     try {
       const key = PREFIX + ':' + accountId + ':';
       await redisClient.hSet(key, FIELD.NICKNAME, nickname);
       await redisClient.hSet(key, FIELD.CHAR_CLASS, charClass);
       await redisClient.hSet(key, FIELD.TRANSFORM, JSON.stringify(transform));
-      // console.log(await redisClient.hGet(key, field.NICKNAME));
-      // console.log(await redisClient.hGet(key, field.CHAR_CLASS));
-      // console.log(await redisClient.hGet(key, field.TRANSFORM));
-      // const test = await redisClient.hGetAll(key);
-      // console.log(test);
-      // console.log(test[field.NICKNAME]);
+
+      if (wantResult) {
+        const key = PREFIX + ':' + accountId + ':';
+        const data = await redisClient.hGetAll(key);
+        const result = changeNullProtoToObj(data);
+        return result;
+      }
     } catch (error) {
       console.error('Error in createGameChar : ', error);
     }
