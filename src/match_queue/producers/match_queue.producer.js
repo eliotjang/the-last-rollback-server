@@ -13,7 +13,7 @@ setProcessors();
  * @param {number} dungeonCode
  * @param {User} user
  */
-export const matchEnqueue = (dungeonCode, user) => {
+export const matchEnqueue = async (dungeonCode, user) => {
   if (!(user instanceof User)) {
     throw new CustomError(
       ErrorCodes.INVALID_ARGUMENT,
