@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 import { config } from '../config/config.js';
 import CustomError from '../utils/error/customError.js';
 import { ErrorCodes } from '../utils/error/errorCodes.js';
-import { findUserByAccountID } from '../db/user/user.db.js';
+import { userDB } from '../db/user/user.db.js';
 
 export const verifyToken = async (token) => {
   try {
@@ -11,7 +11,7 @@ export const verifyToken = async (token) => {
     if (accountId === null || typeof accountId === 'undefined') {
       throw new CustomError(ErrorCodes.MISSING_LOGIN_FIELDS, '로그인 정보 필요');
     }
-    const user = await findUserByAccountID(accountId);
+    const user = await userDB.getUser(accountId);
 
     if (!user) {
       throw new CustomError(ErrorCodes.USER_NOT_FOUND, '유효하지 않은 유저');

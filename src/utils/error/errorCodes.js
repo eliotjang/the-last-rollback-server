@@ -28,6 +28,7 @@ export const ErrorCodes = {
   GAME_REDIS_DATA_ERROR: 10025,
   TRANSFORM_CASE_ERROR: 10026,
   TOKEN_VERIFY_ERROR: 10027,
+  EXISTED_NICKNAME: 10028,
 };
 
 export const SuccessCode = {

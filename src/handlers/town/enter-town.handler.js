@@ -5,41 +5,99 @@ import { handleError } from '../../utils/error/errorHandler.js';
 import TransformInfo from '../../protobuf/classes/info/transform-info.proto.js';
 import { playerInfoToObject } from '../../utils/transform-object.utils.js';
 import { ErrorCodes, SuccessCode } from '../../utils/error/errorCodes.js';
-import { gameCharRedis } from '../../utils/redis/game.char.redis.js';
+import { townRedis } from '../../utils/redis/town.redis.js';
 import { getUserById } from '../../session/user.session.js';
+import { gameCharDB } from '../../db/game-char/game-char.db.js';
+import lodash from 'lodash';
+import { socketRedis } from '../../utils/redis/socket.redis.js';
+import { sendNotificationSocket, sendResponseSocket } from '../../utils/packet-sender.utils.js';
 
-const enterTownHandler = async ({ socket, accountId, packet }) => {
+const enterTownHandler = async ({ socket, accountId, packet, message }) => {
   try {
     const { nickname, charClass } = packet;
-    const transform = new TransformInfo().getTransform();
-    const gameChar = await gameCharRedis.createGameChar(
-      nickname,
-      charClass,
-      transform,
-      accountId,
-      true,
-    );
+    const isExistPlayerNickname = await gameCharDB.getGameCharByNickname(nickname);
 
-    if (charClass < 1001 || charClass > 1005) {
+    if (message) {
+      console.log(message);
+      const playerInfo = await gameCharDB.getGameChar(accountId);
+      const { playerId, nickname, charClass, transform } = playerInfo;
+      await townRedis.addPlayer(playerId, nickname, charClass, transform);
+      // const socketObj = await socketRedis.addTownSocket(accountId, socket, true);
+      const payload = {
+        player: playerInfo,
+      };
+      // sendResponseSocket(
+      //   socket,
+      //   SuccessCode.Success,
+      //   '기존 캐릭터 로드',
+      //   payloadTypes.S_ENTER,
+      //   payload,
+      // );
+      socket.sendResponse(SuccessCode.Success, '기존 캐릭터 로드', payloadTypes.S_ENTER, payload);
+    } else if (charClass < 1001 || charClass > 1005) {
       socket.sendResponse(
         ErrorCodes.INVALID_PACKET,
         '존재하지 않는 캐릭터입니다.',
         payloadTypes.S_ENTER,
       );
       throw new CustomError(ErrorCodes.INVALID_PACKET, '존재하지 않는 캐릭터입니다.');
+    } else if (!lodash.isEmpty(isExistPlayerNickname)) {
+      socket.sendResponse(
+        ErrorCodes.EXISTED_NICKNAME,
+        '이미 존재하는 닉네임입니다.',
+        payloadTypes.S_ENTER,
+      );
+      throw new CustomError(ErrorCodes.EXISTED_NICKNAME, '이미 존재하는 닉네임입니다.');
+    } else {
+      console.log('새로운 캐릭터 생성');
+      const transform = new TransformInfo().getTransform();
+      const playerInfo = await townRedis.addPlayer(accountId, nickname, charClass, transform, true);
+      await socketRedis.addTownSocket(accountId, socket, true);
+      const gameCharInfo = await gameCharDB.addPlayer(
+        accountId,
+        nickname,
+        charClass,
+        transform,
+        true,
+      );
+
+      socket.sendResponse(SuccessCode.Success, '유저 생성 성공', payloadTypes.S_ENTER, {
+        player: playerInfo,
+      });
     }
-    gameChar.charClass = +gameChar.charClass;
+
+    const othersPlayer = await townRedis.getOthersPlayerInfo(accountId);
+    if (!lodash.isEmpty(othersPlayer)) {
+      socket.sendNotification(payloadTypes.S_SPAWN, { players: othersPlayer });
+    }
+
+    // 기존 유저에게 새로 들어온 유저 정보를 전송 작성 예정
+
+    // Redis에 소켓 저장 후 반환간 데이터가 달라지는 경우로 현재 미사용
+    // const townSockets = await socketRedis.getOthersTownSocket(accountId);
+    // console.log('townSockets  : ', townSockets.length);
+    // if (!lodash.isEmpty(townSockets)) {
+    //   const playerInfo = await gameCharDB.getGameChar(accountId);
+    //   for (let i = 0; i < townSockets.length; i++) {
+    //     const socketObj = townSockets[i];
+    //     console.log('socket : ', socket);
+    //     sendNotificationSocket(socketObj, payloadTypes.S_SPAWN, { players: [playerInfo] });
+    //   }
+    // }
+
     // const plainPlayerInfo = playerInfoToObject(playerInfo);
-    // const user = { playerInfo: gameChar, socket };
-    const user = getUserById(accountId);
+    // const user = { playerInfo, socket };
 
-    const townSessions = getAllTownSessions();
-    let townSession = townSessions.find((townSession) => !townSession.isFull());
-    if (!townSession) {
-      townSession = addTownSession();
-    }
+    // const user = getUserById(accountId);
 
-    townSession.addUser(user);
+    // const townSessions = getAllTownSessions();
+    // let townSession = townSessions.find((townSession) => !townSession.isFull());
+    // if (!townSession) {
+    //   townSession = addTownSession();
+    // }
+
+    // townSession.addUser(user);
+
     // if (existingSession) {
     //   socket.sendResponse(
     //     ErrorCodes.EXISTED_USER,
@@ -48,10 +106,6 @@ const enterTownHandler = async ({ socket, accountId, packet }) => {
     //   );
     //   throw new CustomError(ErrorCodes.USER_NOT_FOUND, '이미 타운 세션에 들어가있는 사용자입니다.');
     // }
-
-    socket.sendResponse(SuccessCode.Success, '유저 생성 성공', payloadTypes.S_ENTER, {
-      player: gameChar,
-    });
   } catch (error) {
     handleError(socket, error);
   }

@@ -44,7 +44,7 @@ export const loadProtoFiles = async () => {
 
     Object.freeze(protoMessages);
     console.log(`Successfully loaded protobuf files.`);
-    console.log(Object.values(protoMessages.packet).map((message) => message.name));
+    // console.log(Object.values(protoMessages.packet).map((message) => message.name));
   } catch (err) {
     console.error(err);
   }

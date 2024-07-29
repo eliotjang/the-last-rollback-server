@@ -8,7 +8,6 @@ const GUEST_FIELD = {
   CHAR_STAT: 'charStat',
 };
 
-// 몬스터 관련 데이터를 호스트만 저장할 것인지 논의 필요
 const HOST_FIELD = {
   CHAR_STAT: 'charStat',
   MONSTER_STAT: 'monsterStat',
