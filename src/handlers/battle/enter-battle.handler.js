@@ -4,7 +4,7 @@ import { getTownSessionByUserSocket } from '../../session/town.session.js';
 import CustomError from '../../utils/error/customError.js';
 import { ErrorCodes } from '../../utils/error/errorCodes.js';
 import { handleError } from '../../utils/error/errorHandler.js';
-import { serialize } from '../../utils/packet-serializer.utils.js';
+import { serialize, serializeEx } from '../../utils/packet-serializer.utils.js';
 
 const enterBattleHandler = ({ socket, userId, payload }) => {
   try {
@@ -25,16 +25,16 @@ const enterBattleHandler = ({ socket, userId, payload }) => {
     const battleSession = addBattleSession();
     battleSession.addUser(user);
 
-    const response = serialize(packetTypes.S_ENTER_DUNGEON, {
-      payload: {
-        dungeonInfo,
-        player,
-        screenText,
-        battleLog,
-      },
-    });
+    // const response = serializeEx(packetTypes.S_ENTER_DUNGEON, {
+    //   payload: {
+    //     dungeonInfo,
+    //     player,
+    //     screenText,
+    //     battleLog,
+    //   },
+    // });
 
-    socket.write(response);
+    // socket.write(response);
   } catch (e) {
     handleError(socket, e);
   }

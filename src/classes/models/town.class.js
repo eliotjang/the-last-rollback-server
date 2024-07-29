@@ -24,11 +24,11 @@ class Town extends Game {
 
       if (curUserInfo.length) {
         super.notifyUser(user.accountId, payloadTypes.S_SPAWN, { players: playerInfos });
-        console.log('현재 들어온 유저에게 다른 모든 유저 정보를 전송:', playerInfos);
+        // console.log('현재 들어온 유저에게 다른 모든 유저 정보를 전송:', playerInfos);
 
         user.getPlayerInfo().then((userInfo) => {
           super.notifyOthers(user.accountId, payloadTypes.S_SPAWN, { players: [userInfo] });
-          console.log('기존 유저에게 새로 들어온 유저 정보를 전송:', userInfo);
+          // console.log('기존 유저에게 새로 들어온 유저 정보를 전송:', userInfo);
         });
       }
     });

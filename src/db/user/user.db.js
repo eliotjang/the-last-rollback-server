@@ -1,26 +1,133 @@
 import pools from '../database.js';
-import { SQL_USER_QUERIES } from './user.queries.js';
+import { USER_QUERIES } from './user.queries.js';
 import { toCamelCase } from '../../utils/transform-case.utils.js';
+import { getGameAssets } from '../../init/assets.js';
 
-export const findUserByAccountID = async (accountId) => {
-  const [rows] = await pools.USER_DB.query(SQL_USER_QUERIES.FIND_USER_BY_ACCOUNT_ID, [accountId]);
-  return toCamelCase(rows[0]);
-};
+export const userDB = {
+  /**
+   *
+   * @param {string} accountId 계정 아이디
+   * @param {string} accountPwd 계정 비밀번호
+   * @param {boolean} wantResult true 시, 계정 생성 결과 반환
+   * @returns 계정 객체 반환
+   */
+  addUser: async function (accountId, accountPwd, wantResult) {
+    await pools.USER_DB.query(USER_QUERIES.ADD_USER, [accountId, accountPwd]);
 
-export const createUser = async (accountId, accountPwd) => {
-  await pools.USER_DB.query(SQL_USER_QUERIES.CREATE_USER, [accountId, accountPwd]);
-  const [rows] = await pools.USER_DB.query(SQL_USER_QUERIES.FIND_USER_BY_ACCOUNT_ID, [accountId]);
-  return toCamelCase(rows[0]);
-};
+    if (wantResult) {
+      return await this.getUser(accountId);
+    }
+  },
 
-export const updateUserLogin = async (accountId) => {
-  await pools.USER_DB.query(SQL_USER_QUERIES.UPDATE_USER_LOGIN, [accountId]);
-};
+  /**
+   *
+   * @param {string} accountId 계정 아이디
+   * @returns 계정 객체 반환
+   */
+  getUser: async function (accountId) {
+    const [rows] = await pools.USER_DB.query(USER_QUERIES.GET_USER, [accountId]);
+    return toCamelCase(rows[0]);
+  },
 
-export const updateUserLevel = async (level, accountId) => {
-  await pools.USER_DB.query(SQL_USER_QUERIES.UPDATE_USER_LEVEL, [level, accountId]);
-};
+  /**
+   *
+   * @param {string} accountId 계정 아이디
+   */
+  updateLogin: async function (accountId) {
+    await pools.USER_DB.query(USER_QUERIES.UPDATE_LOGIN, [accountId]);
+  },
 
-export const updateUserExp = async (experience, accountId) => {
-  await pools.USER_DB.query(SQL_USER_QUERIES.UPDATE_USER_EXPERIENCE, [experience, accountId]);
+  /**
+   *
+   * @param {string} accountId 계정 아이디
+   * @param {boolean} wantResult true 시, 계정 객체 반환
+   * @returns 계정 객체 반환
+   */
+  updateLevel: async function (accountId, wantResult) {
+    const { userInfo } = getGameAssets();
+    const user = await this.getUser(accountId);
+
+    if (user.userLevel >= userInfo.data[userInfo.data.length - 1].level) {
+      console.log('최대 레벨에 도달했습니다.');
+      return;
+    }
+
+    await pools.USER_DB.query(USER_QUERIES.UPDATE_LEVEL, [accountId]);
+
+    if (wantResult) {
+      return await this.getUser(accountId);
+    }
+  },
+
+  /**
+   *
+   * @param {string} accountId 계정 아이디
+   * @param {number} experience 획득 경험치
+   * @param {boolean} wantResult true 시, 계정 객체 반환
+   * @returns 계정 객체 반환
+   */
+  updateExp: async function (accountId, experience, wantResult) {
+    const { userInfo } = getGameAssets();
+    let user = await this.getUser(accountId);
+
+    if (user.userLevel >= userInfo.data[userInfo.data.length - 1].level) {
+      console.log('최대 레벨에 도달했습니다.');
+      return;
+    }
+
+    let targetData = userInfo.data.find((data) => data.level === user.userLevel);
+
+    while (experience >= targetData.maxExp) {
+      experience -= targetData.maxExp;
+      user = await this.updateLevel(accountId, true);
+
+      if (user.userLevel >= userInfo.data[userInfo.data.length - 1].level) {
+        console.log('최대 레벨에 도달했습니다.');
+        return;
+      }
+      targetData = userInfo.data.find((data) => data.level === user.userLevel);
+    }
+    await pools.USER_DB.query(USER_QUERIES.UPDATE_EXP, [experience, accountId]);
+
+    if (wantResult) {
+      return await this.getUser(accountId);
+    }
+  },
+
+  /**
+   *
+   * @param {string} accountId 계정 아이디
+   * @param {boolean} wantResult true 시, 계정 객체 반환
+   * @returns 계정 객체 반환
+   */
+  updateStageUnlock: async function (accountId, wantResult) {
+    const { stageUnlock } = getGameAssets();
+    let user = await this.getUser(accountId);
+
+    if (user.stageUnlock >= stageUnlock.data[stageUnlock.data.length - 1].stage) {
+      console.log('최대 스테이지에 도달했습니다.');
+      return;
+    }
+
+    await pools.USER_DB.query(USER_QUERIES.UPDATE_STAGE_UNLOCK, [accountId]);
+
+    if (wantResult) {
+      return await this.getUser(accountId);
+    }
+  },
+
+  /**
+   *
+   * @param {string} accountId 계정 아이디
+   * @param {boolean} wantResult true 시, 계정 객체 반환
+   * @returns 계정 객체 반환
+   */
+  removeUser: async function (accountId, wantResult) {
+    const result = await this.getUser(accountId);
+    await pools.USER_DB.query(USER_QUERIES.REMOVE_USER, [accountId]);
+
+    if (wantResult) {
+      return result;
+    }
+  },
 };
