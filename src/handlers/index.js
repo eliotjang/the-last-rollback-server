@@ -5,7 +5,7 @@ import locationUpdateHandler from './game/locationUpdate.handler.js';
 import enterTownHandler from './town/enter-town.handler.js';
 import loginAccountHandler from './account/login-account.handler.js';
 import signupAccountHandler from './account/signup-account.handler.js';
-import dungeonMatchHandler from './battle/dungeon-match.handler.js';
+import dungeonMatchHandler from './dungeon/dungeon-match.handler.js';
 
 const handlers = {
   [payloadTypes.C_ENTER]: enterTownHandler,

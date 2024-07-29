@@ -1,8 +1,8 @@
 import { MAX_USERS } from '../constants/game.constants.js';
-import { townRedis } from './town.redis.js';
-import { dungeonRedis } from './dungeon.redis.js';
+import { townRedis } from '../utils/redis/town.redis.js';
+import { dungeonRedis } from '../utils/redis/dungeon.redis.js';
 import { getTownSessionByUserId } from '../session/town.session.js';
-import { payloadTypes } from '../../constants/packet.constants.js';
+import { payloadTypes } from '../constants/packet.constants.js';
 
 // const waitingList = []; // one list per stage?
 const waitingLists = {}; // dungeonCode : waitingList[];
