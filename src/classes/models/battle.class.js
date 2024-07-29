@@ -1,6 +1,5 @@
 import Game from './game.class.js';
-
-const MAX_USERS = 4;
+import { MAX_USERS } from '../../constants/game.constants.js';
 
 class Battle extends Game {
   constructor(id) {
