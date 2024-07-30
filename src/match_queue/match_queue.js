@@ -5,19 +5,61 @@ import { getTownSessionByUserId } from '../session/town.session.js';
 import { payloadTypes } from '../constants/packet.constants.js';
 
 // const waitingList = []; // one list per stage?
-const waitingLists = {}; // dungeonCode : waitingList[];
+let waitingLists; // dungeonCode : waitingList[];
+
+export const initWaitingLists = () => {
+  waitingLists = {};
+};
 
 /**
  *
  * @param {Object} data
  */
 export const addToWaitingList = (data) => {
+  const { dungeonCode, user } = data;
+
   // TODO: init 파일로 모든 던전 코드에 대해 waitingList initialize 하고 이 if문 제거
-  if (!waitingLists[data.dungeonCode]) {
-    waitingLists[data.dungeonCode] = [];
+  if (!waitingLists[dungeonCode]) {
+    waitingLists[dungeonCode] = [];
   }
-  waitingLists[data.dungeonCode].push(data.user);
-  console.log('waitingLists[data.dungeonCode]:', waitingLists[data.dungeonCode]);
+  const idx = getWaitingListIndex(dungeonCode, user);
+  console.log('idx:', idx);
+  if (idx === -1) {
+    // 유저가 큐에 존재하지 않을 때
+    waitingLists[dungeonCode].push(user);
+  } else {
+    console.log(`User ${user.accountId} already in queue.`);
+  }
+
+  printWaitingList(dungeonCode);
+  // console.log('waitingLists[dungeonCode]:', waitingLists[dungeonCode]);
+};
+
+// TODO: 시간복잡도 줄일 수 있는 구조 고민해보기 (전송했던 dungeonCode 저장?)
+export const clearFromWaitingLists = (user) => {
+  for (const dungeonCode in Object.keys(waitingLists)) {
+    const idx = getWaitingListIndex(dungeonCode, user);
+    if (idx !== -1) {
+      // 유저를 찾으면 제거
+      console.log('Found user:', idx);
+      waitingLists[dungeonCode]?.splice(idx, 1);
+    }
+  }
+};
+
+const getWaitingListIndex = (dungeonCode, user) => {
+  return waitingLists[dungeonCode]?.findIndex((item) => item === user);
+};
+
+const printWaitingList = (dungeonCode) => {
+  if (waitingLists[dungeonCode]) {
+    console.log(
+      'waitingList:',
+      waitingLists[dungeonCode].map((user) => user.accountId),
+    );
+  } else {
+    console.log('???');
+  }
 };
 
 /**
@@ -27,7 +69,7 @@ export const addToWaitingList = (data) => {
 export const checkWaitingList = async (dungeonCode) => {
   console.log('------------');
   if (waitingLists[dungeonCode].length >= MAX_USERS) {
-    const users = waitingLists.splice(0, MAX_USERS);
+    const users = waitingLists[dungeonCode].splice(0, MAX_USERS);
     console.log('checkWaitingList:', users);
 
     // TODO: 위의 users에 있는 유저들을 포함하는 게임 세션 생성
