@@ -328,6 +328,7 @@ message NotificationPacket {
   uint32 payloadType = 2;
   oneof payload {
     S_Move sMove = 4;
+    S_Despawn sDespawn = 5;
     S_Spawn sSpawn = 6;
     S_SomeNotification sSomeNotification = 3;
   }

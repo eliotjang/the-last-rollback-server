@@ -1,6 +1,7 @@
 import { sessionTypes } from '../../constants/session.constants.js';
-import { getBattleSession } from '../../session/battle.session.js';
+import { getDungeonSession } from '../../session/dungeon.session.js';
 import { getTownSession } from '../../session/town.session.js';
+import { dungeonRedis } from '../../utils/redis/dungeon.redis.js';
 import { townRedis } from '../../utils/redis/town.redis.js';
 
 class User {
@@ -26,8 +27,8 @@ class User {
       case sessionTypes.TOWN:
         getSessionFunc = getTownSession;
         break;
-      case sessionTypes.BATTLE:
-        getSessionFunc = getBattleSession;
+      case sessionTypes.DUNGEON:
+        getSessionFunc = getDungeonSession;
         break;
       default:
         return null;
@@ -35,9 +36,15 @@ class User {
     return getSessionFunc(this.sessionInfo.id);
   }
 
-  // 임시, 의사코드
   async getPlayerInfo() {
-    return await townRedis.getPlayerInfo(this.accountId);
+    switch (this.sessionInfo.type) {
+      case sessionTypes.TOWN:
+        return await townRedis.getPlayerInfo(this.accountId);
+      case sessionTypes.BATTLE:
+        return await dungeonRedis.getPlayerInfo(this.accountId);
+      default:
+        return null;
+    }
   }
 
   setSession(sessionType, sessionId) {
@@ -48,6 +55,17 @@ class User {
   removeSession() {
     this.sessionInfo.type = sessionTypes.NULL;
     this.sessionInfo.id = null;
+  }
+
+  async removePlayerInfo() {
+    switch (this.sessionInfo.type) {
+      case sessionTypes.TOWN:
+        return await townRedis.removePlayer(this.accountId);
+      case sessionTypes.BATTLE:
+        return await dungeonRedis.removePlayer(this.accountId);
+      default:
+        return null;
+    }
   }
 }
 
