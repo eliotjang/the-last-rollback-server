@@ -34,7 +34,7 @@ const loginAccountHandler = async ({ socket, userId, packet }) => {
 
     await userDB.updateLogin(accountId);
 
-    addUser(socket, accountId);
+    await addUser(socket, accountId);
 
     const playerInfo = await gameCharDB.getGameChar(accountId);
     if (!lodash.isEmpty(playerInfo)) {
