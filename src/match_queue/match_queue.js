@@ -2,7 +2,9 @@ import { MAX_USERS } from '../constants/game.constants.js';
 import { townRedis } from '../utils/redis/town.redis.js';
 import { dungeonRedis } from '../utils/redis/dungeon.redis.js';
 import { getTownSessionByUserId } from '../session/town.session.js';
-import { payloadTypes } from '../constants/packet.constants.js';
+import { addBattleSession } from '../session/battle.session.js';
+import { getUserById } from '../session/user.session.js';
+import { enterDungeonSession } from '../handlers/dungeon/enter-dungeon.js';
 
 // const waitingList = []; // one list per stage?
 let waitingLists; // dungeonCode : waitingList[];
@@ -74,26 +76,35 @@ export const checkWaitingList = async (dungeonCode) => {
 
     // TODO: 위의 users에 있는 유저들을 포함하는 게임 세션 생성
 
+    const accountIds = users.map((user) => user.accountId);
+
     // BattleSession 생성
-    const hostId = users[0];
+    // redis
+    const hostId = accountIds[0];
     const hostInfo = await townRedis.getPlayerInfo(hostId);
     await dungeonRedis.createDungeon(hostInfo, hostId);
+    // 인메모리
+    const dungeonSession = addBattleSession();
 
-    // users의 유저를 battle session에 추가
-    for (const user of users) {
-      const playerInfo = await townRedis.getPlayerInfo(user);
-      await dungeonRedis.createGuest(playerInfo, hostId, user);
-    }
+    for (const accountId of accountIds) {
+      // users의 유저를 battle session에 추가
+      // redis
+      const playerInfo = await townRedis.getPlayerInfo(accountId);
+      await dungeonRedis.createGuest(playerInfo, hostId, accountId);
+      // 인메모리
+      const user = getUserById(accountId);
+      dungeonSession.addUser(user);
 
-    // town session에서 유저 제거
-    for (const user of users) {
-      await townRedis.removePlayer(user, false);
-    }
+      // town session에서 유저 제거
+      await townRedis.removePlayer(accountId, false);
 
-    // 각 유저의 town session 내 다른 유저에게 Despawn 패킷 전송
-    for (const user of users) {
-      const townSession = getTownSessionByUserId(user); // 이 방법으로 townSession에 저장했다는 가정 하에
-      townSession.notifyOthers(user, payloadTypes.S_DESPAWN, { playerIds: users });
+      // 각 유저의 town session 내 다른 유저에게 Despawn 패킷 전송
+      const townSession = getTownSessionByUserId(accountId);
+      console.log('townSession:', townSession);
+      townSession.removeUser(accountId);
+
+      // 각 클라이언트에게 S_EnterDungeon 패킷 전송
+      enterDungeonSession(accountId, dungeonCode);
     }
   }
 };
