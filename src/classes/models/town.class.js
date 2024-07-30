@@ -1,6 +1,5 @@
 import { payloadTypes } from '../../constants/packet.constants.js';
 import Game from './game.class.js';
-import { serialize } from '../../utils/packet-serializer.utils.js';
 import { sessionTypes } from '../../constants/session.constants.js';
 
 const MAX_USERS = 20;
@@ -57,7 +56,7 @@ class Town extends Game {
   removeUser(accountId) {
     super.removeUser(accountId);
 
-    super.notifyAll(payloadTypes.S_DESPAWN, { playerIds: accountId });
+    super.notifyAll(payloadTypes.S_DESPAWN, { playerIds: [accountId] });
   }
 
   //

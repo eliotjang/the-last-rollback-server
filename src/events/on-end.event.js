@@ -7,10 +7,10 @@ import { townRedis } from '../utils/redis/town.redis.js';
 
 const onEnd = (socket) => async () => {
   try {
-    // removeUser(socket);
-    const player = await townRedis.removePlayer(socket.accountId, true);
-    await gameCharDB.updateTransform(socket.accountId, player.transform, true);
-    await socketRedis.removeTownSocket(socket.accountId);
+    removeUser(socket);
+    // const player = await townRedis.removePlayer(socket.accountId, true);
+    // await gameCharDB.updateTransform(socket.accountId, player.transform, true);
+    // await socketRedis.removeTownSocket(socket.accountId);
 
     console.log('클라이언트 연결이 종료되었습니다.');
   } catch (error) {

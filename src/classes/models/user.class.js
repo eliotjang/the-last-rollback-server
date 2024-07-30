@@ -36,7 +36,6 @@ class User {
     return getSessionFunc(this.sessionInfo.id);
   }
 
-  // 임시, 의사코드
   async getPlayerInfo() {
     switch (this.sessionInfo.type) {
       case sessionTypes.TOWN:
@@ -56,6 +55,17 @@ class User {
   removeSession() {
     this.sessionInfo.type = sessionTypes.NULL;
     this.sessionInfo.id = null;
+  }
+
+  async removePlayerInfo() {
+    switch (this.sessionInfo.type) {
+      case sessionTypes.TOWN:
+        return await townRedis.removePlayer(this.accountId);
+      case sessionTypes.BATTLE:
+        return await dungeonRedis.removePlayer(this.accountId);
+      default:
+        return null;
+    }
   }
 }
 
