@@ -244,7 +244,7 @@ message ActionSet {
 }
 
 message PlayerStatus {
-  int32 playerClass = 1;
+  // int32 playerClass = 1;
   int32 playerLevel = 2;
   string playerName = 3;
   float playerFullHp = 4;
