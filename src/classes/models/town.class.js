@@ -1,28 +1,22 @@
 import { payloadTypes } from '../../constants/packet.constants.js';
 import Game from './game.class.js';
 import { serialize } from '../../utils/packet-serializer.utils.js';
+import { sessionTypes } from '../../constants/session.constants.js';
 
 const MAX_USERS = 20;
 
 class Town extends Game {
   constructor(id) {
     super(id, MAX_USERS);
+    this.type = sessionTypes.TOWN;
   }
 
   addUser(user) {
-    let curUserInfo;
+    console.log('In townSession', this.users);
     Promise.all(this.users.map((curUser) => curUser.getPlayerInfo())).then((playerInfos) => {
-      curUserInfo = playerInfos;
-
       super.addUser(user);
 
-      // const allPlayerInfo = this.users.reduce((data, curUser) => {
-      //   // data.push(curUser.getPlayerInfo());
-      //   curUser.getPlayerInfo().then((e) => data.push(e));
-      //   return data;
-      // }, []);
-
-      if (curUserInfo.length) {
+      if (playerInfos.length) {
         super.notifyUser(user.accountId, payloadTypes.S_SPAWN, { players: playerInfos });
         // console.log('현재 들어온 유저에게 다른 모든 유저 정보를 전송:', playerInfos);
 
@@ -32,6 +26,13 @@ class Town extends Game {
         });
       }
     });
+
+    // const allPlayerInfo = this.users.reduce((data, curUser) => {
+    //   // data.push(curUser.getPlayerInfo());
+    //   curUser.getPlayerInfo().then((e) => data.push(e));
+    //   return data;
+    // }, []);
+
     // this.users.forEach((curUser) => {
     //   const data = allPlayerInfo.filter((playerInfo) => playerInfo.playerId !== curUser.accountId);
     //   if (data.length === 0) {
@@ -57,6 +58,13 @@ class Town extends Game {
     super.removeUser(accountId);
 
     super.notifyAll(payloadTypes.S_DESPAWN, { playerIds: accountId });
+  }
+
+  //
+  movePlayer(accountId, transform) {
+    // await townRedis.updatePlayerTransform(transform, accountId);
+
+    super.notifyAll(payloadTypes.S_MOVE, { playerId: accountId, transform });
   }
 }
 

@@ -1,6 +1,7 @@
 import { sessionTypes } from '../../constants/session.constants.js';
 import { getBattleSession } from '../../session/battle.session.js';
 import { getTownSession } from '../../session/town.session.js';
+import { dungeonRedis } from '../../utils/redis/dungeon.redis.js';
 import { townRedis } from '../../utils/redis/town.redis.js';
 
 class User {
@@ -37,7 +38,14 @@ class User {
 
   // 임시, 의사코드
   async getPlayerInfo() {
-    return await townRedis.getPlayerInfo(this.accountId);
+    switch (this.sessionInfo.type) {
+      case sessionTypes.TOWN:
+        return await townRedis.getPlayerInfo(this.accountId);
+      case sessionTypes.BATTLE:
+        return await dungeonRedis.getPlayerInfo(this.accountId);
+      default:
+        return null;
+    }
   }
 
   setSession(sessionType, sessionId) {

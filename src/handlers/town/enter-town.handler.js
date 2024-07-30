@@ -17,11 +17,22 @@ const enterTownHandler = async ({ socket, accountId, packet, message }) => {
     const { nickname, charClass } = packet;
     const isExistPlayerNickname = await gameCharDB.getGameCharByNickname(nickname);
 
+    const user = getUserById(accountId);
+
+    const townSessions = getAllTownSessions();
+    let townSession = townSessions.find((townSession) => !townSession.isFull());
+    if (!townSession) {
+      townSession = addTownSession();
+    }
+
     if (message) {
       console.log(message);
       const playerInfo = await gameCharDB.getGameChar(accountId);
       const { playerId, nickname, charClass, transform } = playerInfo;
       await townRedis.addPlayer(playerId, nickname, charClass, transform);
+
+      townSession.addUser(user);
+
       // const socketObj = await socketRedis.addTownSocket(accountId, socket, true);
       const payload = {
         player: playerInfo,
@@ -52,7 +63,7 @@ const enterTownHandler = async ({ socket, accountId, packet, message }) => {
       console.log('새로운 캐릭터 생성');
       const transform = new TransformInfo().getTransform();
       const playerInfo = await townRedis.addPlayer(accountId, nickname, charClass, transform, true);
-      await socketRedis.addTownSocket(accountId, socket, true);
+      // await socketRedis.addTownSocket(accountId, socket, true);
       const gameCharInfo = await gameCharDB.addPlayer(
         accountId,
         nickname,
@@ -61,15 +72,17 @@ const enterTownHandler = async ({ socket, accountId, packet, message }) => {
         true,
       );
 
+      townSession.addUser(user);
+
       socket.sendResponse(SuccessCode.Success, '유저 생성 성공', payloadTypes.S_ENTER, {
         player: playerInfo,
       });
     }
 
-    const othersPlayer = await townRedis.getOthersPlayerInfo(accountId);
-    if (!lodash.isEmpty(othersPlayer)) {
-      socket.sendNotification(payloadTypes.S_SPAWN, { players: othersPlayer });
-    }
+    // const othersPlayer = await townRedis.getOthersPlayerInfo(accountId);
+    // if (!lodash.isEmpty(othersPlayer)) {
+    //   socket.sendNotification(payloadTypes.S_SPAWN, { players: othersPlayer });
+    // }
 
     // 기존 유저에게 새로 들어온 유저 정보를 전송 작성 예정
 
