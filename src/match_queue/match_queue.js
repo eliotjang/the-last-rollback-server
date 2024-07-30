@@ -2,7 +2,7 @@ import { MAX_USERS } from '../constants/game.constants.js';
 import { townRedis } from '../utils/redis/town.redis.js';
 import { dungeonRedis } from '../utils/redis/dungeon.redis.js';
 import { getTownSessionByUserId } from '../session/town.session.js';
-import { addBattleSession } from '../session/battle.session.js';
+import { addDungeonSession } from '../session/dungeon.session.js';
 import { getUserById } from '../session/user.session.js';
 import { enterDungeonSession } from '../handlers/dungeon/enter-dungeon.js';
 
@@ -84,7 +84,7 @@ export const checkWaitingList = async (dungeonCode) => {
     const hostInfo = await townRedis.getPlayerInfo(hostId);
     await dungeonRedis.createDungeon(hostInfo, hostId);
     // 인메모리
-    const dungeonSession = addBattleSession();
+    const dungeonSession = addDungeonSession();
 
     for (const accountId of accountIds) {
       // users의 유저를 battle session에 추가
