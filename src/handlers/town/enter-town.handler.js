@@ -12,10 +12,37 @@ import lodash from 'lodash';
 import { socketRedis } from '../../utils/redis/socket.redis.js';
 import { sendNotificationSocket, sendResponseSocket } from '../../utils/packet-sender.utils.js';
 
-const enterTownHandler = async ({ socket, accountId, packet, message }) => {
+const enterTownHandler = async ({ socket, accountId, packet, playerInfo }) => {
   try {
     const { nickname, charClass } = packet;
-    const isExistPlayerNickname = await gameCharDB.getGameCharByNickname(nickname);
+    let message;
+
+    if (!playerInfo) {
+      const isExistPlayerNickname = await gameCharDB.getGameCharByNickname(nickname);
+      if (!lodash.isEmpty(isExistPlayerNickname)) {
+        socket.sendResponse(
+          ErrorCodes.EXISTED_NICKNAME,
+          '이미 존재하는 닉네임입니다.',
+          payloadTypes.S_ENTER,
+        );
+        throw new CustomError(ErrorCodes.EXISTED_NICKNAME, '이미 존재하는 닉네임입니다.');
+      } else if (charClass < 1001 || charClass > 1005) {
+        socket.sendResponse(
+          ErrorCodes.INVALID_PACKET,
+          '존재하지 않는 캐릭터입니다.',
+          payloadTypes.S_ENTER,
+        );
+        throw new CustomError(ErrorCodes.INVALID_PACKET, '존재하지 않는 캐릭터입니다.');
+      }
+
+      const transform = { posX: 0, posY: 1, posZ: 0, rot: 0 }; // 임시, gameCharDB 변경 시 제거
+
+      await gameCharDB.addPlayer(accountId, nickname, charClass, transform);
+      console.log('새로운 캐릭터 생성');
+      message = '유저 생성 성공';
+    } else {
+      message = '기존 캐릭터 로드';
+    }
 
     const user = getUserById(accountId);
 
@@ -25,59 +52,12 @@ const enterTownHandler = async ({ socket, accountId, packet, message }) => {
       townSession = addTownSession();
     }
 
-    if (message) {
-      console.log(message);
-      const playerInfo = await gameCharDB.getGameChar(accountId);
-      const { playerId, nickname, charClass, transform } = playerInfo;
-      await townRedis.addPlayer(playerId, nickname, charClass, transform);
+    const transform = new TransformInfo().getTransform();
+    playerInfo = await townRedis.addPlayer(accountId, nickname, charClass, transform, true);
 
-      townSession.addUser(user);
+    townSession.addUser(user);
 
-      // const socketObj = await socketRedis.addTownSocket(accountId, socket, true);
-      const payload = {
-        player: playerInfo,
-      };
-      // sendResponseSocket(
-      //   socket,
-      //   SuccessCode.Success,
-      //   '기존 캐릭터 로드',
-      //   payloadTypes.S_ENTER,
-      //   payload,
-      // );
-      socket.sendResponse(SuccessCode.Success, '기존 캐릭터 로드', payloadTypes.S_ENTER, payload);
-    } else if (charClass < 1001 || charClass > 1005) {
-      socket.sendResponse(
-        ErrorCodes.INVALID_PACKET,
-        '존재하지 않는 캐릭터입니다.',
-        payloadTypes.S_ENTER,
-      );
-      throw new CustomError(ErrorCodes.INVALID_PACKET, '존재하지 않는 캐릭터입니다.');
-    } else if (!lodash.isEmpty(isExistPlayerNickname)) {
-      socket.sendResponse(
-        ErrorCodes.EXISTED_NICKNAME,
-        '이미 존재하는 닉네임입니다.',
-        payloadTypes.S_ENTER,
-      );
-      throw new CustomError(ErrorCodes.EXISTED_NICKNAME, '이미 존재하는 닉네임입니다.');
-    } else {
-      console.log('새로운 캐릭터 생성');
-      const transform = new TransformInfo().getTransform();
-      const playerInfo = await townRedis.addPlayer(accountId, nickname, charClass, transform, true);
-      // await socketRedis.addTownSocket(accountId, socket, true);
-      const gameCharInfo = await gameCharDB.addPlayer(
-        accountId,
-        nickname,
-        charClass,
-        transform,
-        true,
-      );
-
-      townSession.addUser(user);
-
-      socket.sendResponse(SuccessCode.Success, '유저 생성 성공', payloadTypes.S_ENTER, {
-        player: playerInfo,
-      });
-    }
+    socket.sendResponse(SuccessCode.Success, message, payloadTypes.S_ENTER, { player: playerInfo });
 
     // const othersPlayer = await townRedis.getOthersPlayerInfo(accountId);
     // if (!lodash.isEmpty(othersPlayer)) {
@@ -97,19 +77,6 @@ const enterTownHandler = async ({ socket, accountId, packet, message }) => {
     //     sendNotificationSocket(socketObj, payloadTypes.S_SPAWN, { players: [playerInfo] });
     //   }
     // }
-
-    // const plainPlayerInfo = playerInfoToObject(playerInfo);
-    // const user = { playerInfo, socket };
-
-    // const user = getUserById(accountId);
-
-    // const townSessions = getAllTownSessions();
-    // let townSession = townSessions.find((townSession) => !townSession.isFull());
-    // if (!townSession) {
-    //   townSession = addTownSession();
-    // }
-
-    // townSession.addUser(user);
 
     // if (existingSession) {
     //   socket.sendResponse(

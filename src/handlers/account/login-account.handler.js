@@ -38,9 +38,10 @@ const loginAccountHandler = async ({ socket, userId, packet }) => {
 
     const playerInfo = await gameCharDB.getGameChar(accountId);
     if (!lodash.isEmpty(playerInfo)) {
-      const message = '캐릭터를 생성한 기록이 있습니다. 기존 캐릭터를 로드합니다.';
+      // const message = '캐릭터를 생성한 기록이 있습니다. 기존 캐릭터를 로드합니다.';
       const { nickname, charClass } = playerInfo;
-      enterTownHandler({ socket, accountId, packet: { nickname, charClass }, message });
+      // enterTownHandler({ socket, accountId, packet: { nickname, charClass }, message });
+      enterTownHandler({ socket, accountId, packet: { nickname, charClass }, playerInfo });
       return;
     }
 
