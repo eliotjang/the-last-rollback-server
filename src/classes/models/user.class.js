@@ -1,5 +1,5 @@
 import { sessionTypes } from '../../constants/session.constants.js';
-import { getBattleSession } from '../../session/battle.session.js';
+import { getDungeonSession } from '../../session/dungeon.session.js';
 import { getTownSession } from '../../session/town.session.js';
 import { dungeonRedis } from '../../utils/redis/dungeon.redis.js';
 import { townRedis } from '../../utils/redis/town.redis.js';
@@ -27,8 +27,8 @@ class User {
       case sessionTypes.TOWN:
         getSessionFunc = getTownSession;
         break;
-      case sessionTypes.BATTLE:
-        getSessionFunc = getBattleSession;
+      case sessionTypes.DUNGEON:
+        getSessionFunc = getDungeonSession;
         break;
       default:
         return null;
