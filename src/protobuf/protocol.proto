@@ -353,6 +353,6 @@ message NotificationPacket {
     S_Despawn sDespawn = 5;
     S_Spawn sSpawn = 6;
     S_SomeNotification sSomeNotification = 3;
-    S_EnterDungeon sEnterDungeon = 11;
+    // S_EnterDungeon sEnterDungeon = 11;
   }
 }
