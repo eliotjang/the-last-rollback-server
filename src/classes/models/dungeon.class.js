@@ -8,6 +8,12 @@ class Dungeon extends Game {
     super(id, MAX_USERS);
     this.type = sessionTypes.DUNGEON;
   }
+
+  addUser(user) {
+    Promise.all(this.users.map((curUser) => curUser.getPlayerInfo())).then(() => {
+      super.addUser(user);
+    });
+  }
 }
 
 export default Dungeon;
