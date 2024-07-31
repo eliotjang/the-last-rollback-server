@@ -47,10 +47,9 @@ export const userSocket = {
 export const addUser = (socket, accountId) => {
   let user = getUserById(accountId);
   if (user) {
-    user.socket = socket;
-  } else {
-    user = new User(accountId, socket);
+    removeUser(user.socket);
   }
+  user = new User(accountId, socket);
   userSession.push(user);
   return user;
 };
@@ -61,6 +60,7 @@ export const removeUser = (socket) => {
     const user = userSession.splice(index, 1)[0];
     const gameSession = user.getSession();
     if (gameSession) {
+      user.removePlayerInfo();
       gameSession.removeUser(user.accountId);
     }
 
