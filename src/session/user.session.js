@@ -44,23 +44,24 @@ export const userSocket = {
   },
 };
 
-export const addUser = (socket, accountId) => {
+export const addUser = async (socket, accountId) => {
   let user = getUserById(accountId);
   if (user) {
-    removeUser(user.socket);
+    await removeUser(user.socket);
+    user.socket.end('duplicated user');
   }
   user = new User(accountId, socket);
   userSession.push(user);
   return user;
 };
 
-export const removeUser = (socket) => {
+export const removeUser = async (socket) => {
   const index = userSession.findIndex((user) => user.socket === socket);
   if (index !== -1) {
     const user = userSession.splice(index, 1)[0];
     const gameSession = user.getSession();
     if (gameSession) {
-      user.removePlayerInfo();
+      await user.removePlayerInfo();
       gameSession.removeUser(user.accountId);
     }
 
