@@ -31,7 +31,7 @@ export const loadGameAssets = async () => {
       readFileAsync('char_stat_info.json'),
       readFileAsync('user_info.json'),
       readFileAsync('stage_unlock.json'),
-      readFileAsync('monster_info'),
+      readFileAsync('monster_info.json'),
     ]);
     gameAssets = { charStatInfo, userInfo, stageUnlock, monsterInfo };
     console.log('JSON 데이터 파일이 로드되었습니다.');

@@ -30,6 +30,7 @@ export const ErrorCodes = {
   TOKEN_VERIFY_ERROR: 10027,
   EXISTED_NICKNAME: 10028,
   MONSTER_NOT_FOUND: 10029,
+  INVALID_ARGUMENT: 11111,
 };
 
 export const SuccessCode = {

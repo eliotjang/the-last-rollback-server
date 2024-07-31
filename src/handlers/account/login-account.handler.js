@@ -9,7 +9,7 @@ import lodash from 'lodash';
 import { gameCharDB } from '../../db/game-char/game-char.db.js';
 import { userDB } from '../../db/user/user.db.js';
 import enterTownHandler from '../town/enter-town.handler.js';
-import { userSocket } from '../../session/user.session.js';
+import { addUser, userSocket } from '../../session/user.session.js';
 
 const loginAccountHandler = async ({ socket, userId, packet }) => {
   try {
@@ -34,16 +34,19 @@ const loginAccountHandler = async ({ socket, userId, packet }) => {
 
     await userDB.updateLogin(accountId);
 
+    await addUser(socket, accountId);
+
     const playerInfo = await gameCharDB.getGameChar(accountId);
     if (!lodash.isEmpty(playerInfo)) {
-      const message = '캐릭터를 생성한 기록이 있습니다. 기존 캐릭터를 로드합니다.';
+      // const message = '캐릭터를 생성한 기록이 있습니다. 기존 캐릭터를 로드합니다.';
       const { nickname, charClass } = playerInfo;
-      enterTownHandler({ socket, accountId, packet: { nickname, charClass }, message });
+      // enterTownHandler({ socket, accountId, packet: { nickname, charClass }, message });
+      enterTownHandler({ socket, accountId, packet: { nickname, charClass }, playerInfo });
       return;
     }
 
     // 소켓 임시 저장
-    userSocket.addUser(socket, accountId);
+    // userSocket.addUser(socket, accountId);
 
     const payload = {
       accountId,
