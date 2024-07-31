@@ -43,6 +43,8 @@ export const payloadTypes = {
   S_SIGN_UP: 27,
   C_LOG_IN: 28,
   S_LOG_IN: 29,
+  C_MONSTER_MOVE: 60,
+  S_MONSTER_MOVE: 61,
   S_SOME_NOTIFICATION: 300,
 };
 

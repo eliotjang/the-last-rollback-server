@@ -36,7 +36,28 @@ enum MsgId {
     S_SIGN_UP = 27;
     C_LOG_IN = 28;
     S_LOG_IN = 29; 
+    C_MONSTER_MOVE = 60;
+    S_MONSTER_MOVE = 61;
     S_SOME_NOTIFICATION = 300;
+}
+
+message C_SignUp {
+  string accountId = 1;
+  string accountPwd = 2;
+}
+
+message S_SignUp {
+  string accountId = 1;
+}
+
+message C_LogIn {
+  string accountId = 1;
+  string accountPwd = 2;
+}
+
+message S_LogIn {
+  string accountId = 1;
+  string token = 2;
 }
 
 // 응답 패킷 - S_Enter, S_Spawn
@@ -55,8 +76,6 @@ message S_Spawn {
   repeated PlayerInfo players = 1;
 }
 
-
-
 // 접속상태를 서버에서 판단해서 끊기도 다른 플레이어들 정보 전달
 // 응답 패킷 - S_Leave, S_Despawn
 message S_Despawn {
@@ -72,6 +91,18 @@ message C_Move {
 // ALL
 message S_Move {
   string playerId = 1;
+  TransformInfo transform = 2;
+}
+
+// 호스트
+message C_MonsterMove {
+  int32 monsterIdx = 1;
+  TransformInfo transform = 2;
+}
+
+// 게스트
+message S_MonsterMove {
+  int32 monsterIdx = 1;
   TransformInfo transform = 2;
 }
 
@@ -248,25 +279,6 @@ message BattleLog {
 message BtnInfo {
   string msg = 1;
   bool enable = 2;
-}
-
-message C_SignUp {
-  string accountId = 1;
-  string accountPwd = 2;
-}
-
-message S_SignUp {
-  string accountId = 1;
-}
-
-message C_LogIn {
-  string accountId = 1;
-  string accountPwd = 2;
-}
-
-message S_LogIn {
-  string accountId = 1;
-  string token = 2;
 }
 
 // 임시

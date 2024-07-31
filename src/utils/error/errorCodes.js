@@ -29,6 +29,7 @@ export const ErrorCodes = {
   TRANSFORM_CASE_ERROR: 10026,
   TOKEN_VERIFY_ERROR: 10027,
   EXISTED_NICKNAME: 10028,
+  MONSTER_NOT_FOUND: 10029,
 };
 
 export const SuccessCode = {
