@@ -48,7 +48,10 @@ export const clearFromWaitingLists = (user) => {
 };
 
 const getWaitingListIndex = (dungeonCode, user) => {
-  return waitingLists[dungeonCode]?.findIndex((item) => item === user);
+  if (waitingLists[dungeonCode]) {
+    return waitingLists[dungeonCode].findIndex((item) => item.accountId === user.accountId);
+  }
+  return -1;
 };
 
 const printWaitingList = (dungeonCode) => {
