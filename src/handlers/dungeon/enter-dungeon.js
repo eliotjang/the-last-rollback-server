@@ -16,13 +16,17 @@ export const enterDungeonSession = async (accountId, dungeonCode) => {
     })),
   };
 
-  const battleSession = getDungeonSessionByUserId(accountId);
+  const dungeonSession = getDungeonSessionByUserId(accountId);
+
+  // dungeonSession.users.forEach((user) => {
+  //   console.log(`sessionInfo for user ${user.accountId}:`, user.sessionInfo);
+  // });
 
   const playerInfoArray = [];
   const playerStatusArray = [];
 
-  if (battleSession) {
-    const accountIds = battleSession.users.map((user) => user.accountId);
+  if (dungeonSession) {
+    const accountIds = dungeonSession.users.map((user) => user.accountId);
 
     for (const accountId of accountIds) {
       const playerChar = await gameCharDB.getGameChar(accountId);
@@ -48,10 +52,12 @@ export const enterDungeonSession = async (accountId, dungeonCode) => {
     }
   }
 
-  const data = { dungeonInfo, playerInfo: playerInfoArray, players: playerStatusArray };
+  const data = JSON.parse(
+    JSON.stringify({ dungeonInfo, playerInfo: playerInfoArray, players: playerStatusArray }),
+  );
   console.log('data:', data);
 
-  const currentUser = battleSession.users.find((user) => user.accountId === accountId);
+  const currentUser = dungeonSession.users.find((user) => user.accountId === accountId);
   console.log('currentUser:', currentUser);
 
   currentUser.socket.sendResponse(

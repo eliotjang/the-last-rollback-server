@@ -328,6 +328,7 @@ message ResponsePacket {
     S_Chat sChat = 10;
 
     S_DungeonMatch sDungeonMatch = 23;
+    S_EnterDungeon sEnterDungeon = 24;
     S_LeaveDungeon sLeaveDungeon = 12;
     
     S_ScreenText sScreenText = 13;
