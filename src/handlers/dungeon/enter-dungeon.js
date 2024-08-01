@@ -4,19 +4,19 @@ import { gameCharDB } from '../../db/game-char/game-char.db.js';
 import { payloadTypes } from '../../constants/packet.constants.js';
 import { SuccessCode } from '../../utils/error/errorCodes.js';
 
-export const enterDungeonSession = async (accountId, dungeonCode) => {
+export const enterDungeonSession = async (dungeonSession, dungeonCode) => {
   const { monsterInfo, charStatInfo } = getGameAssets();
   const dungeonInfo = {
     dungeonCode,
     monsters: monsterInfo.data.map((monster, index) => ({
-      monsterIdx: index + 1,
+      monsterIdx: index,
       monsterModel: monster.monsterModel,
       monsterName: monster.monsterName,
       monsterHp: monster.maxHp,
     })),
   };
 
-  const dungeonSession = getDungeonSessionByUserId(accountId);
+  // const dungeonSession = getDungeonSessionByUserId(accountId);
 
   // dungeonSession.users.forEach((user) => {
   //   console.log(`sessionInfo for user ${user.accountId}:`, user.sessionInfo);
@@ -52,18 +52,24 @@ export const enterDungeonSession = async (accountId, dungeonCode) => {
     }
   }
 
-  const data = JSON.parse(
-    JSON.stringify({ dungeonInfo, playerInfo: playerInfoArray, players: playerStatusArray }),
-  );
-  console.log('data:', data);
+  const data = { dungeonInfo, playerInfo: playerInfoArray, players: playerStatusArray };
+  // console.log('data:', data);
 
-  const currentUser = dungeonSession.users.find((user) => user.accountId === accountId);
-  console.log('currentUser:', currentUser);
+  for (const user of dungeonSession.users) {
+    user.socket.sendResponse(
+      SuccessCode.Success,
+      '던전에 입장합니다.',
+      payloadTypes.S_ENTER_DUNGEON,
+      data,
+    );
+  }
+  // const currentUser = dungeonSession.users.find((user) => user.accountId === accountId);
+  // console.log('currentUser:', currentUser);
 
-  currentUser.socket.sendResponse(
-    SuccessCode.Success,
-    '던전에 입장합니다.',
-    payloadTypes.S_ENTER_DUNGEON,
-    data,
-  );
+  // currentUser.socket.sendResponse(
+  //   SuccessCode.Success,
+  //   '던전에 입장합니다.',
+  //   payloadTypes.S_ENTER_DUNGEON,
+  //   data,
+  // );
 };
