@@ -27,9 +27,9 @@ export const payloadTypes = {
   S_ANIMATION: 9, // 모두
   C_CHAT: 12,
   S_CHAT: 13, // noti
-  C_ENTER_DUNGEON: 14,
+  // C_ENTER_DUNGEON: 14,
   C_PLAYER_RESPONSE: 15,
-  S_ENTER_DUNGEON: 16,
+  // S_ENTER_DUNGEON: 16,
   S_LEAVE_DUNGEON: 17,
   S_SCREEN_TEXT: 18,
   S_SCREEN_DONE: 19,
@@ -47,6 +47,11 @@ export const payloadTypes = {
   S_PLAYER_ATTACK: 41,
   C_MONSTER_ATTACKED: 42,
   S_MONSTER_ATTACKED: 43,
+
+  C_DUNGEON_MATCH: 50,
+  S_DUNGEON_MATCH: 51,
+  S_ENTER_DUNGEON: 55,
+
   S_SOME_NOTIFICATION: 300,
 };
 
@@ -64,6 +69,9 @@ export const payloadNames = Object.fromEntries(
   }),
 );
 
+/**
+ * @deprecated
+ */
 export const typeMappings = Object.fromEntries(
   Object.entries(payloadTypes).map(([key, value]) => {
     if (key.charAt(0) === 'S') {

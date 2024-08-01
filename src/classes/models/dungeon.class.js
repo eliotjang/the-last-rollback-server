@@ -10,6 +10,12 @@ class Dungeon extends Game {
     this.type = sessionTypes.DUNGEON;
   }
 
+  addUser(user) {
+    Promise.all(this.users.map((curUser) => curUser.getPlayerInfo())).then(() => {
+      super.addUser(user);
+    });
+  }
+
   attackMonster(accountId, attackType, monsterIdx) {
     super.notifyOthers(accountId, payloadTypes.S_PLAYER_ATTACK, {
       playerId: accountId,

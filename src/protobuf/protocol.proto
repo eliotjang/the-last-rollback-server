@@ -20,9 +20,9 @@ enum MsgId {
     S_ANIMATION = 9;
     C_CHAT = 12;
     S_CHAT = 13;
-    C_ENTER_DUNGEON = 14;
+    // C_ENTER_DUNGEON = 14;
     C_PLAYER_RESPONSE = 15;
-    S_ENTER_DUNGEON = 16;
+    // S_ENTER_DUNGEON = 16;
     S_LEAVE_DUNGEON = 17;
     S_SCREEN_TEXT = 18;
     S_SCREEN_DONE = 19;
@@ -40,6 +40,10 @@ enum MsgId {
     S_PLAYER_ATTACK = 41;
     C_MONSTER_ATTACKED = 42;
     S_MONSTER_ATTACKED = 43;
+
+    C_DUNGEON_MATCH = 50;
+    S_DUNGEON_MATCH = 51;
+    S_ENTER_DUNGEON = 55;
     S_SOME_NOTIFICATION = 300;
 }
 
@@ -114,13 +118,23 @@ message C_PlayerResponse{
   int32 responseCode = 1;
 }
 
+message C_DungeonMatch {
+  uint32 dungeonCode = 1;
+}
+
+message S_DungeonMatch {
+  uint32 dungeonCode = 1;
+  // ScreenText screenText = 2;
+}
 
 // Me
 message S_EnterDungeon{
   DungeonInfo dungeonInfo = 1;
-  PlayerStatus player = 2;
-  optional ScreenText screenText = 3;
-  optional BattleLog battleLog = 4;
+	repeated PlayerInfo playerInfo = 2;
+  repeated PlayerStatus players = 3;
+  // repeated StatInfo statInfo = 3; // 전투 시에 사용하는
+  // optional ScreenText screenText = 3;
+  // optional BattleLog battleLog = 4;
 }
 
 // Me
@@ -259,7 +273,7 @@ message ActionSet {
 }
 
 message PlayerStatus {
-  int32 playerClass = 1;
+  // int32 playerClass = 1;
   int32 playerLevel = 2;
   string playerName = 3;
   float playerFullHp = 4;
@@ -318,11 +332,16 @@ message RequestPacket {
     C_Move cMove = 6;
     C_Animation cAnimation = 7;
     C_Chat cChat = 8;
+
+    C_DungeonMatch cDungeonMatch = 13;
     C_EnterDungeon cEnterDungeon = 9;
+    
     C_PlayerResponse cPlayerResponse = 10;
+    
     C_SignUp cSignUp = 11;
     C_LogIn cLogIn = 12;
-    C_PlayerAttack cPlayerAttack = 23;
+    C_PlayerAttack cPlayerAttack = 25;
+    C_MonsterAttacked cMonsterAttacked = 26;
   }
 }
 
@@ -338,10 +357,14 @@ message ResponsePacket {
     S_Move sMove = 8;
     S_Animation sAnimation = 9;
     S_Chat sChat = 10;
-    S_EnterDungeon sEnterDungeon = 11;
+
+    S_DungeonMatch sDungeonMatch = 23;
+    S_EnterDungeon sEnterDungeon = 24;
     S_LeaveDungeon sLeaveDungeon = 12;
+    
     S_ScreenText sScreenText = 13;
     S_ScreenDone sScreenDone = 14;
+
     S_BattleLog sBattleLog = 15;
     S_SetPlayerHp sSetPlayerHp = 16;
     S_SetPlayerMp sSetPlayerMp = 17;
@@ -350,7 +373,8 @@ message ResponsePacket {
     S_MonsterAction sMonsterAction = 20;
     S_SignUp sSignUp = 21;
     S_LogIn sLogIn = 22;
-    S_PlayerAttack sPlayerAttack = 23;
+    S_PlayerAttack sPlayerAttack = 25;
+    S_MonsterAttacked sMonsterAttacked = 26;
   }
 }
 
@@ -362,6 +386,8 @@ message NotificationPacket {
     S_Despawn sDespawn = 5;
     S_Spawn sSpawn = 6;
     S_SomeNotification sSomeNotification = 3;
-    S_PlayerAttack sPlayerAttack = 23;
+    S_PlayerAttack sPlayerAttack = 25;
+    S_MonsterAttacked sMonsterAttacked = 26;
+    // S_EnterDungeon sEnterDungeon = 11;
   }
 }
