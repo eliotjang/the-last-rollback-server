@@ -13,7 +13,9 @@ class Game {
   }
   // add to Session
   addUser(user) {
+    console.log('get type in Game : ', this.type);
     user.setSession(this.type, this.id);
+    console.log(user.getSession());
     this.users.push(user);
   }
 

@@ -12,7 +12,7 @@ class User {
 
     // 유저가 포함된 게임 세션 정보
     this.sessionInfo = {
-      type: sessionTypes.NULL, // 세션 타입 (0: null || 1: town || 2: battle)
+      type: sessionTypes.NULL, // 세션 타입 (0: null || 1: town || 2: dungeon)
       id: null, // 세션 id
     };
   }
@@ -23,6 +23,7 @@ class User {
 
   getSession() {
     let getSessionFunc;
+    console.log('sessionInfo Type : ', this.sessionInfo.type);
     switch (this.sessionInfo.type) {
       case sessionTypes.TOWN:
         getSessionFunc = getTownSession;
@@ -40,7 +41,11 @@ class User {
     switch (this.sessionInfo.type) {
       case sessionTypes.TOWN:
         return await townRedis.getPlayerInfo(this.accountId);
-      case sessionTypes.BATTLE:
+      case sessionTypes.DUNGEON:
+        console.log(
+          'get sessionTypes.DUNGEON getPlayerInfo : ',
+          await dungeonRedis.getPlayerInfo(this.accountId),
+        );
         return await dungeonRedis.getPlayerInfo(this.accountId);
       default:
         return null;
@@ -61,7 +66,7 @@ class User {
     switch (this.sessionInfo.type) {
       case sessionTypes.TOWN:
         return await townRedis.removePlayer(this.accountId);
-      case sessionTypes.BATTLE:
+      case sessionTypes.DUNGEON:
         return await dungeonRedis.removePlayer(this.accountId);
       default:
         return null;
