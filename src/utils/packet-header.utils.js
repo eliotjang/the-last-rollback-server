@@ -6,11 +6,8 @@ import { headerConstants } from '../constants/packet.constants.js';
  */
 export const readHeader = (packet) => {
   //
-  const totalLength = packet.readIntLE(0, headerConstants.TOTAL_LENGTH);
-  const packetType = packet.readIntLE(
-    headerConstants.TOTAL_LENGTH,
-    headerConstants.PACKET_TYPE_LENGTH,
-  );
+  const totalLength = packet.readInt32LE(0);
+  const packetType = packet.readInt8(headerConstants.TOTAL_LENGTH);
   return {
     totalLength,
     packetType,

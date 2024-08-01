@@ -1,30 +1,28 @@
-import { payloadTypes } from '../../constants/packet.constants.js';
-import { getTownSessionByUserSocket } from '../../session/town.session.js';
+import { getUserById } from '../../session/user.session.js';
 import CustomError from '../../utils/error/customError.js';
 import { ErrorCodes } from '../../utils/error/errorCodes.js';
 import { handleError } from '../../utils/error/errorHandler.js';
-//import { updatePosition } from '../../classes/models/user.class.js';
+import { townRedis } from '../../utils/redis/town.redis.js';
 
-const locationUpdateHandler = ({ socket, userId, packet }) => {
+const locationUpdateHandler = async ({ socket, accountId, packet }) => {
   try {
     const { transform } = packet;
-    const townSession = getTownSessionByUserSocket(socket);
+    const user = getUserById(accountId);
+    if (!user) {
+      throw new CustomError(ErrorCodes.USER_NOT_FOUND, '유저를 찾을 수 없습니다.');
+    }
 
+    const townSession = user.getSession();
     if (!townSession) {
       throw new CustomError(ErrorCodes.GAME_NOT_FOUND, '타운 세션을 찾을 수 없습니다.');
     }
 
-    const user = townSession.getUserBySocket(socket);
-    if (!user) {
-      throw new CustomError(ErrorCodes.USER_NOT_FOUND, '유저를 찾을 수 없습니다.');
-    }
-    //user.updatePosition(TransformInfo);
-    user.playerInfo.transform = transform;
-    const data = { playerId: user.playerInfo.playerId, transform };
-    console.log('####', data);
-    //const TransformInfos = townSession.getAllLocation(user.playerInfo.playerId);
+    await townRedis.updatePlayerTransform(transform, accountId);
 
-    townSession.sendPacketToAll(payloadTypes.S_MOVE, data);
+    // 현재 추측항법 적용 X
+    townSession.movePlayer(accountId, transform);
+
+    //const TransformInfos = townSession.getAllLocation(user.playerInfo.playerId);
   } catch (error) {
     handleError(socket, error);
   }

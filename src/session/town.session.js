@@ -20,6 +20,10 @@ export const getTownSession = (id) => {
   return townSessions.find((session) => session.id === id);
 };
 
+export const getTownSessionByUserId = (accountId) => {
+  return townSessions.find((session) => session.getUser(accountId));
+};
+
 export const getTownSessionByUserSocket = (socket) => {
   return townSessions.find((session) => session.getUserBySocket(socket));
 };

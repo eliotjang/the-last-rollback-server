@@ -1,35 +1,54 @@
 import { v4 as uuidv4 } from 'uuid';
-import { gameRedis, userRedis } from './redis.js';
+import { townRedis } from './town.redis.js';
+import { socketRedis } from './socket.redis.js';
 
-const testUserRedisConnection = async () => {
+const townRedisConnection = async () => {
   try {
     const accountId = uuidv4();
     const nickname = 'eliot';
-    const accountClass = 1001;
-    const transform = { x: 12, y: 23 };
+    const charClass = 1001;
+    const transform = { posX: 12, poxY: 23, posZ: 10, rot: 50 };
+    const transform2 = { posX: 100, poxY: 100, posZ: 10, rot: 50 };
 
-    await userRedis.createUserData(accountId, nickname, accountClass, transform);
-    const userRD = await userRedis.getUserData(accountId);
-    console.log('유저 레디스 테스트 결과:', userRD);
+    await townRedis.addPlayer(accountId, nickname, charClass, transform, true);
+    await townRedis.getPlayerInfo(accountId);
+    await townRedis.updatePlayerTransform(transform2, accountId);
+    await townRedis.getAllPlayerTransform();
+    await townRedis.getAllPlayerInfo();
+    await townRedis.getOthersPlayerInfo(accountId);
+    await townRedis.removePlayer(accountId, true);
+
+    console.log(`Town Redis 테스트 성공`);
   } catch (error) {
-    console.error('유저 레디스 실행 중 오류 발생: ', error);
+    console.error('Town Redis 테스트 중 오류 발생 : ', error);
   }
 };
 
-const testGameRedisConnection = async () => {
+const dungeonRedisConnection = async () => {
   try {
-    const uuid = uuidv4();
-    const gold = 3000;
-
-    await gameRedis.createGameData(uuid, gold);
-    const gameRD = await gameRedis.getGameData(uuid);
-    console.log('게임 레디스 테스트 결과:', gameRD);
+    //
+    console.log(`Dungeon Redis 테스트 성공`);
   } catch (error) {
-    console.error('게임 레디스 실행 중 오류 발생: ', error);
+    console.error('Dungeon Redis 테스트 중 오류 발생 : ', error);
+  }
+};
+
+const socketRedisConnection = async () => {
+  try {
+    const accountId = uuidv4();
+    const socket = uuidv4();
+    await socketRedis.addTownSocket(accountId, socket);
+    await socketRedis.getTownSocket(accountId);
+    await socketRedis.getAllTownSocket();
+    await socketRedis.removeTownSocket(accountId);
+    console.log(`Socket Redis 테스트 성공`);
+  } catch (error) {
+    console.error('Socket Redis 테스트 중 오류 발생 : ', error);
   }
 };
 
 export const testAllRedisConnections = async () => {
-  await testUserRedisConnection();
-  await testGameRedisConnection();
+  await townRedisConnection();
+  // await dungeonRedisConnection();
+  await socketRedisConnection();
 };

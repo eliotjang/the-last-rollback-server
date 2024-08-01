@@ -6,7 +6,7 @@ import { sendNotification, sendPacket, sendResponse } from '../utils/packet-send
 const onConnection = (socket) => {
   console.log('클라이언트가 연결되었습니다:', socket.remoteAddress, socket.remotePort);
   socket.buffer = Buffer.alloc(0);
-  socket.sendPacket = sendPacket.bind(socket);
+  // socket.sendPacket = sendPacket.bind(socket);
   socket.sendResponse = sendResponse.bind(socket);
   socket.sendNotification = sendNotification.bind(socket);
 

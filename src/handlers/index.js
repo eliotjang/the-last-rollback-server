@@ -6,21 +6,22 @@ import locationUpdateHandler from './game/locationUpdate.handler.js';
 import enterTownHandler from './town/enter-town.handler.js';
 import loginAccountHandler from './account/login-account.handler.js';
 import signupAccountHandler from './account/signup-account.handler.js';
+import dungeonMatchHandler from './dungeon/dungeon-match.handler.js';
 
 const handlers = {
-  [payloadTypes.C_SIGNUP]: signupAccountHandler,
-  [payloadTypes.C_LOGIN]: loginAccountHandler,
   [payloadTypes.C_ENTER]: enterTownHandler,
+  [payloadTypes.C_SIGN_UP]: signupAccountHandler,
+  [payloadTypes.C_LOG_IN]: loginAccountHandler,
   [payloadTypes.C_MOVE]: locationUpdateHandler,
-  [payloadTypes.C_ANIMATION]: actionInteractHandler,
+  [payloadTypes.C_DUNGEON_MATCH]: dungeonMatchHandler,
 };
 
-export const getHandlerByPayloadType = (packetType) => {
-  if (!handlers[packetType]) {
+export const getHandlerByPayloadType = (payloadType) => {
+  if (!handlers[payloadType]) {
     throw new CustomError(
       ErrorCodes.UNKNOWN_HANDLER_ID,
-      `핸들러를 찾을 수 없습니다: ID ${packetType}`,
+      `핸들러를 찾을 수 없습니다: ID ${payloadType}`,
     );
   }
-  return handlers[packetType];
+  return handlers[payloadType];
 };

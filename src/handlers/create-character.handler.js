@@ -14,7 +14,7 @@
 //     const statInfo = new StatInfo(1, 100);
 //     const playerInfo = new PlayerInfo(userId, nickname, characterClass, transform, statInfo);
 
-//     await createUser(userId, nickname, characterClass, transform.posX, transform.posY);
+//     await addUser(userId, nickname, characterClass, transform.posX, transform.posY);
 
 //     const user = { playerInfo, socket };
 
