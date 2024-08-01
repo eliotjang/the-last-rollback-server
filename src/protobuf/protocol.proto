@@ -36,6 +36,9 @@ enum MsgId {
     S_SIGN_UP = 27;
     C_LOG_IN = 28;
     S_LOG_IN = 29; 
+    S_GAME_END = 30;
+    // C_BASE = 31;
+    // S_BASE = 32;
 
     C_DUNGEON_MATCH = 50;
     S_DUNGEON_MATCH = 51;
@@ -131,6 +134,22 @@ message S_EnterDungeon{
   // repeated StatInfo statInfo = 3; // 전투 시에 사용하는
   // optional ScreenText screenText = 3;
   // optional BattleLog battleLog = 4;
+}
+
+// message C_Base{
+//   int32 hp = 1;
+//   string accountId = 2;
+// }
+
+// message S_Base{
+//   int32 hp = 1;
+// }
+
+message S_GameEnd {
+  bool result = 1; // 0 패배 1 승리
+	int32 playerId = 2;
+  int32 accountLevel = 3;
+  int32 accountEXP = 4;
 }
 
 // Me
@@ -306,6 +325,7 @@ message RequestPacket {
 
     C_DungeonMatch cDungeonMatch = 13;
     C_EnterDungeon cEnterDungeon = 9;
+    // C_Base cBase = 14;
     
     C_PlayerResponse cPlayerResponse = 10;
     
@@ -329,7 +349,8 @@ message ResponsePacket {
 
     S_DungeonMatch sDungeonMatch = 23;
     S_EnterDungeon sEnterDungeon = 24;
-    S_LeaveDungeon sLeaveDungeon = 12;
+    // S_LeaveDungeon sLeaveDungeon = 12;
+    S_GameEnd sGameEnd = 25;
     
     S_ScreenText sScreenText = 13;
     S_ScreenDone sScreenDone = 14;
@@ -353,6 +374,8 @@ message NotificationPacket {
     S_Despawn sDespawn = 5;
     S_Spawn sSpawn = 6;
     S_SomeNotification sSomeNotification = 3;
+    // S_Base sBase = 7;
+    S_LeaveDungeon sLeaveDungeon = 8;
     // S_EnterDungeon sEnterDungeon = 11;
   }
 }
