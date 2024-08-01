@@ -24,11 +24,11 @@ const onData = (socket) => async (data) => {
       switch (packetType) {
         case packetTypes.PING: {
           //
-          console.log('PING RECEIVED');
+          // console.log('PING RECEIVED');
           break;
         }
         case packetTypes.REQUEST: {
-          console.log('REQUEST RECEIVED');
+          // console.log('REQUEST RECEIVED');
           const { clientVersion, sequence, payloadType, payload } = deserializeByPacketType(
             packetType,
             packet,
@@ -38,8 +38,9 @@ const onData = (socket) => async (data) => {
           //   console.log(socket.token);
           //   await verifyToken(socket.token);
           // }
-
-          console.log(clientVersion, sequence, payloadType, payload);
+          if (payloadType !== 6) {
+            console.log(clientVersion, sequence, payloadType, payload);
+          }
           verifyClientVersion(clientVersion);
           verifySequence(sequence);
           const handler = getHandlerByPayloadType(payloadType || 0);
