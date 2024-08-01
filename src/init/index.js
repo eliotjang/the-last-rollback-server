@@ -1,5 +1,5 @@
 import pools from '../db/database.js';
-// import { testAllDBConnections } from '../utils/db/testConnection.js';
+import { testGameCharDBQueries, testUserDBQueries } from '../utils/db/testConnection.js';
 import { testAllRedisConnections } from '../utils/redis/testConnection.js';
 import { loadGameAssets } from './assets.js';
 import { loadProtoFiles } from './proto.init.js';
@@ -8,7 +8,8 @@ const initServer = async () => {
   try {
     await loadGameAssets();
     await loadProtoFiles();
-    // await testAllDBConnections(pools);
+    await testUserDBQueries();
+    await testGameCharDBQueries();
     await testAllRedisConnections();
   } catch (e) {
     console.error(e);

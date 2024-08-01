@@ -1,51 +1,69 @@
-import { packetTypes } from '../../constants/packet.constants.js';
+import { payloadTypes } from '../../constants/packet.constants.js';
 import Game from './game.class.js';
-import { serialize } from '../../utils/packet-serializer.utils.js';
+import { sessionTypes } from '../../constants/session.constants.js';
 
 const MAX_USERS = 20;
 
 class Town extends Game {
   constructor(id) {
     super(id, MAX_USERS);
+    this.type = sessionTypes.TOWN;
   }
 
   addUser(user) {
-    super.addUser(user);
+    console.log('In townSession', this.users);
+    Promise.all(this.users.map((curUser) => curUser.getPlayerInfo())).then((playerInfos) => {
+      super.addUser(user);
 
-    const allPlayerInfo = this.users.reduce((data, curUser) => {
-      data.push(curUser.playerInfo);
-      return data;
-    }, []);
+      if (playerInfos.length) {
+        super.notifyUser(user.accountId, payloadTypes.S_SPAWN, { players: playerInfos });
+        // console.log('현재 들어온 유저에게 다른 모든 유저 정보를 전송:', playerInfos);
 
-    this.users.forEach((curUser) => {
-      const data = allPlayerInfo.filter(
-        (playerInfo) => playerInfo.playerId !== curUser.playerInfo.playerId,
-      );
-      if (data.length === 0) {
-        return;
-      }
-
-      // 현재 들어온 유저에게 다른 모든 유저 정보를 전송
-      if (curUser === user) {
-        const response = serialize(packetTypes.S_SPAWN, {
-          players: data,
+        user.getPlayerInfo().then((userInfo) => {
+          super.notifyOthers(user.accountId, payloadTypes.S_SPAWN, { players: [userInfo] });
+          // console.log('기존 유저에게 새로 들어온 유저 정보를 전송:', userInfo);
         });
-        console.log('data:', data);
-        user.socket.write(response);
-      } else {
-        // 기존 유저에게 새로 들어온 유저 정보를 전송
-        this.sendPacketToOthers(curUser.playerInfo.playerId, packetTypes.S_ENTER, {
-          player: user.playerInfo,
-        });
-        console.log('user:', user.playerInfo);
       }
     });
+
+    // const allPlayerInfo = this.users.reduce((data, curUser) => {
+    //   // data.push(curUser.getPlayerInfo());
+    //   curUser.getPlayerInfo().then((e) => data.push(e));
+    //   return data;
+    // }, []);
+
+    // this.users.forEach((curUser) => {
+    //   const data = allPlayerInfo.filter((playerInfo) => playerInfo.playerId !== curUser.accountId);
+    //   if (data.length === 0) {
+    //     return;
+    //   }
+
+    //   // 현재 들어온 유저에게 다른 모든 유저 정보를 전송
+    //   if (curUser === user) {
+    //     // user.socket.sendResponse(2, 'tempp', payloadTypes.S_SPAWN, { players: data });
+    //     super.notifyUser(user.accountId, 'in', payloadTypes.S_SPAWN, { players: data });
+    //     console.log('현재 들어온 유저에게 다른 모든 유저 정보를 전송:', data);
+    //   } else {
+    //     // 기존 유저에게 새로 들어온 유저 정보를 전송
+    //     const userInfo = [user.getPlayerInfo()];
+    //     // user.socket.sendResponse(2, 'temp', payloadTypes.S_SPAWN, { players: userInfo });
+    //     super.notifyOthers(user.accountId, 'in', payloadTypes.S_SPAWN, { players: userInfo });
+    //     console.log('기존 유저에게 새로 들어온 유저 정보를 전송:', userInfo);
+    //   }
+    // });
   }
 
-  removeUser(userId) {
-    super.removeUser(userId);
+  removeUser(accountId) {
+    super.removeUser(accountId);
 
-    this.sendPacketToAll(packetTypes.S_DESPAWN, { playerIds: userId });
+    super.notifyAll(payloadTypes.S_DESPAWN, { playerIds: [accountId] });
+  }
+
+  //
+  movePlayer(accountId, transform) {
+    // await townRedis.updatePlayerTransform(transform, accountId);
+
+    super.notifyAll(payloadTypes.S_MOVE, { playerId: accountId, transform });
   }
 }
 

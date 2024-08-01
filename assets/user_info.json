@@ -1,0 +1,17 @@
+{
+  "name": "user_info",
+  "version": "1.0.0",
+  "data": [
+    { "level": 1, "maxExp": 100 },
+    { "level": 2, "maxExp": 200 },
+    { "level": 3, "maxExp": 400 },
+    { "level": 4, "maxExp": 800 },
+    { "level": 5, "maxExp": 1600 },
+    { "level": 6, "maxExp": 3200 },
+    { "level": 7, "maxExp": 6400 },
+    { "level": 8, "maxExp": 12800 },
+    { "level": 9, "maxExp": 25600 },
+    { "level": 10, "maxExp": 51200 },
+    { "level": 11, "maxExp": 102400 }
+  ]
+}

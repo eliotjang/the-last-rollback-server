@@ -1,5 +1,4 @@
-import PlayerInfo from '../../protobuf/classes/info/player-info.proto.js';
-import { serialize } from '../../utils/packet-serializer.utils.js';
+import { sessionTypes } from '../../constants/session.constants.js';
 
 class Game {
   constructor(id, maxUser) {
@@ -8,80 +7,79 @@ class Game {
     }
 
     this.id = id;
+    this.type = sessionTypes.NULL;
     this.users = [];
     this.maxUser = maxUser;
   }
-
+  // add to Session
   addUser(user) {
+    user.setSession(this.type, this.id);
     this.users.push(user);
   }
 
-  removeUser(userId) {
-    this.users = this.users.filter((user) => user.playerInfo.playerId !== userId);
+  // remove from Session
+  removeUser(accountId) {
+    this.users = this.users.filter((user) => {
+      if (user.accountId === accountId) {
+        user.removeSession();
+        return false;
+      }
+      return true;
+    });
   }
 
-  getUser(userId) {
-    return this.users.find((user) => user.playerInfo.playerId === userId);
+  // get information from session
+  getUser(accountId) {
+    return this.users.find((user) => user.accountId === accountId);
   }
 
   getUserBySocket(socket) {
     return this.users.find((user) => user.socket === socket);
   }
 
-  isFull() {
-    return this.users.length >= this.maxUser;
-  }
-
-  getAllLocation(userId) {
+  getAllLocation(accountId) {
     const locationData = [];
     this.users.forEach((user) => {
-      if (user.playerInfo.playerId === userId) {
+      if (user.accountId === accountId) {
         locationData.push({
-          playerId: user.playerInfo.playerId,
-          TransformInfo: user.playerInfo.transform,
+          playerId: user.accountId,
+          TransformInfo: user.getPlayerInfo().transform,
         });
       }
     });
     return locationData;
   }
 
-  sendPacketToUser(userId, packetType, data) {
-    const user = this.users.find((user) => user.playerInfo.playerId === userId);
-    if (user) {
-      const packet = serialize(packetType, data);
-      user.socket.write(packet);
-    }
+  // socket.write() in session
+  notifyUser(accountId, payloadType, data) {
+    const user = this.users.find((user) => user.accountId === accountId);
+    user.socket.sendNotification(payloadType, data);
   }
 
-  sendPacketToAll(packetType, data) {
+  notifyAll(payloadType, data) {
     this.users.forEach((user) => {
-      const packet = serialize(packetType, data);
-      user.socket.write(packet);
-    });
-  }
-
-  sendPacketToOthers(userId, packetType, data) {
-    this.users.forEach((user) => {
-      if (user.playerInfo.playerId !== userId) {
-        const packet = serialize(packetType, data);
-        user.socket.write(packet);
-      }
+      user.socket.sendNotification(payloadType, data);
     });
   }
 
   /**
    *
-   * @param {*} userId
+   * @param {*} accountId
    * @param {string} message
    * @param {uint32} payloadType
    * @param {Object} data
    */
-  notifyOthers(userId, message, payloadType, data) {
+  notifyOthers(accountId, payloadType, data) {
     this.users.forEach((user) => {
-      if (user.playerInfo.playerId !== userId) {
-        user.socket.sendNotification(Date.now(), message, payloadType, data);
+      if (user.accountId !== accountId) {
+        user.socket.sendNotification(payloadType, data);
       }
     });
+  }
+
+  // ...etc
+  isFull() {
+    return this.users.length >= this.maxUser;
   }
 }
 

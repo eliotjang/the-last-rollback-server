@@ -21,9 +21,8 @@ const executeSqlFile = async (pool, filePath) => {
 const createSchemas = async () => {
   const sqlDir = path.join(__dirname, '../sql');
   try {
-    // USER_DB SQL 파일 실행
     await executeSqlFile(pools.USER_DB, path.join(sqlDir, 'user_db.sql'));
-
+    await executeSqlFile(pools.GAME_CHAR_DB, path.join(sqlDir, 'game_char_db.sql'));
     console.log('데이터베이스 테이블이 성공적으로 생성되었습니다.');
   } catch (error) {
     console.error('데이터베이스 테이블 생성 중 오류가 발생했습니다:', error);
