@@ -58,7 +58,9 @@ export const sendNotification = function (payloadType, payload) {
     payload,
   };
   const serializedPacket = serializeEx(packetTypes.NOTIFICATION, payloadType, packetData);
-  console.log('deserialize test:', deserializeTest(packetTypes.NOTIFICATION, serializedPacket));
+  // if (payloadType !== payloadTypes.S_MOVE) {
+  //   console.log('deserialize test:', deserializeTest(packetTypes.NOTIFICATION, serializedPacket));
+  // }
   const header = writeHeader(serializedPacket.length, packetTypes.NOTIFICATION);
   const packet = Buffer.concat([header, serializedPacket]);
   this.write(packet);

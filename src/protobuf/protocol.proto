@@ -314,14 +314,12 @@ message RequestPacket {
     C_Move cMove = 6;
     C_Animation cAnimation = 7;
     C_Chat cChat = 8;
-
-    C_DungeonMatch cDungeonMatch = 13;
-    C_EnterDungeon cEnterDungeon = 9;
-    
-    C_PlayerResponse cPlayerResponse = 10;
-    
-    C_SignUp cSignUp = 11;
-    C_LogIn cLogIn = 12;
+    C_DungeonMatch cDungeonMatch = 9;
+    C_EnterDungeon cEnterDungeon = 10;
+    C_PlayerResponse cPlayerResponse = 11;
+    C_SignUp cSignUp = 12;
+    C_LogIn cLogIn = 13;
+    C_MonsterMove cMonsterMove = 14;
   }
 }
 
@@ -360,10 +358,11 @@ message NotificationPacket {
   uint64 timestamp = 1;
   uint32 payloadType = 2;
   oneof payload {
-    S_Move sMove = 4;
-    S_Despawn sDespawn = 5;
-    S_Spawn sSpawn = 6;
-    S_SomeNotification sSomeNotification = 3;
+    S_Move sMove = 3;
+    S_Despawn sDespawn = 4;
+    S_Spawn sSpawn = 5;
+    S_SomeNotification sSomeNotification = 6;
+    S_MonsterMove sMonsterMove = 7;
     // S_EnterDungeon sEnterDungeon = 11;
   }
 }

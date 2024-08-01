@@ -9,7 +9,7 @@ import lodash from 'lodash';
 import { gameCharDB } from '../../db/game-char/game-char.db.js';
 import { userDB } from '../../db/user/user.db.js';
 import enterTownHandler from '../town/enter-town.handler.js';
-import { addUser, userSocket } from '../../session/user.session.js';
+import { addUser } from '../../session/user.session.js';
 
 const loginAccountHandler = async ({ socket, userId, packet }) => {
   try {

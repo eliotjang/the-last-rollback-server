@@ -9,9 +9,9 @@ export const enterDungeonSession = async (accountId, dungeonCode) => {
   const dungeonInfo = {
     dungeonCode,
     monsters: monsterInfo.data.map((monster, index) => ({
-      monsterIdx: index + 1,
-      monsterModel: monster.monsterModel,
-      monsterName: monster.monsterName,
+      monsterIdx: index,
+      monsterModel: 2001,
+      monsterName: 'mushroom',
       monsterHp: monster.maxHp,
     })),
   };
