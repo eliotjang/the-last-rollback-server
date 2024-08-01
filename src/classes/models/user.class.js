@@ -40,7 +40,7 @@ class User {
     switch (this.sessionInfo.type) {
       case sessionTypes.TOWN:
         return await townRedis.getPlayerInfo(this.accountId);
-      case sessionTypes.BATTLE:
+      case sessionTypes.DUNGEON:
         return await dungeonRedis.getPlayerInfo(this.accountId);
       default:
         return null;
@@ -61,7 +61,7 @@ class User {
     switch (this.sessionInfo.type) {
       case sessionTypes.TOWN:
         return await townRedis.removePlayer(this.accountId);
-      case sessionTypes.BATTLE:
+      case sessionTypes.DUNGEON:
         return await dungeonRedis.removePlayer(this.accountId);
       default:
         return null;

@@ -36,6 +36,10 @@ enum MsgId {
     S_SIGN_UP = 27;
     C_LOG_IN = 28;
     S_LOG_IN = 29; 
+    C_PLAYER_ATTACK = 40;
+    S_PLAYER_ATTACK = 41;
+    C_MONSTER_ATTACKED = 42;
+    S_MONSTER_ATTACKED = 43;
     S_SOME_NOTIFICATION = 300;
 }
 
@@ -161,6 +165,31 @@ message S_PlayerAction {
 message S_MonsterAction {
   int32 actionMonsterIdx = 1;
   ActionSet actionSet = 2;
+}
+
+// My 플레이어의 공격만 서버에 전송
+message C_PlayerAttack{
+	int32 attackType = 2; // 공격 종류
+  int32 monsterIdx = 3; // 공격 받는 몬스터 Idx
+}
+
+// All
+message S_PlayerAttack{
+  string playerId = 1; // 공격하는 유저 accountId
+	int32 attackType = 2; // 공격 종류
+  int32 monsterIdx = 3; // 공격 받는 몬스터 Idx
+}
+
+// My 플레이어의 공격 판정에 당한 경우만 서버에 전송
+message C_MonsterAttacked{
+	int32 attackType = 2; // 공격 종류
+  int32 monsterIdx = 3; // 공격 받는 몬스터 Idx
+}
+
+// All
+message S_MonsterAttacked{
+  int32 monsterIdx = 3; // 공격 받은 몬스터 Idx
+  float monsterHp = 4; // 몬스터 남은 체력
 }
 
 // 정보 구조체
@@ -293,6 +322,7 @@ message RequestPacket {
     C_PlayerResponse cPlayerResponse = 10;
     C_SignUp cSignUp = 11;
     C_LogIn cLogIn = 12;
+    C_PlayerAttack cPlayerAttack = 23;
   }
 }
 
@@ -320,6 +350,7 @@ message ResponsePacket {
     S_MonsterAction sMonsterAction = 20;
     S_SignUp sSignUp = 21;
     S_LogIn sLogIn = 22;
+    S_PlayerAttack sPlayerAttack = 23;
   }
 }
 
@@ -331,5 +362,6 @@ message NotificationPacket {
     S_Despawn sDespawn = 5;
     S_Spawn sSpawn = 6;
     S_SomeNotification sSomeNotification = 3;
+    S_PlayerAttack sPlayerAttack = 23;
   }
 }
