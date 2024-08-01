@@ -45,7 +45,6 @@ export const payloadTypes = {
   S_LOG_IN: 29,
   C_DUNGEON_MATCH: 50,
   S_DUNGEON_MATCH: 51,
-  S_ENTER_DUNGEON: 55,
   S_ENTER_DUNGEON: 54,
   // S_LEAVE_DUNGEON: 55,
   C_DAY_ROUND_READY: 56,

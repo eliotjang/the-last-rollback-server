@@ -37,7 +37,6 @@ enum MsgId {
     S_LOG_IN = 29; 
     C_DUNGEON_MATCH = 50;
     S_DUNGEON_MATCH = 51;
-    S_ENTER_DUNGEON = 55;
     S_ENTER_DUNGEON = 54;
     S_LEAVE_DUNGEON = 55;
     C_DAY_ROUND_READY = 56;
@@ -235,25 +234,6 @@ message S_NightRoundEnd {
   repeated RoundResult roundResults = 2;
 }
 
-message C_SignUp {
-  string accountId = 1;
-  string accountPwd = 2;
-}
-
-message S_SignUp {
-  string accountId = 1;
-}
-
-message C_LogIn {
-  string accountId = 1;
-  string accountPwd = 2;
-}
-
-message S_LogIn {
-  string accountId = 1;
-  string token = 2;
-}
-
 // 임시
 message S_SomeNotification {
   string value = 1;
@@ -345,11 +325,6 @@ message BattleLog {
 message BtnInfo {
   string msg = 1;
   bool enable = 2;
-}
-
-// 임시
-message S_SomeNotification {
-  string value = 1;
 }
 
 message RoundResult {
