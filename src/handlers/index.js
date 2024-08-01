@@ -6,6 +6,7 @@ import enterTownHandler from './town/enter-town.handler.js';
 import loginAccountHandler from './account/login-account.handler.js';
 import signupAccountHandler from './account/signup-account.handler.js';
 import dungeonMatchHandler from './dungeon/dungeon-match.handler.js';
+// import baseHpUpdateHandler from './dungeon/base.handler.js';
 
 const handlers = {
   [payloadTypes.C_ENTER]: enterTownHandler,
@@ -13,6 +14,7 @@ const handlers = {
   [payloadTypes.C_LOG_IN]: loginAccountHandler,
   [payloadTypes.C_MOVE]: locationUpdateHandler,
   [payloadTypes.C_DUNGEON_MATCH]: dungeonMatchHandler,
+  // [payloadTypes.C_BASE]: baseHpUpdateHandler,
 };
 
 export const getHandlerByPayloadType = (payloadType) => {
