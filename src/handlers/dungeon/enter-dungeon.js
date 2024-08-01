@@ -9,7 +9,7 @@ export const enterDungeonSession = async (dungeonSession, dungeonCode) => {
   const dungeonInfo = {
     dungeonCode,
     monsters: monsterInfo.data.map((monster, index) => ({
-      monsterIdx: index + 1,
+      monsterIdx: index,
       monsterModel: monster.monsterModel,
       monsterName: monster.monsterName,
       monsterHp: monster.maxHp,
