@@ -397,7 +397,7 @@ message NotificationPacket {
     S_NightRoundStart sNightRoundStart = 6;
     S_NightRoundEnd sNightRoundEnd = 7;
     S_MonsterMove sMonsterMove = 8;
-    
+
     S_Chat sChat = 9;
   }
 }
