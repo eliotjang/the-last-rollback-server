@@ -392,6 +392,7 @@ message NotificationPacket {
     S_NightRoundEnd sNightRoundEnd = 8;
 
     S_SomeNotification sSomeNotification = 3;
+    S_Chat sChat = 7;
     // S_EnterDungeon sEnterDungeon = 11;
   }
 }

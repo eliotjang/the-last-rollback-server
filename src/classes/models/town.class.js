@@ -65,6 +65,10 @@ class Town extends Game {
 
     super.notifyAll(payloadTypes.S_MOVE, { playerId: accountId, transform });
   }
+
+  chatPlayer(accountId, chatMsg) {
+    super.notifyAll(payloadTypes.S_CHAT, { playerId: accountId, chatMsg });
+  }
 }
 
 export default Town;
