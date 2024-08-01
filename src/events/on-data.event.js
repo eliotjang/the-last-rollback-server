@@ -24,7 +24,7 @@ const onData = (socket) => async (data) => {
       switch (packetType) {
         case packetTypes.PING: {
           //
-          console.log('PING RECEIVED');
+          // console.log('PING RECEIVED');
           break;
         }
         case packetTypes.REQUEST: {

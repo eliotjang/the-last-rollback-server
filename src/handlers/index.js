@@ -7,6 +7,7 @@ import loginAccountHandler from './account/login-account.handler.js';
 import signupAccountHandler from './account/signup-account.handler.js';
 import monsterMoveHandler from './dungeon/monster-move.handler.js';
 import dungeonMatchHandler from './dungeon/dungeon-match.handler.js';
+import dayRoundReadyHandler from './dungeon/day-round-ready.handler.js';
 
 const handlers = {
   [payloadTypes.C_ENTER]: enterTownHandler,
@@ -15,6 +16,7 @@ const handlers = {
   [payloadTypes.C_MOVE]: locationUpdateHandler,
   [payloadTypes.C_MONSTER_MOVE]: monsterMoveHandler,
   [payloadTypes.C_DUNGEON_MATCH]: dungeonMatchHandler,
+  [payloadTypes.C_DAY_ROUND_READY]: dayRoundReadyHandler,
 };
 
 export const getHandlerByPayloadType = (payloadType) => {

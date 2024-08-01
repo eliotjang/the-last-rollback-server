@@ -20,10 +20,9 @@ enum MsgId {
     S_ANIMATION = 9;
     C_CHAT = 12;
     S_CHAT = 13;
-    // C_ENTER_DUNGEON = 14;
+
     C_PLAYER_RESPONSE = 15;
-    // S_ENTER_DUNGEON = 16;
-    S_LEAVE_DUNGEON = 17;
+    
     S_SCREEN_TEXT = 18;
     S_SCREEN_DONE = 19;
     S_BATTLE_LOG = 20;
@@ -39,8 +38,15 @@ enum MsgId {
     C_DUNGEON_MATCH = 50;
     S_DUNGEON_MATCH = 51;
     S_ENTER_DUNGEON = 55;
+    S_ENTER_DUNGEON = 54;
+    S_LEAVE_DUNGEON = 55;
+    C_DAY_ROUND_READY = 56;
+    S_DAY_ROUND_READY = 57;
+    S_NIGHT_ROUND_START = 58;
+    S_NIGHT_ROUND_END = 59;
     C_MONSTER_MOVE = 60;
     S_MONSTER_MOVE = 61;
+
     S_SOME_NOTIFICATION = 300;
 }
 
@@ -207,6 +213,53 @@ message S_MonsterAction {
   ActionSet actionSet = 2;
 }
 
+// 개인 준비 완료 패킷
+message C_DayRoundReady {
+  // 내용 없음
+}
+
+// 준비 완료 서버 응답
+message S_DayRoundReady {
+  bool isReady = 1; // 서버 기준 준비 상태 알림, 1이 준비 완료
+}
+
+// 마지막 유저 준비 완료 시 전체 통지
+message S_NightRoundStart {
+  // uint32 stageId = 1;
+}
+
+// 라운드의 마지막 몬스터가 처치됐을 시 전체 통지
+message S_NightRoundEnd {
+  DungeonInfo dungeonInfo = 1; // 다음 라운드 몬스터 목록
+  // 밤 라운드 정산에 필요한 정보 전송
+  repeated RoundResult roundResults = 2;
+}
+
+message C_SignUp {
+  string accountId = 1;
+  string accountPwd = 2;
+}
+
+message S_SignUp {
+  string accountId = 1;
+}
+
+message C_LogIn {
+  string accountId = 1;
+  string accountPwd = 2;
+}
+
+message S_LogIn {
+  string accountId = 1;
+  string token = 2;
+}
+
+// 임시
+message S_SomeNotification {
+  string value = 1;
+}
+
+// ---------------------------------
 // 정보 구조체
 
 message PlayerInfo {
@@ -276,7 +329,7 @@ message ActionSet {
 message PlayerStatus {
   // int32 playerClass = 1;
   int32 playerLevel = 2;
-  string playerName = 3;
+  string playerName = 3; // nickname
   float playerFullHp = 4;
   float playerFullMp = 5;
   float playerCurHp = 6;
@@ -297,6 +350,13 @@ message BtnInfo {
 // 임시
 message S_SomeNotification {
   string value = 1;
+}
+
+message RoundResult {
+  string nickname = 1;
+  uint32 score = 2;
+  uint32 killCound = 3;
+  // 밤 라운드 정산 정보 있으면 여기에 추가
 }
 
 // 패킷
@@ -361,8 +421,10 @@ message NotificationPacket {
     S_Move sMove = 3;
     S_Despawn sDespawn = 4;
     S_Spawn sSpawn = 5;
-    S_SomeNotification sSomeNotification = 6;
-    S_MonsterMove sMonsterMove = 7;
+    S_NightRoundStart sNightRoundStart = 6;
+    S_NightRoundEnd sNightRoundEnd = 7;
+    S_MonsterMove sMonsterMove = 8;
+    // S_SomeNotification sSomeNotification = 3;
     // S_EnterDungeon sEnterDungeon = 11;
   }
 }

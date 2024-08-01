@@ -106,7 +106,8 @@ export const checkWaitingList = async (dungeonCode) => {
       await townRedis.removePlayer(accountId, false);
 
       // 각 클라이언트에게 S_EnterDungeon 패킷 전송
-      enterDungeonSession(accountId, dungeonCode);
+      // enterDungeonSession(accountId, dungeonCode);
     }
+    enterDungeonSession(dungeonSession, dungeonCode);
   }
 };

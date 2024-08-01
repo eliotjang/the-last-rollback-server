@@ -33,7 +33,7 @@ export const sendResponse = function (code, message, payloadType, payload, dontS
     payload,
   };
   const serializedPacket = serializeEx(packetTypes.RESPONSE, payloadType, packetData);
-  console.log('deserialize test:', deserializeTest(packetTypes.RESPONSE, serializedPacket));
+  deserializeTest(packetTypes.RESPONSE, serializedPacket);
   const header = writeHeader(serializedPacket.length, packetTypes.RESPONSE);
   const packet = Buffer.concat([header, serializedPacket]);
 
@@ -82,7 +82,7 @@ export const sendResponseSocket = function (
     payload,
   };
   const serializedPacket = serializeEx(packetTypes.RESPONSE, payloadType, packetData);
-  console.log('deserialize test:', deserializeTest(packetTypes.RESPONSE, serializedPacket));
+  deserializeTest(packetTypes.RESPONSE, serializedPacket);
   const header = writeHeader(serializedPacket.length, packetTypes.RESPONSE);
   const packet = Buffer.concat([header, serializedPacket]);
 
@@ -100,7 +100,7 @@ export const sendNotificationSocket = function (socket, payloadType, payload) {
     payload,
   };
   const serializedPacket = serializeEx(packetTypes.NOTIFICATION, payloadType, packetData);
-  console.log('deserialize test:', deserializeTest(packetTypes.NOTIFICATION, serializedPacket));
+  deserializeTest(packetTypes.NOTIFICATION, serializedPacket);
   const header = writeHeader(serializedPacket.length, packetTypes.NOTIFICATION);
   const packet = Buffer.concat([header, serializedPacket]);
   socket.write(packet);
