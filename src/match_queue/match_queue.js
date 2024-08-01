@@ -92,7 +92,7 @@ export const checkWaitingList = async (dungeonCode) => {
     for (const accountId of accountIds) {
       // 각 유저의 town session 내 다른 유저에게 Despawn 패킷 전송
       const townSession = getTownSessionByUserId(accountId);
-      townSession.removeUser(accountId);
+      await townSession.removeUser(accountId);
 
       // users의 유저를 battle session에 추가
       // redis

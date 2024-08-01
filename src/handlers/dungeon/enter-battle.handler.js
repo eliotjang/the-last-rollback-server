@@ -19,11 +19,11 @@ const enterBattleHandler = ({ socket, userId, payload }) => {
     if (!townSession) {
       //   throw new CustomError(ErrorCodes.GAME_NOT_FOUND, 'Town 세션을 찾을 수 없습니다.');
     } else {
-      townSession.removeUser(userId);
+      // townSession.removeUser(userId);               //test를 위한 임시 주석처리
     }
 
-    const battleSession = addBattleSession();
-    battleSession.addUser(user);
+    // const battleSession = addBattleSession();        //test를 위한 임시 주석처리
+    // battleSession.addUser(user);                     //test를 위한 임시 주석처리
 
     // const response = serializeEx(packetTypes.S_ENTER_DUNGEON, {
     //   payload: {

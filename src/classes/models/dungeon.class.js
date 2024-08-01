@@ -1,3 +1,4 @@
+import { payloadTypes } from '../../constants/packet.constants.js';
 import { sessionTypes } from '../../constants/session.constants.js';
 import Game from './game.class.js';
 
@@ -13,6 +14,12 @@ class Dungeon extends Game {
     Promise.all(this.users.map((curUser) => curUser.getPlayerInfo())).then(() => {
       super.addUser(user);
     });
+  }
+
+  movePlayer(accountId, transform) {
+    // await townRedis.updatePlayerTransform(transform, accountId);
+
+    super.notifyAll(payloadTypes.S_MOVE, { playerId: accountId, transform });
   }
 }
 
