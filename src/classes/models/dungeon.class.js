@@ -24,7 +24,7 @@ class Dungeon extends Game {
   }
 
   async movePlayer(accountId, transform) {
-    await dungeonRedis.updatePlayerTransform(transform, accountId);
+    // await dungeonRedis.updatePlayerTransform(transform, accountId);
 
     super.notifyAll(payloadTypes.S_MOVE, { playerId: accountId, transform });
   }
