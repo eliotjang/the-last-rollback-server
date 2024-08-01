@@ -1,6 +1,7 @@
 import { MAX_USERS } from '../../constants/game.constants.js';
 import { payloadTypes } from '../../constants/packet.constants.js';
 import { sessionTypes } from '../../constants/session.constants.js';
+import { dungeonRedis } from '../../utils/redis/dungeon.redis.js';
 import Game from './game.class.js';
 
 // const MAX_USERS = 4;
@@ -19,12 +20,20 @@ class Dungeon extends Game {
     });
   }
 
-  movePlayer(accountId, transform) {
-    console.log(
-      'MOVE PLAYER:',
-      this.users.map((user) => user.accountId),
-    );
+  removeUser(accountId) {
+    super.removeUser(accountId);
+
+    super.notifyAll(payloadTypes.S_DESPAWN, { playerIds: [accountId] });
+  }
+
+  async movePlayer(accountId, transform) {
+    // await dungeonRedis.updatePlayerTransform(transform, accountId);
+
     super.notifyAll(payloadTypes.S_MOVE, { playerId: accountId, transform });
+  }
+
+  moveMonster(accountId, payloadType, payload) {
+    super.notifyOthers(accountId, payloadType, payload);
   }
 
   toggleReadyState(user) {

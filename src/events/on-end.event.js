@@ -1,5 +1,6 @@
 import { gameCharDB } from '../db/game-char/game-char.db.js';
 import TransformInfo from '../protobuf/classes/info/transform-info.proto.js';
+import { getDungeonSessionByUserSocket } from '../session/dungeon.session.js';
 import { removeUser } from '../session/user.session.js';
 import { handleError } from '../utils/error/errorHandler.js';
 import { socketRedis } from '../utils/redis/socket.redis.js';
@@ -7,7 +8,7 @@ import { townRedis } from '../utils/redis/town.redis.js';
 
 const onEnd = (socket) => async () => {
   try {
-    removeUser(socket);
+    await removeUser(socket);
     // const player = await townRedis.removePlayer(socket.accountId, true);
     // await gameCharDB.updateTransform(socket.accountId, player.transform, true);
     // await socketRedis.removeTownSocket(socket.accountId);
