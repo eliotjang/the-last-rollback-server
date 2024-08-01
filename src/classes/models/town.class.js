@@ -65,6 +65,10 @@ class Town extends Game {
 
     super.notifyAll(payloadTypes.S_MOVE, { playerId: accountId, transform });
   }
+
+  actionPlayer(accountId, animCode) {
+    super.notifyAll(payloadTypes.S_ANIMATION, { playerId: accountId, animCode });
+  }
 }
 
 export default Town;
