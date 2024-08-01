@@ -52,10 +52,8 @@ export const enterDungeonSession = async (dungeonSession, dungeonCode) => {
     }
   }
 
-  const data = JSON.parse(
-    JSON.stringify({ dungeonInfo, playerInfo: playerInfoArray, players: playerStatusArray }),
-  );
-  console.log('data:', data);
+  const data = { dungeonInfo, playerInfo: playerInfoArray, players: playerStatusArray };
+  // console.log('data:', data);
 
   for (const user of dungeonSession.users) {
     user.socket.sendResponse(
