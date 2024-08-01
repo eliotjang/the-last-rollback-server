@@ -14,6 +14,10 @@ class Dungeon extends Game {
       super.addUser(user);
     });
   }
+
+  movePlayer(accountId, transform) {
+    super.notifyAll(payloadTypes.S_MOVE, { playerId: accountId, transform });
+  }
 }
 
 export default Dungeon;

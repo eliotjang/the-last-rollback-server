@@ -4,7 +4,7 @@ import { gameCharDB } from '../../db/game-char/game-char.db.js';
 import { payloadTypes } from '../../constants/packet.constants.js';
 import { SuccessCode } from '../../utils/error/errorCodes.js';
 
-export const enterDungeonSession = async (accountId, dungeonCode) => {
+export const enterDungeonSession = async (dungeonSession, dungeonCode) => {
   const { monsterInfo, charStatInfo } = getGameAssets();
   const dungeonInfo = {
     dungeonCode,
@@ -16,7 +16,7 @@ export const enterDungeonSession = async (accountId, dungeonCode) => {
     })),
   };
 
-  const dungeonSession = getDungeonSessionByUserId(accountId);
+  // const dungeonSession = getDungeonSessionByUserId(accountId);
 
   // dungeonSession.users.forEach((user) => {
   //   console.log(`sessionInfo for user ${user.accountId}:`, user.sessionInfo);
@@ -57,13 +57,21 @@ export const enterDungeonSession = async (accountId, dungeonCode) => {
   );
   console.log('data:', data);
 
-  const currentUser = dungeonSession.users.find((user) => user.accountId === accountId);
-  console.log('currentUser:', currentUser);
+  for (const user of dungeonSession.users) {
+    user.socket.sendResponse(
+      SuccessCode.Success,
+      '던전에 입장합니다.',
+      payloadTypes.S_ENTER_DUNGEON,
+      data,
+    );
+  }
+  // const currentUser = dungeonSession.users.find((user) => user.accountId === accountId);
+  // console.log('currentUser:', currentUser);
 
-  currentUser.socket.sendResponse(
-    SuccessCode.Success,
-    '던전에 입장합니다.',
-    payloadTypes.S_ENTER_DUNGEON,
-    data,
-  );
+  // currentUser.socket.sendResponse(
+  //   SuccessCode.Success,
+  //   '던전에 입장합니다.',
+  //   payloadTypes.S_ENTER_DUNGEON,
+  //   data,
+  // );
 };
