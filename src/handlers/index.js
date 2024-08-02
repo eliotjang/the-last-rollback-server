@@ -12,7 +12,7 @@ import dayRoundReadyHandler from './dungeon/day-round-ready.handler.js';
 import attackMonsterHandler from './dungeon/attack-monster.handler.js';
 import attackedMonsterHandler from './dungeon/attacked-monster.handler.js';
 import attackPlayerHandler from './dungeon/attack-player.handler.js';
-import animationMonsterHandler from './dungeon/animation-monster.handler copy.js';
+import animationMonsterHandler from './dungeon/animation-monster.handler.js';
 import animationPlayerHandler from './dungeon/animation-player.handler.js';
 
 const handlers = {
