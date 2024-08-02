@@ -1,9 +1,10 @@
-import { MAX_USERS } from '../../constants/game.constants.js';
+import { DAY_DURATION, MAX_USERS } from '../../constants/game.constants.js';
 import { payloadTypes } from '../../constants/packet.constants.js';
 import { sessionTypes } from '../../constants/session.constants.js';
 import { getGameAssets } from '../../init/assets.js';
 import dungeonUtils from '../../utils/dungeon/dungeon.utils.js';
 import Game from './game.class.js';
+import User from './user.class.js';
 
 // const MAX_USERS = 4;
 
@@ -11,6 +12,7 @@ class Dungeon extends Game {
   constructor(id, dungeonCode) {
     super(id, MAX_USERS);
     this.type = sessionTypes.DUNGEON;
+    this.dungeonCode = dungeonCode;
     this._isNight = false;
     this.readyStates = [];
     this.round = null;
@@ -18,6 +20,7 @@ class Dungeon extends Game {
     this.playerInfos = null;
     this.playerStatus = null;
     this.towerHp = null;
+    this.timers = new Map();
   }
 
   addTowerHp(towerHp) {
@@ -484,16 +487,25 @@ class Dungeon extends Game {
     super.notifyOthers(accountId, payloadType, payload);
   }
 
+  // TODO: 타이머 패킷 분리?
   toggleReadyState(user) {
-    if (isNight) return true;
+    if (this._isNight) return true;
     const idx = this.readyStates.findIndex((targetId) => targetId === user.accountId);
-    if (idx !== -1) {
+    if (idx === -1) {
       this.readyStates.push(user.accountId);
+      console.log('======', this.readyStates, this.round);
       if (this.readyStates.length === MAX_USERS) {
-        this.setIsNight(true);
-        // TODO: 모든 유저에게 S_NightRoundStart 전송
-        const data = {}; //
-        super.notifyAll(payloadTypes.S_NIGHT_ROUND_START, data);
+        if (this.round === 1) {
+          // this._isNight = true; // 밤 테스트
+          // setTimeout(this.endNightRound.bind(this), 3000); // 밤 테스트
+          // TODO: 중복 실행 막기, 타이머 매핑
+          this.setDayRoundTimer();
+        } else {
+          this._isNight = true;
+          // TODO: 모든 유저에게 S_NightRoundStart 전송
+          const data = {}; //
+          super.notifyAll(payloadTypes.S_NIGHT_ROUND_START, data);
+        }
       }
       return true;
     } else {
@@ -506,6 +518,11 @@ class Dungeon extends Game {
     return this.readyStates.length;
   }
 
+  /**
+   * User 인스턴스로 해당 유저의 라운드 통계 정보를 불러옵니다.
+   * @param {User} user 유저 세션에 등록된 유저 인스턴스
+   * @returns {RoundResult} 유저의 라운드 통계 정보(RoundResult)를 담은 객체
+   */
   fetchRoundStatsByUser(user) {
     // TODO: 라운드 통계 (RoundResult) 반환
 
@@ -518,7 +535,7 @@ class Dungeon extends Game {
       
     }
     */
-    const nickname = this.getUser(user.accountId).nickname; // 임시
+    const nickname = this.getUser(user.accountId).nickname; // TODO: nickname 추가 필요
     const score = 0; // 임시
     const killCount = 0; // 임시
     return {
@@ -528,10 +545,16 @@ class Dungeon extends Game {
     };
   }
 
+  /**
+   * 밤 라운드를 종료시킵니다. 해당 라운드가 마지막 밤 라운드인 경우 S_GameEnd 패킷을 전송합니다.
+   */
   endNightRound() {
-    if (!isNight) return;
-    this.setIsNight(false);
+    if (!this._isNight) return;
+    this._isNight = false;
     const dungeonInfo = dungeonUtils.fetchDungeonInfo(this.dungeonCode, this.round + 1); // 다음 라운드 몬스터 목록 받아오기
+    if (dungeonInfo === null) {
+      // 마지막 라운드가 종료됨 (gameEnd 전송)
+    }
     this.setMonsters(dungeonInfo.monsters);
     const roundResults = this.users.map((user) => this.fetchRoundStatsByUser(user)); // 각 유저의 라운드 통계 받아오기
     const data = {
@@ -539,6 +562,7 @@ class Dungeon extends Game {
       roundResults,
     };
     this.notifyAll(payloadTypes.S_NIGHT_ROUND_END, data);
+    this.setDayRoundTimer();
   }
 
   /**
@@ -554,8 +578,25 @@ class Dungeon extends Game {
     return monsters;
   }
 
-  setIsNight(isNight) {
-    this._isNight = isNight;
+  /**
+   *
+   */
+  setDayRoundTimer() {
+    Promise.all([
+      (async () => {
+        setTimeout(() => {
+          this._isNight = true;
+          this.notifyAll(payloadTypes.S_NIGHT_ROUND_START, {});
+        }, DAY_DURATION);
+      })(),
+      (async () => {
+        const data = {
+          startTime: Date.now(),
+          milliseconds: DAY_DURATION,
+        };
+        this.notifyAll(payloadTypes.S_DAY_ROUND_TIMER, data);
+      })(),
+    ]);
   }
 
   animationMonster(data) {
