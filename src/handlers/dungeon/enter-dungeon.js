@@ -7,7 +7,7 @@ import { SuccessCode } from '../../utils/error/errorCodes.js';
 export const enterDungeonSession = async (dungeonSession, dungeonCode) => {
   const { monsterInfo, charStatInfo, stageUnlock } = getGameAssets();
 
-  const towerHp = stageUnlock[0].towerHp;
+  const towerHp = stageUnlock.data[0].towerHp;
   dungeonSession.addTower(towerHp);
 
   const dungeonInfo = {
