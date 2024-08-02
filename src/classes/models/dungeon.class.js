@@ -76,7 +76,7 @@ class Dungeon extends Game {
     const data = this.playerStatus.get(accountId);
     if (data.playerHp - damage <= 0) {
       console.log(`${accountId} 플레이어 사망`);
-      this.killPlayer(accountId);
+      // this.killPlayer(accountId);
     }
 
     data.playerHp -= damage;
