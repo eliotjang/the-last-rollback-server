@@ -37,7 +37,6 @@ class User {
   }
 
   async getPlayerInfo() {
-    console.log(this.sessionInfo.type);
     switch (this.sessionInfo.type) {
       case sessionTypes.TOWN:
         return await townRedis.getPlayerInfo(this.accountId);
