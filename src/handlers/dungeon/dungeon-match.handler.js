@@ -1,6 +1,6 @@
 import { payloadTypes } from '../../constants/packet.constants.js';
 import { matchDequeue, matchEnqueue } from '../../match_queue/producers/match_queue.producer.js';
-import { getUserById, userSocket } from '../../session/user.session.js';
+import { getUserById } from '../../session/user.session.js';
 import CustomError from '../../utils/error/customError.js';
 import { ErrorCodes, SuccessCode } from '../../utils/error/errorCodes.js';
 
@@ -11,7 +11,7 @@ const dungeonMatchHandler = async ({ socket, accountId, packet }) => {
   // 이미 진행 중인 던전 세션이 있는지 확인?
 
   // 유저 객체 찾기
-  const user = userSocket.getUserById(accountId);
+  const user = getUserById(accountId);
 
   if (!user) {
     // 유저가 없을 때

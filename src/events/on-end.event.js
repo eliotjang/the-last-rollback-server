@@ -1,5 +1,6 @@
 import { gameCharDB } from '../db/game-char/game-char.db.js';
 import TransformInfo from '../protobuf/classes/info/transform-info.proto.js';
+import { getDungeonSessionByUserSocket } from '../session/dungeon.session.js';
 import { removeUser } from '../session/user.session.js';
 import { handleError } from '../utils/error/errorHandler.js';
 import { socketRedis } from '../utils/redis/socket.redis.js';
