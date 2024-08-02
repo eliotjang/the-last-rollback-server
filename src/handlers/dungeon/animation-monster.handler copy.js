@@ -21,6 +21,8 @@ const animationMonsterHandler = ({ socket, accountId, packet }) => {
 
     if (playerId) {
       data.playerId = playerId;
+    } else {
+      data.playerId = '-1';
     }
 
     dungeonSession.animationMonster(data);

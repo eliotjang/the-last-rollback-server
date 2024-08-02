@@ -18,6 +18,8 @@ const animationPlayerHandler = ({ socket, accountId, packet }) => {
 
     if (monsterIdx) {
       data.monsterIdx = monsterIdx;
+    } else {
+      data.monsterIdx = -1;
     }
 
     dungeonSession.animationPlayer(data);
