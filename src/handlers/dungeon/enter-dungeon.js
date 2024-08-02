@@ -5,7 +5,10 @@ import { payloadTypes } from '../../constants/packet.constants.js';
 import { SuccessCode } from '../../utils/error/errorCodes.js';
 
 export const enterDungeonSession = async (dungeonSession, dungeonCode) => {
-  const { monsterInfo, charStatInfo } = getGameAssets();
+  const { monsterInfo, charStatInfo, stageUnlock } = getGameAssets();
+
+  const towerHp = stageUnlock[0].towerHp;
+  dungeonSession.addTower(towerHp);
 
   const dungeonInfo = {
     dungeonCode,

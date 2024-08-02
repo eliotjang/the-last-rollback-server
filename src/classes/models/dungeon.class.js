@@ -16,6 +16,15 @@ class Dungeon extends Game {
     this.roundMonsters = null;
     this.playerInfos = null;
     this.playerStatus = null;
+    this.towerHp = null;
+  }
+
+  addTowerHp(towerHp) {
+    this.towerHp = towerHp;
+  }
+
+  updateMonsterAttackTower() {
+    //
   }
 
   /**
