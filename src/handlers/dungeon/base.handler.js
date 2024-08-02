@@ -1,20 +1,26 @@
 import { getDungeonSessionByUserId } from '../../session/dungeon.session.js';
-import { getTownSessionByUserId } from '../../session/town.session.js';
+import { getAllTownSessions, addTownSession } from '../../session/town.session.js';
+import { handleError } from '../../utils/error/errorHandler.js';
 
-// 기지가 공격당하면 클라에서 어떤 accountId를 보낼지  아무거나 보내도됨
-const baseHpUpdateHandler = async ({ socket, accountId, packet }) => {
-  const { hp } = packet;
-  const updateHp = hp - 10;
+const baseHpUpdateHandler = async ({ _, accountId, _ }) => {
+  try {
+    const dungeonSession = getDungeonSessionByUserId(accountId);
+    const townSessions = getAllTownSessions();
+    let townSession = townSessions.find((townSession) => !townSession.isFull());
+    if (!townSession) {
+      townSession = addTownSession();
+    }
 
-  const dungeonSession = getDungeonSessionByUserId(accountId);
-  const townSession = getTownSessionByUserId(accountId);
-  dungeonSession.updateBaseHp(updateHp);
+    dungeonSession.updateBaseHp(10);
 
-  if (updateHp <= 0) {
-    const lastHp = 0;
-    dungeonSession.updateBaseHp(lastHp);
+    if (dungeon.baseHp <= 0) {
+      const lastHp = 0;
+      dungeonSession.updateBaseHp(lastHp);
 
-    await dungeonSession.updateGameOver(townSession);
+      await dungeonSession.updateGameOver(townSession);
+    }
+  } catch (error) {
+    handleError(socket, error);
   }
 };
 

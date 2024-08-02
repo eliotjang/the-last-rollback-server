@@ -3,9 +3,12 @@ import { getDungeonSessionByUserId } from '../../session/dungeon.session.js';
 import { gameCharDB } from '../../db/game-char/game-char.db.js';
 import { payloadTypes } from '../../constants/packet.constants.js';
 import { SuccessCode } from '../../utils/error/errorCodes.js';
+// import { findBaseHpByDungeonCode } from '../../utils/find-baseHp.utils.js';
 
 export const enterDungeonSession = async (dungeonSession, dungeonCode) => {
   const { monsterInfo, charStatInfo } = getGameAssets();
+  // const baseHp = findBaseHpByDungeonCode(dungeonCode);
+
   const dungeonInfo = {
     dungeonCode,
     monsters: monsterInfo.data.map((monster, index) => ({
@@ -14,7 +17,10 @@ export const enterDungeonSession = async (dungeonSession, dungeonCode) => {
       monsterName: monster.monsterName,
       monsterHp: monster.maxHp,
     })),
+    // baseHp
   };
+
+  // dungeonSession.addDungeonInfo(dungeonInfo);
 
   // const dungeonSession = getDungeonSessionByUserId(accountId);
 

@@ -172,8 +172,7 @@ message S_EnterDungeon{
 }
 
 // message C_Base{
-//   int32 hp = 1;
-//   string accountId = 2;
+//   string accountId = 1;
 // }
 
 // message S_Base{
@@ -306,6 +305,7 @@ message Color {
 message DungeonInfo {
   int32 dungeonCode = 1;
   repeated MonsterStatus monsters = 2;
+  // int32 baseHp = 3;
 }
 
 message MonsterStatus {

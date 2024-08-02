@@ -5,7 +5,6 @@ import { dungeonRedis } from '../../utils/redis/dungeon.redis.js';
 import Game from './game.class.js';
 import { userDB } from '../../db/user/user.db.js';
 import { SuccessCode } from '../../utils/error/errorCodes.js';
-import { payloadTypes } from '../../constants/packet.constants.js';
 import { getUserById } from '../../session/user.session.js';
 
 // const MAX_USERS = 4;
@@ -18,16 +17,20 @@ class Dungeon extends Game {
     this.accountExpMap = {};
     this._isNight = false;
     this.readyStates = [];
+    this.dungeonInfo = null;
   }
 
   addUser(user) {
-    Promise.all(this.users.map((curUser) => curUser.getPlayerInfo())).then(() => {
-      super.addUser(user);
-    });
+    super.addUser(user);
   }
 
-  updateBaseHp(data) {
-    super.notifyAll(payloadTypes.S_BASE, data);
+  addDungeonInfo(dungeonInfo) {
+    this.dungeonInfo = { ...dungeonInfo };
+  }
+
+  updateBaseHp(amount) {
+    this.dungeonInfo.baseHp -= amount;
+    super.notifyAll(payloadTypes.S_BASE, this.dungeonInfo.baseHp);
   }
 
   updateRoundResult(accountId, gameExp) {
@@ -46,7 +49,8 @@ class Dungeon extends Game {
   }
 
   async updateGameOver(townSession) {
-    const playersExp = this.updateRoundResult();
+    // 죽은 라운드의 경험치는 포함안됨
+    const playersExp = this.updateRoundResult(); // updatePlayerExp로 변경
 
     for (const [accountId, totalExp] of Object.entries(playersExp)) {
       const player = await userDB.updateExp(accountId, totalExp, true);
@@ -73,7 +77,7 @@ class Dungeon extends Game {
     const playersExp = this.updateRoundResult();
 
     for (const [accountId, totalExp] of Object.entries(playersExp)) {
-      const wineExp = totalExp + 100; // 임의로 승리 시 경험치 100 추가
+      const wineExp = totalExp + 100; // 승리 시 정산에서 얻은 경험치에서 100 추가
       const player = await userDB.updateExp(accountId, wineExp, true);
       const playerLevel = player.player_level;
 
@@ -97,7 +101,7 @@ class Dungeon extends Game {
   removeUser(accountId) {
     super.removeUser(accountId);
 
-    super.notifyAll(payloadTypes.S_DESPAWN, { playerIds: [accountId] });
+    super.notifyAll(payloadTypes.S_LEAVE_DUNGEON);
   }
 
   async movePlayer(accountId, transform) {

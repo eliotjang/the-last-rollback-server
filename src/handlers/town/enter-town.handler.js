@@ -3,7 +3,6 @@ import { addTownSession, getAllTownSessions } from '../../session/town.session.j
 import CustomError from '../../utils/error/customError.js';
 import { handleError } from '../../utils/error/errorHandler.js';
 import TransformInfo from '../../protobuf/classes/info/transform-info.proto.js';
-import { playerInfoToObject } from '../../utils/transform-object.utils.js';
 import { ErrorCodes, SuccessCode } from '../../utils/error/errorCodes.js';
 import { townRedis } from '../../utils/redis/town.redis.js';
 import { getUserById } from '../../session/user.session.js';
