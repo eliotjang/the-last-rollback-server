@@ -138,24 +138,28 @@ message S_Animation {
 // 응답 패킷 - S_Animation
 message C_AnimationPlayer {
   int32 animCode = 2;
+  optional int32 monsterIdx = 3;
 }
 
 // ALL
 message S_AnimationPlayer {
   string playerId = 1;
   int32 animCode = 2;
+  optional int32 monsterIdx = 3;
 }
 
 // 응답 패킷 - S_Animation
 message C_AnimationMonster {
   int32 monsterIdx = 2;
   int32 animCode = 1;
+  optional string playerId = 3;
 }
 
 // ALL
 message S_AnimationMonster {
   int32 monsterIdx = 2;
   int32 animCode = 1;
+  optional string playerId = 3;
 }
 
 

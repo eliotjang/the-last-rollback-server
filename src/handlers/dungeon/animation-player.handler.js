@@ -1,6 +1,6 @@
 const animationPlayerHandler = ({ socket, accountId, packet }) => {
   try {
-    const { animCode } = packet;
+    const { animCode, monsterIdx } = packet;
 
     const user = getUserById(accountId);
     const dungeonSession = user.getSession();
@@ -8,11 +8,13 @@ const animationPlayerHandler = ({ socket, accountId, packet }) => {
       throw new CustomError(ErrorCodes.GAME_NOT_FOUND, 'Dungeon Session을 찾을 수 없습니다.');
     }
 
-    // 거리 검증
-    // verifyDistance();
-    // const playerInfo = dungeonSession.getPlayerInfo(accountId);
+    const data = { animCode, accountId };
 
-    dungeonSession.animationPlayer(animCode, accountId);
+    if (monsterIdx) {
+      data.monsterIdx = monsterIdx;
+    }
+
+    dungeonSession.animationPlayer(data);
   } catch (e) {
     handleError(e);
   }

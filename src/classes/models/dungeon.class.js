@@ -524,12 +524,12 @@ class Dungeon extends Game {
     this._isNight = true;
   }
 
-  animationMonster(animCode, monsterIdx) {
-    super.notifyAll(payloadTypes.S_ANIMATION_MONSTER, { animCode, monsterIdx });
+  animationMonster(data) {
+    super.notifyAll(payloadTypes.S_ANIMATION_MONSTER, data);
   }
 
-  animationPlayer(animCode, playerId) {
-    super.notifyAll(payloadTypes.S_ANIMATION_MONSTER, { animCode, playerId });
+  animationPlayer(data) {
+    super.notifyAll(payloadTypes.S_ANIMATION_MONSTER, data);
   }
 }
 
