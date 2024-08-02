@@ -47,6 +47,7 @@ enum MsgId {
     C_ANIMATION_MONSTER = 48;
     S_ANIMATION_MONSTER = 49;
 
+    S_DAY_ROUND_TIMER = 500;
     C_DUNGEON_MATCH = 50;
     S_DUNGEON_MATCH = 51;
     S_ENTER_DUNGEON = 54;
@@ -175,6 +176,11 @@ message C_Chat{
   string playerId = 1;
   string senderName = 2;
   string chatMsg = 3;
+}
+
+message S_DayRoundTimer {
+  uint64 startTime = 1;
+  uint32 milliseconds = 2;
 }
 
 // 응답 패킷 - S_EnterDungeon
@@ -433,6 +439,7 @@ message RequestPacket {
     C_MonsterAttack cMonsterAttack = 27;
     C_AnimationMonster cAnimationMonster = 28;
     C_AnimationPlayer cAnimationPlayer = 29;
+    C_DayRoundReady cDayRoundReady = 15;
   }
 }
 
@@ -453,6 +460,7 @@ message ResponsePacket {
     S_DungeonMatch sDungeonMatch = 23;
     S_EnterDungeon sEnterDungeon = 24;
     S_LeaveDungeon sLeaveDungeon = 12;
+    S_DayRoundReady sDayRoundReady = 25;
     
     S_ScreenText sScreenText = 13;
     S_ScreenDone sScreenDone = 14;
@@ -480,6 +488,7 @@ message NotificationPacket {
     S_Despawn sDespawn = 4;
     S_Spawn sSpawn = 5;
 
+    S_DayRoundTimer sDayRoundTimer = 10;
     S_NightRoundStart sNightRoundStart = 6;
     S_NightRoundEnd sNightRoundEnd = 7;
     S_MonsterMove sMonsterMove = 8;

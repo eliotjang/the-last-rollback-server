@@ -3,6 +3,7 @@ import {
   getDungeonSessionByUserId,
   getDungeonSessionByUserSocket,
 } from '../../session/dungeon.session.js';
+import { getUserById } from '../../session/user.session.js';
 import CustomError from '../../utils/error/customError.js';
 import { ErrorCodes, SuccessCode } from '../../utils/error/errorCodes.js';
 
@@ -16,8 +17,8 @@ const dayRoundReadyHandler = ({ socket, accountId, packet }) => {
   if (!dungeon) {
     throw new CustomError(ErrorCodes.GAME_NOT_FOUND, '던전 세션을 찾을 수 없습니다.');
   }
-  dungeon.toggleReadyState();
-  const isReady = toggleReady(user);
+
+  const isReady = dungeon.toggleReadyState(user);
 
   // TODO: 준비 상태 변경 알림
   socket.sendResponse(

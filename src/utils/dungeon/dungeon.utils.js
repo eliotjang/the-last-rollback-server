@@ -59,6 +59,10 @@ const dungeonUtils = {
    */
   fetchDungeonInfo: (dungeonCode, round) => {
     const roundData = stageData[dungeonCode][round];
+    if (roundData === null || typeof roundData === 'undefined') {
+      // 마지막 라운드
+      return null;
+    }
 
     const monsters = [];
     let index = 0;
