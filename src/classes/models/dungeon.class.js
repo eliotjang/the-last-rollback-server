@@ -457,8 +457,13 @@ class Dungeon extends Game {
     super.notifyOthers(accountId, payloadTypes.S_MONSTER_ATTACKED, { monsterIdx, monsterHp });
   }
 
-  attackPlayer(monsterIdx, accountId, playerHp) {
-    super.notifyAll(payloadTypes.S_PLAYER_ATTACKED, { monsterIdx, playerId: accountId, playerHp });
+  attackPlayer(monsterIdx, attackType, accountId, playerHp) {
+    super.notifyAll(payloadTypes.S_PLAYER_ATTACKED, {
+      monsterIdx,
+      attackType,
+      playerId: accountId,
+      playerHp,
+    });
   }
 
   removeUser(accountId) {

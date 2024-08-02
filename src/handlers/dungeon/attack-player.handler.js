@@ -8,7 +8,7 @@ import { handleError } from '../../utils/error/errorHandler.js';
 // 몬스터가 플레이어 공격 요청 시
 const attackPlayerHandler = ({ socket, accountId, packet }) => {
   try {
-    const { monsterIdx, playerId } = packet;
+    const { monsterIdx, attackType, playerId } = packet;
 
     const user = getUserById(accountId);
     const dungeonSession = user.getSession();
@@ -43,7 +43,7 @@ const attackPlayerHandler = ({ socket, accountId, packet }) => {
 
     const playerHp = playerStatus.playerHp;
 
-    dungeonSession.attackPlayer(monsterIdx, playerId, playerHp);
+    dungeonSession.attackPlayer(monsterIdx, attackType, playerId, playerHp);
     console.log('attackPlayerHandler', packet);
   } catch (e) {
     handleError(e);
