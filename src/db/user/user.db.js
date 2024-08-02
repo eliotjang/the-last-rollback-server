@@ -104,7 +104,7 @@ export const userDB = {
     const { stageUnlock } = getGameAssets();
     let user = await this.getUser(accountId);
 
-    if (user.stageUnlock >= stageUnlock.data[stageUnlock.data.length - 1].stage) {
+    if (user.stageUnlock >= stageUnlock.data[stageUnlock.data.length - 1].dungeonCode) {
       console.log('최대 스테이지에 도달했습니다.');
       return;
     }

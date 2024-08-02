@@ -2,9 +2,9 @@
   "name": "stage_unlock",
   "version": "1.0.0",
   "data": [
-    { "stage": 1, "rewardId": 1000 },
-    { "stage": 2, "rewardId": 2000 },
-    { "stage": 3, "rewardId": 3000 },
-    { "stage": 4, "rewardId": 4000 }
+    { "dungeonCode": 1, "rewardId": 1000 },
+    { "dungeonCode": 2, "rewardId": 2000 },
+    { "dungeonCode": 3, "rewardId": 3000 },
+    { "dungeonCode": 4, "rewardId": 4000 }
   ]
 }
