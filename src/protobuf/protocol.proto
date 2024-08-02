@@ -402,8 +402,9 @@ message BtnInfo {
 message RoundResult {
   string nickname = 1;
   uint32 score = 2;
-  uint32 killCound = 3;
-  // 밤 라운드 정산 정보 있으면 여기에 추가
+  uint32 killCount = 3;
+  // 밤 라운드 정산 정보 있으면 여기에 추가?
+  
 }
 
 // 패킷
