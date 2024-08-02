@@ -42,7 +42,7 @@ class Town extends Game {
   }
 
   actionPlayer(accountId, animCode) {
-    super.notifyAll(payloadTypes.S_ANIMATION, { playerId: accountId, animCode });
+    super.notifyOthers(payloadTypes.S_ANIMATION, { playerId: accountId, animCode });
   }
 
   chatPlayer(accountId, chatMsg) {

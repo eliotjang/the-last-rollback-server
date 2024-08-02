@@ -20,6 +20,7 @@ const handlers = {
   [payloadTypes.C_DUNGEON_MATCH]: dungeonMatchHandler,
   [payloadTypes.C_CHAT]: chattingHandler,
   [payloadTypes.C_DAY_ROUND_READY]: dayRoundReadyHandler,
+  [payloadTypes.C_ANIMATION]: actionInteractHandler,
 };
 
 export const getHandlerByPayloadType = (payloadType) => {

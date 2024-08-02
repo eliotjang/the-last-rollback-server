@@ -14,7 +14,7 @@ const chattingHandler = async ({ socket, accountId, packet }) => {
 
     const curSession = user.getSession();
     if (!curSession) {
-      throw new CustomError(ErrorCodes.GAME_NOT_FOUND, '타운 세션을 찾을 수 없습니다.');
+      throw new CustomError(ErrorCodes.GAME_NOT_FOUND, '세션을 찾을 수 없습니다.');
     }
 
     curSession.chatPlayer(accountId, chatMsg);

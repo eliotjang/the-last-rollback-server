@@ -13,12 +13,12 @@ const actionInteractHandler = ({ socket, accountId, packet }) => {
       throw new CustomError(ErrorCodes.USER_NOT_FOUND, '유저를 찾을 수 없습니다.');
     }
 
-    const townSession = user.getSession();
-    if (!townSession) {
-      throw new CustomError(ErrorCodes.GAME_NOT_FOUND, '타운 세션을 찾을 수 없습니다.');
+    const curSession = user.getSession();
+    if (!curSession) {
+      throw new CustomError(ErrorCodes.GAME_NOT_FOUND, '세션을 찾을 수 없습니다.');
     }
 
-    townSession.movePlayer(accountId, animCode);
+    curSession.actionPlayer(accountId, animCode);
   } catch (error) {
     handleError(socket, error);
   }

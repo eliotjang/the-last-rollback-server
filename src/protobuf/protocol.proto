@@ -399,5 +399,6 @@ message NotificationPacket {
     S_MonsterMove sMonsterMove = 8;
 
     S_Chat sChat = 9;
+    S_Animation sAnimation = 10;
   }
 }
