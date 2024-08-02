@@ -15,9 +15,10 @@ class Dungeon extends Game {
   }
 
   addUser(user) {
-    Promise.all(this.users.map((curUser) => curUser.getPlayerInfo())).then(() => {
-      super.addUser(user);
-    });
+    // Promise.all(this.users.map((curUser) => curUser.getPlayerInfo())).then(() => {
+    //   super.addUser(user);
+    // });
+    super.addUser(user);
   }
 
   attackMonster(accountId, attackType, monsterIdx) {

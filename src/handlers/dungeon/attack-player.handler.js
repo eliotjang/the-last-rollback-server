@@ -42,6 +42,7 @@ const attackPlayerHandler = ({ socket, accountId, packet }) => {
     const playerHp = 10;
 
     dungeonSession.attackPlayer(monsterIdx, playerId, playerHp);
+    console.log('attackPlayerHandler', packet);
   } catch (e) {
     handleError(e);
   }
