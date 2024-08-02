@@ -6,8 +6,10 @@ import { SuccessCode } from '../../utils/error/errorCodes.js';
 // import { findBaseHpByDungeonCode } from '../../utils/find-baseHp.utils.js';
 
 export const enterDungeonSession = async (dungeonSession, dungeonCode) => {
-  const { monsterInfo, charStatInfo } = getGameAssets();
-  // const baseHp = findBaseHpByDungeonCode(dungeonCode);
+  const { monsterInfo, charStatInfo, stageUnlock } = getGameAssets();
+
+  const towerHp = stageUnlock[0].towerHp;
+  dungeonSession.addTower(towerHp);
 
   const dungeonInfo = {
     dungeonCode,
@@ -17,10 +19,7 @@ export const enterDungeonSession = async (dungeonSession, dungeonCode) => {
       monsterName: monster.monsterName,
       monsterHp: monster.monsterHp,
     })),
-    // baseHp
   };
-
-  // dungeonSession.addDungeonInfo(dungeonInfo);
 
   const round1 = new Map();
   const transform = {

@@ -11,7 +11,7 @@ const baseHpUpdateHandler = async ({ _, accountId, _ }) => {
       townSession = addTownSession();
     }
 
-    dungeonSession.updateBaseHp(10);
+    dungeonSession.updateBaseHp(10); // 몬스터 공격력 임의로 설정
 
     if (dungeon.baseHp <= 0) {
       const lastHp = 0;

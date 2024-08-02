@@ -23,6 +23,16 @@ class Dungeon extends Game {
     this.roundMonsters = null;
     this.playerInfos = null;
     this.playerStatus = null;
+    this.towerHp = null;
+  }
+
+  addTowerHp(towerHp) {
+    this.towerHp = towerHp;
+  }
+
+  updateBaseHp(amount) {
+    this.towerHp -= amount;
+    super.notifyAll(payloadTypes.S_BASE, this.towerHp);
   }
 
   /**
@@ -432,15 +442,6 @@ class Dungeon extends Game {
 
   addUser(user) {
     super.addUser(user);
-  }
-
-  addDungeonInfo(dungeonInfo) {
-    this.dungeonInfo = { ...dungeonInfo };
-  }
-
-  updateBaseHp(amount) {
-    this.dungeonInfo.baseHp -= amount;
-    super.notifyAll(payloadTypes.S_BASE, this.dungeonInfo.baseHp);
   }
 
   updateRoundResult(accountId, gameExp) {
