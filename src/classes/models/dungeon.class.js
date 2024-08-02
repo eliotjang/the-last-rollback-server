@@ -529,7 +529,7 @@ class Dungeon extends Game {
   }
 
   animationPlayer(data) {
-    super.notifyAll(payloadTypes.S_ANIMATION_MONSTER, data);
+    super.notifyAll(payloadTypes.S_ANIMATION_PLAYER, data);
   }
 }
 
