@@ -1,3 +1,9 @@
+import { sessionTypes } from '../../constants/session.constants.js';
+import { getUserById } from '../../session/user.session.js';
+import CustomError from '../../utils/error/customError.js';
+import { ErrorCodes } from '../../utils/error/errorCodes.js';
+import { handleError } from '../../utils/error/errorHandler.js';
+
 const animationPlayerHandler = ({ socket, accountId, packet }) => {
   try {
     const { animCode, monsterIdx } = packet;
