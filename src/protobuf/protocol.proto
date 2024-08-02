@@ -50,8 +50,29 @@ enum MsgId {
     S_DAY_ROUND_READY = 57;
     S_NIGHT_ROUND_START = 58;
     S_NIGHT_ROUND_END = 59;
+    C_MONSTER_MOVE = 60;
+    S_MONSTER_MOVE = 61;
 
     S_SOME_NOTIFICATION = 300;
+}
+
+message C_SignUp {
+  string accountId = 1;
+  string accountPwd = 2;
+}
+
+message S_SignUp {
+  string accountId = 1;
+}
+
+message C_LogIn {
+  string accountId = 1;
+  string accountPwd = 2;
+}
+
+message S_LogIn {
+  string accountId = 1;
+  string token = 2;
 }
 
 // 응답 패킷 - S_Enter, S_Spawn
@@ -70,8 +91,6 @@ message S_Spawn {
   repeated PlayerInfo players = 1;
 }
 
-
-
 // 접속상태를 서버에서 판단해서 끊기도 다른 플레이어들 정보 전달
 // 응답 패킷 - S_Leave, S_Despawn
 message S_Despawn {
@@ -87,6 +106,18 @@ message C_Move {
 // ALL
 message S_Move {
   string playerId = 1;
+  TransformInfo transform = 2;
+}
+
+// 호스트
+message C_MonsterMove {
+  int32 monsterIdx = 1;
+  TransformInfo transform = 2;
+}
+
+// 게스트
+message S_MonsterMove {
+  int32 monsterIdx = 1;
   TransformInfo transform = 2;
 }
 
@@ -248,30 +279,6 @@ message S_NightRoundEnd {
   repeated RoundResult roundResults = 2;
 }
 
-message C_SignUp {
-  string accountId = 1;
-  string accountPwd = 2;
-}
-
-message S_SignUp {
-  string accountId = 1;
-}
-
-message C_LogIn {
-  string accountId = 1;
-  string accountPwd = 2;
-}
-
-message S_LogIn {
-  string accountId = 1;
-  string token = 2;
-}
-
-// 임시
-message S_SomeNotification {
-  string value = 1;
-}
-
 // ---------------------------------
 // 정보 구조체
 
@@ -382,16 +389,15 @@ message RequestPacket {
     C_Move cMove = 6;
     C_Animation cAnimation = 7;
     C_Chat cChat = 8;
-
-    C_DungeonMatch cDungeonMatch = 13;
-    C_EnterDungeon cEnterDungeon = 9;
-    
-    C_PlayerResponse cPlayerResponse = 10;
-    
-    C_SignUp cSignUp = 11;
-    C_LogIn cLogIn = 12;
+    C_DungeonMatch cDungeonMatch = 9;
+    C_EnterDungeon cEnterDungeon = 10;
+    C_PlayerResponse cPlayerResponse = 11;
+    C_SignUp cSignUp = 12;
+    C_LogIn cLogIn = 13;
+    C_MonsterMove cMonsterMove = 14;
     C_PlayerAttack cPlayerAttack = 25;
     C_MonsterAttacked cMonsterAttacked = 26;
+    C_MonsterAttack cMonsterAttack = 27;
   }
 }
 
@@ -405,6 +411,7 @@ message ResponsePacket {
     S_Spawn sSpawn = 6;
     S_Despawn sDespawn = 7;
     S_Move sMove = 8;
+
     S_Animation sAnimation = 9;
     S_Chat sChat = 10;
 
@@ -421,10 +428,12 @@ message ResponsePacket {
     S_SetMonsterHp sSetMonsterHp = 18;
     S_PlayerAction sPlayerAction = 19;
     S_MonsterAction sMonsterAction = 20;
+
     S_SignUp sSignUp = 21;
     S_LogIn sLogIn = 22;
     S_PlayerAttack sPlayerAttack = 25;
     S_MonsterAttacked sMonsterAttacked = 26;
+
   }
 }
 
@@ -432,16 +441,18 @@ message NotificationPacket {
   uint64 timestamp = 1;
   uint32 payloadType = 2;
   oneof payload {
-    S_Move sMove = 4;
-    S_Despawn sDespawn = 5;
-    S_Spawn sSpawn = 6;
+    S_Move sMove = 3;
+    S_Despawn sDespawn = 4;
+    S_Spawn sSpawn = 5;
 
-    S_NightRoundStart sNightRoundStart = 7;
-    S_NightRoundEnd sNightRoundEnd = 8;
+    S_NightRoundStart sNightRoundStart = 6;
+    S_NightRoundEnd sNightRoundEnd = 7;
+    S_MonsterMove sMonsterMove = 8;
 
-    S_SomeNotification sSomeNotification = 3;
     S_PlayerAttack sPlayerAttack = 25;
     S_MonsterAttacked sMonsterAttacked = 26;
+    S_PlayerAttacked sPlayerAttacked = 27;
     // S_EnterDungeon sEnterDungeon = 11;
+    S_Chat sChat = 9;
   }
 }
