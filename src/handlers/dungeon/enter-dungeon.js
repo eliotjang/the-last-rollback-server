@@ -5,7 +5,10 @@ import { payloadTypes } from '../../constants/packet.constants.js';
 import { SuccessCode } from '../../utils/error/errorCodes.js';
 
 export const enterDungeonSession = async (dungeonSession, dungeonCode) => {
-  const { monsterInfo, charStatInfo } = getGameAssets();
+  const { monsterInfo, charStatInfo, stageUnlock } = getGameAssets();
+
+  const towerHp = stageUnlock.data[0].towerHp;
+  dungeonSession.addTowerHp(towerHp);
 
   const dungeonInfo = {
     dungeonCode,
@@ -25,7 +28,7 @@ export const enterDungeonSession = async (dungeonSession, dungeonCode) => {
     rot: 0,
   };
 
-  for (let i = 0; i < dungeonInfo.monsters; i++) {
+  for (let i = 0; i < dungeonInfo.monsters.length; i++) {
     const monsterIdx = i;
     const data = {
       monsterModel: dungeonInfo.monsters[i].monsterModel,
@@ -83,7 +86,7 @@ export const enterDungeonSession = async (dungeonSession, dungeonCode) => {
       playerStats.set(accountId, playerStatus);
 
       // 기존 코드
-      const charStats = charStatInfo['1001'];
+      const charStats = charStatInfo[playerChar.charClass];
       const playerStatus2 = charStats.map((stat) => ({
         playerLevel: stat.level,
         playerName: playerChar.nickname,
@@ -91,6 +94,12 @@ export const enterDungeonSession = async (dungeonSession, dungeonCode) => {
         playerFullMp: stat.maxMp,
         playerCurHp: stat.hp,
         playerCurMp: stat.mp,
+        // atk: stat.atk,
+        // def: stat.def,
+        // magic: stat.magic,
+        // speed: stat.speed,
+        // attackRange: stat.attackRange,
+        // coolTime: stat.coolTime,
       }))[0];
 
       playerStatusArray.push(playerStatus2);
@@ -101,6 +110,7 @@ export const enterDungeonSession = async (dungeonSession, dungeonCode) => {
   console.log('players : ', addPlayers);
 
   const data = { dungeonInfo, playerInfo: playerInfoArray, players: playerStatusArray };
+  console.log(data);
 
   for (const user of dungeonSession.users) {
     user.socket.sendResponse(
