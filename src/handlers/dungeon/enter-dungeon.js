@@ -8,7 +8,7 @@ export const enterDungeonSession = async (dungeonSession, dungeonCode) => {
   const { monsterInfo, charStatInfo, stageUnlock } = getGameAssets();
 
   const towerHp = stageUnlock.data[0].towerHp;
-  dungeonSession.addTower(towerHp);
+  dungeonSession.addTowerHp(towerHp);
 
   const dungeonInfo = {
     dungeonCode,
