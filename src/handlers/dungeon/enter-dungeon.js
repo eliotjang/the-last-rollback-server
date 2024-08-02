@@ -3,6 +3,7 @@ import { getDungeonSessionByUserId } from '../../session/dungeon.session.js';
 import { gameCharDB } from '../../db/game-char/game-char.db.js';
 import { payloadTypes } from '../../constants/packet.constants.js';
 import { SuccessCode } from '../../utils/error/errorCodes.js';
+import dungeonUtils from '../../utils/dungeon/dungeon.utils.js';
 
 export const enterDungeonSession = async (dungeonSession, dungeonCode) => {
   const { monsterInfo, charStatInfo, stageUnlock } = getGameAssets();
@@ -10,6 +11,7 @@ export const enterDungeonSession = async (dungeonSession, dungeonCode) => {
   const towerHp = stageUnlock.data[0].towerHp;
   dungeonSession.addTowerHp(towerHp);
 
+<<<<<<< HEAD
   const dungeonInfo = {
     dungeonCode,
     monsters: monsterInfo.data.map((monster, index) => ({
@@ -39,12 +41,13 @@ export const enterDungeonSession = async (dungeonSession, dungeonCode) => {
     };
     round1.set(monsterIdx, data);
   }
+=======
+  const dungeonInfo = dungeonUtils.fetchDungeonInfo(dungeonCode, 1);
+>>>>>>> 5182fb5 (Add(dungeon.utils.js): dungeonInfo를 가져오는 fetchDungeonInfo 및 보조 함수 추가)
 
   // 첫번째 몬스터 라운드 저장
-  const roundMonsters = dungeonSession.addRoundMonsters(1, round1, true);
+  const roundMonsters = dungeonSession.addRoundMonsters(1, dungeonInfo.monsters, true);
   console.log('roundMonsters : ', roundMonsters);
-
-  // const dungeonSession = getDungeonSessionByUserId(accountId);
 
   // dungeonSession.users.forEach((user) => {
   //   console.log(`sessionInfo for user ${user.accountId}:`, user.sessionInfo);

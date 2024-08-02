@@ -87,7 +87,7 @@ export const checkWaitingList = async (dungeonCode) => {
     // const hostInfo = await townRedis.getPlayerInfo(hostId);
     // await dungeonRedis.createDungeon(hostInfo, hostId);
     // 인메모리
-    const dungeonSession = addDungeonSession();
+    const dungeonSession = addDungeonSession(dungeonCode);
 
     for (const accountId of accountIds) {
       // 각 유저의 town session 내 다른 유저에게 Despawn 패킷 전송

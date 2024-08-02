@@ -2,9 +2,9 @@ import { v4 as uuidv4 } from 'uuid';
 import Dungeon from '../classes/models/dungeon.class.js';
 import { dungeonSessions } from './sessions.js';
 
-export const addDungeonSession = () => {
+export const addDungeonSession = (dungeonCode) => {
   const id = uuidv4();
-  const session = new Dungeon(id);
+  const session = new Dungeon(id, dungeonCode);
   dungeonSessions.push(session);
   return session;
 };

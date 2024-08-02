@@ -2,12 +2,13 @@ import { MAX_USERS } from '../../constants/game.constants.js';
 import { payloadTypes } from '../../constants/packet.constants.js';
 import { sessionTypes } from '../../constants/session.constants.js';
 import { getGameAssets } from '../../init/assets.js';
+import dungeonUtils from '../../utils/dungeon/dungeon.utils.js';
 import Game from './game.class.js';
 
 // const MAX_USERS = 4;
 
 class Dungeon extends Game {
-  constructor(id) {
+  constructor(id, dungeonCode) {
     super(id, MAX_USERS);
     this.type = sessionTypes.DUNGEON;
     this._isNight = false;
@@ -322,7 +323,8 @@ class Dungeon extends Game {
    */
   addRoundMonsters(round, monsters, wantResult) {
     this.round = round;
-    this.roundMonsters = new Map(monsters);
+    // this.roundMonsters = new Map(monsters);
+    this.setMonsters(monsters);
 
     if (wantResult) {
       return this.getRoundMonsters();
@@ -488,7 +490,7 @@ class Dungeon extends Game {
     if (idx !== -1) {
       this.readyStates.push(user.accountId);
       if (this.readyStates.length === MAX_USERS) {
-        this.setNight();
+        this.setIsNight(true);
         // TODO: 모든 유저에게 S_NightRoundStart 전송
         const data = {}; //
         super.notifyAll(payloadTypes.S_NIGHT_ROUND_START, data);
@@ -504,24 +506,56 @@ class Dungeon extends Game {
     return this.readyStates.length;
   }
 
+  fetchRoundStatsByUser(user) {
+    // TODO: 라운드 통계 (RoundResult) 반환
+
+    /*
+    message RoundResult {
+      string nickname = 1;
+      uint32 score = 2;
+      uint32 killCount = 3;
+      // 밤 라운드 정산 정보 있으면 여기에 추가?
+      
+    }
+    */
+    const nickname = this.getUser(user.accountId).nickname; // 임시
+    const score = 0; // 임시
+    const killCount = 0; // 임시
+    return {
+      nickname,
+      score,
+      killCount,
+    };
+  }
+
   endNightRound() {
     if (!isNight) return;
-    this.setDay();
-    const dungeonInfo = []; // 다음 라운드 몬스터 목록 받아오기
-    const roundResults = []; // 각 유저의 라운드 통계 받아오기
+    this.setIsNight(false);
+    const dungeonInfo = dungeonUtils.fetchDungeonInfo(this.dungeonCode, this.round + 1); // 다음 라운드 몬스터 목록 받아오기
+    this.setMonsters(dungeonInfo.monsters);
+    const roundResults = this.users.map((user) => this.fetchRoundStatsByUser(user)); // 각 유저의 라운드 통계 받아오기
     const data = {
       dungeonInfo,
       roundResults,
     };
-    super.notifyAll(payloadTypes.S_NIGHT_ROUND_END, data);
+    this.notifyAll(payloadTypes.S_NIGHT_ROUND_END, data);
   }
 
-  setDay() {
-    this._isNight = false;
+  /**
+   *
+   * @param {[MonsterStatus]} monsters
+   */
+  setMonsters(monsters) {
+    this.roundMonsters = new Map();
+    monsters.forEach((monster) => {
+      const { monsterIdx, ...rest } = monster;
+      this.roundMonsters.set(monsterIdx, rest);
+    });
+    return monsters;
   }
 
-  setNight() {
-    this._isNight = true;
+  setIsNight(isNight) {
+    this._isNight = isNight;
   }
 
   animationMonster(data) {
