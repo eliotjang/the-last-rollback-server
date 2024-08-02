@@ -33,6 +33,7 @@ export const enterDungeonSession = async (dungeonSession, dungeonCode) => {
     const data = {
       monsterModel: dungeonInfo.monsters[i].monsterModel,
       monsterName: dungeonInfo.monsters[i].monsterName,
+      monsterHp: dungeonInfo.monsters[i].monsterHp,
       monsterTransform: transform,
       killExp: 100,
     };
@@ -94,12 +95,12 @@ export const enterDungeonSession = async (dungeonSession, dungeonCode) => {
         playerFullMp: stat.maxMp,
         playerCurHp: stat.hp,
         playerCurMp: stat.mp,
-        // atk: stat.atk,
-        // def: stat.def,
-        // magic: stat.magic,
-        // speed: stat.speed,
-        // attackRange: stat.attackRange,
-        // coolTime: stat.coolTime,
+        atk: stat.atk,
+        def: stat.def,
+        magic: stat.magic,
+        speed: stat.speed,
+        attackRange: stat.attackRange,
+        coolTime: stat.coolTime,
       }))[0];
 
       playerStatusArray.push(playerStatus2);
