@@ -31,6 +31,7 @@ export const ErrorCodes = {
   EXISTED_NICKNAME: 10028,
   MONSTER_NOT_FOUND: 10029,
   INVALID_ARGUMENT: 11111,
+  PROBABILITY_ERROR: 11112,
 };
 
 export const SuccessCode = {
