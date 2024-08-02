@@ -18,6 +18,7 @@ const attackMonsterHandler = ({ socket, accountId, packet }) => {
 
     // 거리 검증
     // verifyDistance();
+    // const playerInfo = dungeonSession.getPlayerInfo(accountId);
 
     dungeonSession.attackMonster(accountId, attackType, monsterIdx);
 

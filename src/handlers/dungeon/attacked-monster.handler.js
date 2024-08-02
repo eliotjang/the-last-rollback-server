@@ -1,5 +1,7 @@
+import { attackTypes } from '../../constants/game.constants.js';
 import { payloadTypes } from '../../constants/packet.constants.js';
 import { sessionTypes } from '../../constants/session.constants.js';
+import { getGameAssets } from '../../init/assets.js';
 import { getUserById } from '../../session/user.session.js';
 import CustomError from '../../utils/error/customError.js';
 import { ErrorCodes, SuccessCode } from '../../utils/error/errorCodes.js';
@@ -20,31 +22,35 @@ const attackedMonsterHandler = ({ socket, accountId, packet }) => {
     // let monsterHp = await dungeonRedis.get();
 
     // dungeonRedis에서 플레이어 playerInfo(charStatInfo) 가져옴
-    // const playerInfo = await dungeonRedis.get(accountId);
+    const playerInfo = dungeonSession.getPlayerInfo(accountId);
+    const playerStatus = dungeonSession.getPlayerStatus(accountId);
+    const { charStatInfo } = getGameAssets();
 
-    // let damage;
-    // switch (attackType) {
-    //   case 0:
-    //     damage = playerInfo.statInfo.atk;
-    //     break;
-    //   case 1:
-    //     damage = playerInfo.statInfo.magic;
-    //     break;
-    //   default:
-    //     damage = 0;
-    // }
+    let damage;
+    switch (attackType) {
+      case attackTypes.NORMAL:
+        damage = charStatInfo[playerInfo.charClass][playerStatus.playerLevel - 1].atk;
+        break;
+      case attackTypes.SKILL:
+        damage = charStatInfo[playerInfo.charClass][playerStatus.playerLevel - 1].magic;
+        break;
+      default:
+        damage = charStatInfo[playerInfo.charClass][playerStatus.playerLevel - 1].atk;
+    }
     // monsterHp -= damage;
-    const monsterHp = 25;
+    //const monsterHp = 25;
 
-    dungeonSession.attackedMonster(accountId, monsterIdx, monsterHp);
+    const monster = dungeonSession.updatePlayerAttackMonster(accountId, monsterIdx, damage, true);
+
+    dungeonSession.attackedMonster(accountId, monsterIdx, monster.monsterHp);
 
     socket.sendResponse(
       SuccessCode.Success,
-      `몬스터(${monsterIdx})가 플레이어(${accountId})에 의해 피격, 몬스터 남은 체력: ${monsterHp}`,
+      `몬스터(${monsterIdx})가 플레이어(${accountId})에 의해 피격, 몬스터 남은 체력: ${monster.monsterHp}`,
       payloadTypes.S_MONSTER_ATTACKED,
       {
         monsterIdx,
-        monsterHp,
+        monsterHp: monster.monsterHp,
       },
     );
   } catch (e) {

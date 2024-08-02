@@ -381,7 +381,7 @@ class Dungeon extends Game {
     if (data.monsterHp - damage <= 0) {
       console.log(`monsterIndex ${monsterIndex}번 몬스터 처치`);
       this.updatePlayerExp(accountId, data.killExp);
-      this.killMonster(monsterIndex);
+      // this.killMonster(monsterIndex);
     } else {
       data.monsterHp -= damage;
       this.roundMonsters.set(monsterIndex, data);

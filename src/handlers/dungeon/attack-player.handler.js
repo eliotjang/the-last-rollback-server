@@ -39,7 +39,9 @@ const attackPlayerHandler = ({ socket, accountId, packet }) => {
     // }
     // monsterHp -= damage;
 
-    const playerHp = 10;
+    const playerStatus = dungeonSession.updateMonsterAttackPlayer(playerId, 10, true);
+
+    const playerHp = playerStatus.playerHp;
 
     dungeonSession.attackPlayer(monsterIdx, playerId, playerHp);
     console.log('attackPlayerHandler', packet);
