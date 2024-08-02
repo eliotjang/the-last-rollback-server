@@ -3,13 +3,12 @@ import { getDungeonSessionByUserId } from '../../session/dungeon.session.js';
 import { gameCharDB } from '../../db/game-char/game-char.db.js';
 import { payloadTypes } from '../../constants/packet.constants.js';
 import { SuccessCode } from '../../utils/error/errorCodes.js';
-// import { findBaseHpByDungeonCode } from '../../utils/find-baseHp.utils.js';
 
 export const enterDungeonSession = async (dungeonSession, dungeonCode) => {
   const { monsterInfo, charStatInfo, stageUnlock } = getGameAssets();
 
   const towerHp = stageUnlock[0].towerHp;
-  dungeonSession.addTower(towerHp);
+  dungeonSession.addTowerHp(towerHp);
 
   const dungeonInfo = {
     dungeonCode,
