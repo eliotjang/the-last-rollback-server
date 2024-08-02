@@ -523,6 +523,14 @@ class Dungeon extends Game {
   setNight() {
     this._isNight = true;
   }
+
+  animationMonster(animCode, monsterIdx) {
+    super.notifyAll(payloadTypes.S_ANIMATION_MONSTER, { animCode, monsterIdx });
+  }
+
+  animationPlayer(animCode, playerId) {
+    super.notifyAll(payloadTypes.S_ANIMATION_MONSTER, { animCode, playerId });
+  }
 }
 
 export default Dungeon;

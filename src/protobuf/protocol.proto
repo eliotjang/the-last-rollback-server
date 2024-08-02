@@ -41,6 +41,11 @@ enum MsgId {
     S_MONSTER_ATTACKED = 43;
     C_MONSTER_ATTACK =  44;
     S_PLAYER_ATTACKED = 45;
+    
+    C_ANIMATION_PLAYER = 46;
+    S_ANIMATION_PLAYER = 47;
+    C_ANIMATION_MONSTER = 48;
+    S_ANIMATION_MONSTER = 49;
 
     C_DUNGEON_MATCH = 50;
     S_DUNGEON_MATCH = 51;
@@ -121,15 +126,36 @@ message S_MonsterMove {
   TransformInfo transform = 2;
 }
 
-// 응답 패킷 - S_Animation
 message C_Animation {
   int32 animCode = 1;
 }
 
-// ALL
 message S_Animation {
   string playerId = 1;
   int32 animCode = 2;
+}
+
+// 응답 패킷 - S_Animation
+message C_AnimationPlayer {
+  int32 animCode = 2;
+}
+
+// ALL
+message S_AnimationPlayer {
+  string playerId = 1;
+  int32 animCode = 2;
+}
+
+// 응답 패킷 - S_Animation
+message C_AnimationMonster {
+  int32 monsterIdx = 2;
+  int32 animCode = 1;
+}
+
+// ALL
+message S_AnimationMonster {
+  int32 monsterIdx = 2;
+  int32 animCode = 1;
 }
 
 
@@ -400,6 +426,8 @@ message RequestPacket {
     C_PlayerAttack cPlayerAttack = 25;
     C_MonsterAttacked cMonsterAttacked = 26;
     C_MonsterAttack cMonsterAttack = 27;
+    C_AnimationMonster cAnimationMonster = 28;
+    C_AnimationPlayer cAnimationPlayer = 29;
   }
 }
 
@@ -454,6 +482,8 @@ message NotificationPacket {
     S_PlayerAttack sPlayerAttack = 25;
     S_MonsterAttacked sMonsterAttacked = 26;
     S_PlayerAttacked sPlayerAttacked = 27;
+    S_AnimationMonster sAnimationMonster = 28;
+    S_AnimationPlayer sAnimationPlayer = 29;
     // S_EnterDungeon sEnterDungeon = 11;
     S_Chat sChat = 9;
   }
