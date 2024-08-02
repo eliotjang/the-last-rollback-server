@@ -35,6 +35,10 @@ class Dungeon extends Game {
     super.notifyOthers(accountId, payloadTypes.S_MONSTER_ATTACKED, { monsterIdx, monsterHp });
   }
 
+  attackPlayer(monsterIdx, accountId, playerHp) {
+    super.notifyAll(payloadTypes.S_PLAYER_ATTACKED, { monsterIdx, playerId: accountId, playerHp });
+  }
+
   movePlayer(accountId, transform) {
     console.log(
       'MOVE PLAYER:',

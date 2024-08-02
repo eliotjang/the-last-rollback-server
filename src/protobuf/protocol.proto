@@ -39,6 +39,8 @@ enum MsgId {
     S_PLAYER_ATTACK = 41;
     C_MONSTER_ATTACKED = 42;
     S_MONSTER_ATTACKED = 43;
+    C_MONSTER_ATTACK =  44;
+    S_PLAYER_ATTACKED = 45;
 
     C_DUNGEON_MATCH = 50;
     S_DUNGEON_MATCH = 51;
@@ -209,6 +211,19 @@ message C_MonsterAttacked{
 message S_MonsterAttacked{
   int32 monsterIdx = 3; // 공격 받은 몬스터 Idx
   float monsterHp = 4; // 몬스터 남은 체력
+}
+
+// 몬스터가 플레이어를 공격할 경우(호스트만 전송)
+message C_MonsterAttack{
+  int32 monsterIdx = 1; // 공격 하는 몬스터 Idx
+  string playerId = 2; // 공격받는 유저 accountId
+}
+
+// All
+message S_PlayerAttacked{
+  int32 monsterIdx = 1; // 공격 하는 몬스터 Idx
+  string playerId = 2; // 공격받는 유저 accountId
+  float playerHp = 3; // 공격받은 유저 남은 체력
 }
 
 // 개인 준비 완료 패킷
