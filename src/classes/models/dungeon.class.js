@@ -388,9 +388,11 @@ class Dungeon extends Game {
     }
     const data = this.roundMonsters.get(monsterIndex);
     if (data.monsterHp - damage <= 0) {
+      data.monsterHp -= damage;
+      this.roundMonsters.set(monsterIndex, data);
       console.log(`monsterIndex ${monsterIndex}번 몬스터 처치`);
       this.updatePlayerExp(accountId, data.killExp);
-      this.killMonster(monsterIndex);
+      // this.killMonster(monsterIndex);
     } else {
       data.monsterHp -= damage;
       this.roundMonsters.set(monsterIndex, data);
@@ -433,8 +435,34 @@ class Dungeon extends Game {
   }
 
   addUser(user) {
-    Promise.all(this.users.map((curUser) => curUser.getPlayerInfo())).then(() => {
-      super.addUser(user);
+    // Promise.all(this.users.map((curUser) => curUser.getPlayerInfo())).then(() => {
+    //   super.addUser(user);
+    // });
+    super.addUser(user);
+  }
+
+  attackMonster(accountId, attackType, monsterIdx) {
+    super.notifyOthers(accountId, payloadTypes.S_PLAYER_ATTACK, {
+      playerId: accountId,
+      attackType,
+      monsterIdx,
+    });
+  }
+
+  // attackedMonster(monsterIdx, monsterHp) {
+  //   super.notifyAll(payloadTypes.S_MONSTER_ATTACKED, { monsterIdx, monsterHp });
+  // }
+
+  attackedMonster(accountId, monsterIdx, monsterHp) {
+    super.notifyOthers(accountId, payloadTypes.S_MONSTER_ATTACKED, { monsterIdx, monsterHp });
+  }
+
+  attackPlayer(monsterIdx, attackType, accountId, playerHp) {
+    super.notifyAll(payloadTypes.S_PLAYER_ATTACKED, {
+      monsterIdx,
+      attackType,
+      playerId: accountId,
+      playerHp,
     });
   }
 
@@ -494,6 +522,14 @@ class Dungeon extends Game {
 
   setNight() {
     this._isNight = true;
+  }
+
+  animationMonster(animCode, monsterIdx) {
+    super.notifyAll(payloadTypes.S_ANIMATION_MONSTER, { animCode, monsterIdx });
+  }
+
+  animationPlayer(animCode, playerId) {
+    super.notifyAll(payloadTypes.S_ANIMATION_MONSTER, { animCode, playerId });
   }
 }
 

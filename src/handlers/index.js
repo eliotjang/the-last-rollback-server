@@ -9,6 +9,9 @@ import monsterMoveHandler from './dungeon/monster-move.handler.js';
 import dungeonMatchHandler from './dungeon/dungeon-match.handler.js';
 import chattingHandler from './game/chatting.handler.js';
 import dayRoundReadyHandler from './dungeon/day-round-ready.handler.js';
+import attackMonsterHandler from './dungeon/attack-monster.handler.js';
+import attackedMonsterHandler from './dungeon/attacked-monster.handler.js';
+import attackPlayerHandler from './dungeon/attack-player.handler.js';
 
 const handlers = {
   [payloadTypes.C_ENTER]: enterTownHandler,
@@ -19,6 +22,9 @@ const handlers = {
   [payloadTypes.C_DUNGEON_MATCH]: dungeonMatchHandler,
   [payloadTypes.C_CHAT]: chattingHandler,
   [payloadTypes.C_DAY_ROUND_READY]: dayRoundReadyHandler,
+  [payloadTypes.C_PLAYER_ATTACK]: attackMonsterHandler,
+  [payloadTypes.C_MONSTER_ATTACKED]: attackedMonsterHandler,
+  [payloadTypes.C_MONSTER_ATTACK]: attackPlayerHandler,
 };
 
 export const getHandlerByPayloadType = (payloadType) => {
