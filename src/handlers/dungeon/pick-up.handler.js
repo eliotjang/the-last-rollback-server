@@ -15,18 +15,16 @@ const pickUpHandler = async (accountId) => {
   const foundItem = pickUpItems.find((data) => data.itemName === pickUpItem);
   const item = foundItem ? foundItem.itemIdx : undefined;
 
-  console.log(item);
-
   switch (item) {
     // 아이템을 획득했을 때 플레이어 정보를 변경
     case pickUpItemType.HP_POTION:
-      dungeonSession.recoveredHp(accountId, foundItem.HP, false);
+      dungeonSession.recoveredHp(accountId, foundItem.HP);
       return;
     case pickUpItemType.MP_POTION:
-      dungeonSession.recoveredMp(accountId, foundItem.MP, false);
+      dungeonSession.recoveredMp(accountId, foundItem.MP);
       return;
     case pickUpItemType.ITEM_BOX:
-      dungeonSession.addItemBox(accountId, 1, false);
+      dungeonSession.addItemBox(accountId);
       return;
     default:
       console.log('아이템을 획득하지 못하였습니다.');
@@ -41,7 +39,6 @@ function getItem(dungeonSession) {
   const itemProbability = dungeonSession.getItemProbability();
 
   const randomNumber = Math.floor(Math.random() * 100 + 1);
-  console.log('######', randomNumber);
   let result = '꽝';
   let accumulationNumber = 0;
 

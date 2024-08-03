@@ -275,14 +275,15 @@ class Dungeon extends Game {
    * @param {boolean} wantResult 반환 여부
    * @returns 플레이어 정보
    */
-  addItemBox(accountId, boxCount, wantResult) {
+  addItemBox(accountId, wantResult) {
     if (!(this.playerInfos.has(accountId) && this.playerStatus.has(accountId))) {
       console.log('해당 플레이어가 존재하지 않음');
       return null;
     }
 
     const data = this.playerInfos.get(accountId);
-    data.itemBox += boxCount;
+    console.log('get 상자 : ', data.itemBox);
+    data.itemBox++;
     this.playerInfos.set(accountId, data);
     console.log('상자 획득!!!!!!!!!', data.itemBox);
     super.notifyAll(payloadTypes.S_PICK_UP_ITEM_BOX, {
@@ -548,7 +549,7 @@ class Dungeon extends Game {
     const totalProbability = itemProbability.reduce((sum, cur) => sum + cur, 0);
     const lastProbability = 100 - totalProbability;
 
-    if (totalProbability >= 100) {
+    if (totalProbability > 100) {
       throw new CustomError(ErrorCodes.PROBABILITY_ERROR, '확률의 합이 100이 넘습니다.');
     }
 
