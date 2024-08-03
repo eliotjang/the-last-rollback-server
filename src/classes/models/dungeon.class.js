@@ -622,7 +622,7 @@ class Dungeon extends Game {
     if (statData.playerMp > maxMp) {
       statData.playerMp = maxMp;
     }
-    console('마나 획득!!!!!!!!!', statData.playerMp);
+    console.log('마나 획득!!!!!!!!!', statData.playerMp);
     // super.notifyAll(payloadTypes.S_PICK_UP_ITEM_MP, {
     //   playerId: accountId,
     //   playerMp: statData.playerMp,
