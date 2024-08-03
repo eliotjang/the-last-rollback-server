@@ -12,6 +12,8 @@ import dayRoundReadyHandler from './dungeon/day-round-ready.handler.js';
 import attackMonsterHandler from './dungeon/attack-monster.handler.js';
 import attackedMonsterHandler from './dungeon/attacked-monster.handler.js';
 import attackPlayerHandler from './dungeon/attack-player.handler.js';
+import animationMonsterHandler from './dungeon/animation-monster.handler.js';
+import animationPlayerHandler from './dungeon/animation-player.handler.js';
 
 const handlers = {
   [payloadTypes.C_ENTER]: enterTownHandler,
@@ -25,6 +27,8 @@ const handlers = {
   [payloadTypes.C_PLAYER_ATTACK]: attackMonsterHandler,
   [payloadTypes.C_MONSTER_ATTACKED]: attackedMonsterHandler,
   [payloadTypes.C_MONSTER_ATTACK]: attackPlayerHandler,
+  [payloadTypes.C_ANIMATION_MONSTER]: animationMonsterHandler,
+  [payloadTypes.C_ANIMATION_PLAYER]: animationPlayerHandler,
 };
 
 export const getHandlerByPayloadType = (payloadType) => {

@@ -80,7 +80,7 @@ class Dungeon extends Game {
     const data = this.playerStatus.get(accountId);
     if (data.playerHp - damage <= 0) {
       console.log(`${accountId} 플레이어 사망`);
-      this.killPlayer(accountId);
+      // this.killPlayer(accountId);
     }
 
     data.playerHp -= damage;
@@ -529,12 +529,12 @@ class Dungeon extends Game {
     this._isNight = true;
   }
 
-  animationMonster(animCode, monsterIdx) {
-    super.notifyAll(payloadTypes.S_ANIMATION_MONSTER, { animCode, monsterIdx });
+  animationMonster(data) {
+    super.notifyAll(payloadTypes.S_ANIMATION_MONSTER, data);
   }
 
-  animationPlayer(animCode, playerId) {
-    super.notifyAll(payloadTypes.S_ANIMATION_MONSTER, { animCode, playerId });
+  animationPlayer(data) {
+    super.notifyAll(payloadTypes.S_ANIMATION_PLAYER, data);
   }
 
   addPickUpList(data) {
