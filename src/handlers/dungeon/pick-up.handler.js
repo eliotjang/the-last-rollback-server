@@ -20,13 +20,13 @@ const pickUpHandler = async (accountId) => {
   switch (item) {
     // 아이템을 획득했을 때 플레이어 정보를 변경
     case pickUpitemType.HP_POTION:
-      dungeonSession.recoveredHp(accountId, item.HP);
+      dungeonSession.recoveredHp(accountId, foundItem.HP);
       return;
     case pickUpitemType.MP_POTION:
-      dungeonSession.recoveredMp(accountId, item.MP);
+      dungeonSession.recoveredMp(accountId, foundItem.MP);
       return;
     case pickUpitemType.ITEM_BOX:
-      dungeonSession.addItemBox(accountId, item.BOX, false);
+      dungeonSession.addItemBox(accountId, foundItem.BOX, false);
       return;
     default:
       console.log('아이템을 획득하지 못하였습니다.');
