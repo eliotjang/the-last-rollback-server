@@ -396,11 +396,12 @@ class Dungeon extends Game {
     }
     const data = this.roundMonsters.get(monsterIndex);
     if (data.monsterHp - damage <= 0) {
+      pickUpHandler(accountId);
       data.monsterHp -= damage;
       this.roundMonsters.set(monsterIndex, data);
       console.log(`monsterIndex ${monsterIndex}번 몬스터 처치`);
       this.updatePlayerExp(accountId, data.killExp);
-      pickUpHandler(accountId);
+
       // this.killMonster(monsterIndex);
     } else {
       data.monsterHp -= damage;

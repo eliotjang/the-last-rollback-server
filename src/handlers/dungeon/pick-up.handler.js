@@ -12,9 +12,12 @@ const pickUpHandler = async (accountId) => {
   const pickUpItems = dungeonSession.getPickUpItems();
   const pickUpItem = getItem(dungeonSession);
 
-  const item = pickUpItems.find((data) => data.itemName === pickUpItem);
+  const foundItem = pickUpItems.find((data) => data.itemName === pickUpItem);
+  const item = foundItem ? foundItem.itemIdx : undefined;
 
-  switch (item.itemIdx) {
+  console.log(item);
+
+  switch (item) {
     // 아이템을 획득했을 때 플레이어 정보를 변경
     case pickUpitemType.HP_POTION:
       dungeonSession.recoveredHp(accountId, item.HP);
