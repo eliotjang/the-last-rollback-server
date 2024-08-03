@@ -4,9 +4,9 @@ import CustomError from '../../utils/error/customError.js';
 import { ErrorCodes } from '../../utils/error/errorCodes.js';
 import { handleError } from '../../utils/error/errorHandler.js';
 
-const animationPlayerHandler = ({ socket, accountId, packet }) => {
+const animationMonsterHandler = ({ socket, accountId, packet }) => {
   try {
-    const { animCode, monsterIdx } = packet;
+    const { animCode, monsterIdx, playerId } = packet;
 
     const user = getUserById(accountId);
     const dungeonSession = user.getSession();
@@ -14,18 +14,21 @@ const animationPlayerHandler = ({ socket, accountId, packet }) => {
       throw new CustomError(ErrorCodes.GAME_NOT_FOUND, 'Dungeon Session을 찾을 수 없습니다.');
     }
 
-    const data = { animCode, playerId: accountId };
+    const data = {
+      animCode,
+      monsterIdx,
+    };
 
-    if (monsterIdx) {
-      data.monsterIdx = monsterIdx;
+    if (playerId) {
+      data.playerId = playerId;
     } else {
-      data.monsterIdx = -1;
+      data.playerId = '-1';
     }
 
-    dungeonSession.animationPlayer(data);
+    dungeonSession.animationMonster(data);
   } catch (e) {
     handleError(e);
   }
 };
 
-export default animationPlayerHandler;
+export default animationMonsterHandler;
