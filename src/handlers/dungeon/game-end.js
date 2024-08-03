@@ -11,11 +11,11 @@ if (!townSession) {
 }
 
 // 플레이어 모두 사망 시 Lose
-if (dungeonSession.getPlayerInfo.isEmpty()) {
+if (dungeonSession.getPlayerInfo(accountId).isEmpty()) {
   await dungeonSession.updateGameOver(townSession);
 }
 
 // 마지막 웨이브에서 몬스터 모두 사망 시 Win
-if (stage === '3' && dungeonSession.getRoundMonsters.isEmpty()) {
+if (stage === '3' && dungeonSession.getRoundMonsters().isEmpty()) {
   await dungeonSession.updateGameWin(townSession);
 }
