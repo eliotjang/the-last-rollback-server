@@ -9,6 +9,7 @@ import monsterMoveHandler from './dungeon/monster-move.handler.js';
 import dungeonMatchHandler from './dungeon/dungeon-match.handler.js';
 import chattingHandler from './game/chatting.handler.js';
 import dayRoundReadyHandler from './dungeon/day-round-ready.handler.js';
+// import towerHpUpdateHandler from './dungeon/tower.handler.js';
 
 const handlers = {
   [payloadTypes.C_ENTER]: enterTownHandler,
@@ -17,7 +18,7 @@ const handlers = {
   [payloadTypes.C_MOVE]: locationUpdateHandler,
   [payloadTypes.C_MONSTER_MOVE]: monsterMoveHandler,
   [payloadTypes.C_DUNGEON_MATCH]: dungeonMatchHandler,
-  // [payloadTypes.C_BASE]: baseHpUpdateHandler,
+  // [payloadTypes.C_TOWER]: towerHpUpdateHandler,
   [payloadTypes.C_CHAT]: chattingHandler,
   [payloadTypes.C_DAY_ROUND_READY]: dayRoundReadyHandler,
 };

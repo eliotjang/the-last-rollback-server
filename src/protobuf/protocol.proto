@@ -36,8 +36,8 @@ enum MsgId {
     C_LOG_IN = 28;
     S_LOG_IN = 29; 
     S_GAME_END = 30;
-    // C_BASE = 31;
-    // S_BASE = 32;
+    // C_TOWER = 31;
+    // S_TOWER = 32;
     C_DUNGEON_MATCH = 50;
     S_DUNGEON_MATCH = 51;
     S_ENTER_DUNGEON = 54;
@@ -171,11 +171,9 @@ message S_EnterDungeon{
   // optional BattleLog battleLog = 4;
 }
 
-// message C_Base{
-//   string accountId = 1;
-// }
+// message C_Tower{ }
 
-// message S_Base{
+// message S_Tower{
 //   int32 hp = 1;
 // }
 
@@ -305,7 +303,6 @@ message Color {
 message DungeonInfo {
   int32 dungeonCode = 1;
   repeated MonsterStatus monsters = 2;
-  // int32 baseHp = 3;
 }
 
 message MonsterStatus {
@@ -369,7 +366,7 @@ message RequestPacket {
     C_SignUp cSignUp = 12;
     C_LogIn cLogIn = 13;
     C_MonsterMove cMonsterMove = 14;
-    // C_Base cBase = 15;
+    // C_Tower cTower = 15;
   }
 }
 
@@ -420,7 +417,6 @@ message NotificationPacket {
     S_MonsterMove sMonsterMove = 8;
 
     S_Chat sChat = 9;
-    // S_Base sBase = 10;
-    // S_EnterDungeon sEnterDungeon = 11;
+    // S_Tower sTower = 10;
   }
 }

@@ -30,12 +30,12 @@ class Dungeon extends Game {
     this.towerHp = towerHp;
   }
 
-  updateBaseHp(amount) {
+  updateTowerHp(amount) {
     this.towerHp -= amount;
     if (this.towerHp <= 0) {
       this.towerHp = 0;
     }
-    super.notifyAll(payloadTypes.S_BASE, this.towerHp);
+    super.notifyAll(payloadTypes.S_TOWER, this.towerHp);
 
     return this.towerHp;
   }
