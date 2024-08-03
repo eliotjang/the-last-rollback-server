@@ -20,10 +20,10 @@ const pickUpHandler = async (accountId) => {
   switch (item) {
     // 아이템을 획득했을 때 플레이어 정보를 변경
     case pickUpitemType.HP_POTION:
-      dungeonSession.recoveredHp(accountId, foundItem.HP);
+      dungeonSession.recoveredHp(accountId, foundItem.HP, false);
       return;
     case pickUpitemType.MP_POTION:
-      dungeonSession.recoveredMp(accountId, foundItem.MP);
+      dungeonSession.recoveredMp(accountId, foundItem.MP, false);
       return;
     case pickUpitemType.ITEM_BOX:
       dungeonSession.addItemBox(accountId, foundItem.BOX, false);
