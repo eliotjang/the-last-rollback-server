@@ -1,4 +1,4 @@
-export const MAX_USERS = 1;
+export const MAX_USERS = 2;
 
 export const attackTypes = {
   NORMAL: 0,

@@ -285,10 +285,10 @@ class Dungeon extends Game {
     data.itemBox += boxCount;
     this.playerInfos.set(accountId, data);
     console.log('상자 획득!!!!!!!!!', data.itemBox);
-    // super.notifyAll(payloadTypes.S_PICK_UP_ITEM_BOX, {
-    //   playerId: accountId,
-    //   updateBox: data.itemBox,
-    // });
+    super.notifyAll(payloadTypes.S_PICK_UP_ITEM_BOX, {
+      playerId: accountId,
+      updateBox: data.itemBox,
+    });
     if (wantResult) {
       return data.itemBox;
     }
@@ -592,10 +592,10 @@ class Dungeon extends Game {
       statData.playerHp = maxHp;
     }
     console.log('체력 획득!!!!!!!!!', statData.playerHp);
-    // super.notifyAll(payloadTypes.S_PICK_UP_ITEM_HP, {
-    //   playerId: accountId,
-    //   playerHp: statData.playerHp,
-    // });
+    super.notifyAll(payloadTypes.S_PICK_UP_ITEM_HP, {
+      playerId: accountId,
+      playerHp: statData.playerHp,
+    });
 
     if (wantResult) {
       return statData.playerHp;
@@ -622,11 +622,11 @@ class Dungeon extends Game {
     if (statData.playerMp > maxMp) {
       statData.playerMp = maxMp;
     }
-    console('마나 획득!!!!!!!!!', statData.playerMp);
-    // super.notifyAll(payloadTypes.S_PICK_UP_ITEM_MP, {
-    //   playerId: accountId,
-    //   playerMp: statData.playerMp,
-    // });
+    console.log('마나 획득!!!!!!!!!', statData.playerMp);
+    super.notifyAll(payloadTypes.S_PICK_UP_ITEM_MP, {
+      playerId: accountId,
+      playerMp: statData.playerMp,
+    });
 
     if (wantResult) {
       return statData.playerMp;

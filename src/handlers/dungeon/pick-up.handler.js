@@ -26,7 +26,7 @@ const pickUpHandler = async (accountId) => {
       dungeonSession.recoveredMp(accountId, foundItem.MP, false);
       return;
     case pickUpItemType.ITEM_BOX:
-      dungeonSession.addItemBox(accountId, foundItem.BOX, false);
+      dungeonSession.addItemBox(accountId, 1, false);
       return;
     default:
       console.log('아이템을 획득하지 못하였습니다.');
