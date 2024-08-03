@@ -11,39 +11,7 @@ export const enterDungeonSession = async (dungeonSession, dungeonCode) => {
   const towerHp = stageUnlock.data[0].towerHp;
   dungeonSession.addTowerHp(towerHp);
 
-<<<<<<< HEAD
-  const dungeonInfo = {
-    dungeonCode,
-    monsters: monsterInfo.data.map((monster, index) => ({
-      monsterIdx: index,
-      monsterModel: monster.monsterModel,
-      monsterName: monster.monsterName,
-      monsterHp: monster.monsterHp,
-    })),
-  };
-
-  const round1 = new Map();
-  const transform = {
-    posX: 43.5,
-    posY: 1.72,
-    poxZ: 119.63,
-    rot: 0,
-  };
-
-  for (let i = 0; i < dungeonInfo.monsters.length; i++) {
-    const monsterIdx = i;
-    const data = {
-      monsterModel: dungeonInfo.monsters[i].monsterModel,
-      monsterName: dungeonInfo.monsters[i].monsterName,
-      monsterHp: dungeonInfo.monsters[i].monsterHp,
-      monsterTransform: transform,
-      killExp: 100,
-    };
-    round1.set(monsterIdx, data);
-  }
-=======
   const dungeonInfo = dungeonUtils.fetchDungeonInfo(dungeonCode, 1);
->>>>>>> 5182fb5 (Add(dungeon.utils.js): dungeonInfo를 가져오는 fetchDungeonInfo 및 보조 함수 추가)
 
   // 첫번째 몬스터 라운드 저장
   const roundMonsters = dungeonSession.addRoundMonsters(1, dungeonInfo.monsters, true);

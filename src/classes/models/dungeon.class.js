@@ -579,24 +579,22 @@ class Dungeon extends Game {
   }
 
   /**
-   *
+   * 낮 라운드의 타이머를 설정하고 시간을 전송합니다. 설정한 시간이 지나면 밤 라운드를 시작합니다.
    */
   setDayRoundTimer() {
-    Promise.all([
-      (async () => {
-        setTimeout(() => {
-          this._isNight = true;
-          this.notifyAll(payloadTypes.S_NIGHT_ROUND_START, {});
-        }, DAY_DURATION);
-      })(),
-      (async () => {
-        const data = {
-          startTime: Date.now(),
-          milliseconds: DAY_DURATION,
-        };
-        this.notifyAll(payloadTypes.S_DAY_ROUND_TIMER, data);
-      })(),
-    ]);
+    (async () => {
+      setTimeout(() => {
+        this._isNight = true;
+        this.notifyAll(payloadTypes.S_NIGHT_ROUND_START, {});
+      }, DAY_DURATION);
+    })();
+    (async () => {
+      const data = {
+        startTime: Date.now(),
+        milliseconds: DAY_DURATION,
+      };
+      this.notifyAll(payloadTypes.S_DAY_ROUND_TIMER, data);
+    })();
   }
 
   animationMonster(data) {
