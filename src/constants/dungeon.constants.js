@@ -1,5 +1,5 @@
 export const pickUpitemType = {
-  HP_POTION: 0,
-  MP_POTION: 1,
-  ITEM_BOX: 2,
+  HP_POTION: 101,
+  MP_POTION: 102,
+  ITEM_BOX: 103,
 };

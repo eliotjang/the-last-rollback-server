@@ -5,10 +5,21 @@ import { payloadTypes } from '../../constants/packet.constants.js';
 import { SuccessCode } from '../../utils/error/errorCodes.js';
 
 export const enterDungeonSession = async (dungeonSession, dungeonCode) => {
-  const { monsterInfo, charStatInfo, stageUnlock } = getGameAssets();
+  const { monsterInfo, charStatInfo, stageUnlock, pickUpItemInfo } = getGameAssets();
 
   const towerHp = stageUnlock.data[0].towerHp;
   dungeonSession.addTowerHp(towerHp);
+
+  const pickUpItems = pickUpItemInfo.data.map((item) => ({
+    itemIdx: item.itemIdx,
+    itemName: item.itemName,
+    HP: item.HP,
+    MP: item.MP,
+    BOX: item.BOX,
+    probability: item.probability,
+  }));
+
+  dungeonSession.addPickUpList(pickUpItems);
 
   const dungeonInfo = {
     dungeonCode,

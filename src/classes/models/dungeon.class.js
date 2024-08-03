@@ -1,6 +1,7 @@
 import { MAX_USERS } from '../../constants/game.constants.js';
 import { payloadTypes } from '../../constants/packet.constants.js';
 import { sessionTypes } from '../../constants/session.constants.js';
+import pickUpHandler from '../../handlers/dungeon/pick-up.handler.js';
 import { getGameAssets } from '../../init/assets.js';
 import Game from './game.class.js';
 
@@ -17,6 +18,9 @@ class Dungeon extends Game {
     this.playerInfos = null;
     this.playerStatus = null;
     this.towerHp = null;
+    this.itemNames = [];
+    this.itemProbability = [];
+    this.pickUpItems = [];
   }
 
   addTowerHp(towerHp) {
@@ -282,7 +286,7 @@ class Dungeon extends Game {
     this.playerInfos.set(accountId, data);
 
     if (wantResult) {
-      return this.getPlayerInfo(accountId);
+      return data.itemBox;
     }
   }
 
@@ -392,6 +396,7 @@ class Dungeon extends Game {
       this.roundMonsters.set(monsterIndex, data);
       console.log(`monsterIndex ${monsterIndex}번 몬스터 처치`);
       this.updatePlayerExp(accountId, data.killExp);
+      pickUpHandler(accountId);
       // this.killMonster(monsterIndex);
     } else {
       data.monsterHp -= damage;
@@ -530,6 +535,40 @@ class Dungeon extends Game {
 
   animationPlayer(animCode, playerId) {
     super.notifyAll(payloadTypes.S_ANIMATION_MONSTER, { animCode, playerId });
+  }
+
+  addPickUpList(data) {
+    const itemNames = data.map((item) => item.itemName);
+    const itemProbability = data.map((item) => item.probability);
+    const totalProbability = itemProbability.reduce((sum, cur) => sum + cur, 0);
+    const lastProbability = 100 - totalProbability;
+
+    if (totalProbability >= 100) {
+      throw new CustomError(ErrorCodes.PROBABILITY_ERROR, '확률의 합이 100이 넘습니다.');
+    }
+
+    itemProbability.push(lastProbability);
+
+    this.itemNames = itemNames;
+    this.itemProbability = itemProbability;
+    this.pickUpItems = data;
+  }
+
+  getItemNames() {
+    return this.itemNames;
+  }
+
+  getItemProbability() {
+    return this.itemProbability;
+  }
+
+  getPickUpItems() {
+    return this.pickUpItems;
+  }
+
+  recoveredHp(accountId, itemHp) {
+    const infoData = this.playerInfos.get(accountId);
+    let statData = this.playerStatus.get(accountId);
   }
 }
 

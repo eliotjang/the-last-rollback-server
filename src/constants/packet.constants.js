@@ -66,6 +66,10 @@ export const payloadTypes = {
   C_MONSTER_MOVE: 60,
   S_MONSTER_MOVE: 61,
 
+  S_PICK_UP_ITEM_HP: 62,
+  S_PICK_UP_ITEM_MP: 63,
+  S_PICK_UP_ITEM_BOX: 64,
+
   S_SOME_NOTIFICATION: 300,
 };
 
