@@ -41,7 +41,7 @@ function getItem(dungeonSession) {
   const itemProbability = dungeonSession.getItemProbability();
 
   const randomNumber = Math.floor(Math.random() * 100 + 1);
-
+  console.log('######', randomNumber);
   let result = '꽝';
   let accumulationNumber = 0;
 
