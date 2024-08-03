@@ -98,7 +98,8 @@ const dungeonSessionConnection = async () => {
   // console.log(test13);
   const test14 = dungeonSession.removeItemBox(player1Id, true);
   // console.log(test14);
-
+  const test15 = dungeonSession.addItemBox(player1Id, 1, true);
+  //console.log(test15);
   removeUser('socket1');
   removeUser('socket2');
 };

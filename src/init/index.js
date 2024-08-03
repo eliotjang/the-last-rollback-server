@@ -12,7 +12,7 @@ const initServer = async () => {
     await testUserDBQueries();
     await testGameCharDBQueries();
     await testAllRedisConnections();
-    // await testAllSessionConnections();
+    //await testAllSessionConnections();
   } catch (e) {
     console.error(e);
     process.exit(1); // 오류 발생 시 프로세스 종료

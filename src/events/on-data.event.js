@@ -39,7 +39,7 @@ const onData = (socket) => async (data) => {
           //   await verifyToken(socket.token);
           // }
 
-          // console.log(clientVersion, sequence, payloadType, payload);
+          console.log(clientVersion, sequence, payloadType, payload);
           verifyClientVersion(clientVersion);
           verifySequence(sequence);
           const handler = getHandlerByPayloadType(payloadType || 0);

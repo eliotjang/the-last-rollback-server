@@ -275,16 +275,20 @@ class Dungeon extends Game {
    * @param {boolean} wantResult 반환 여부
    * @returns 플레이어 정보
    */
-  addItemBox(accountId, wantResult) {
+  addItemBox(accountId, boxCount, wantResult) {
     if (!(this.playerInfos.has(accountId) && this.playerStatus.has(accountId))) {
       console.log('해당 플레이어가 존재하지 않음');
       return null;
     }
 
     const data = this.playerInfos.get(accountId);
-    data.itemBox++;
+    data.itemBox += boxCount;
     this.playerInfos.set(accountId, data);
 
+    super.notifyAll(payloadTypes.S_PICK_UP_ITEM_BOX, {
+      playerId: accountId,
+      updateBox: data.itemBox,
+    });
     if (wantResult) {
       return data.itemBox;
     }
@@ -566,9 +570,66 @@ class Dungeon extends Game {
     return this.pickUpItems;
   }
 
-  recoveredHp(accountId, itemHp) {
+  recoveredHp(accountId, itemHp, wantResult) {
+    if (!(this.playerInfos.has(accountId) && this.playerStatus.has(accountId))) {
+      console.log('해당 플레이어가 존재하지 않음');
+      return null;
+    }
+    const { charStatInfo } = getGameAssets();
+
     const infoData = this.playerInfos.get(accountId);
     let statData = this.playerStatus.get(accountId);
+
+    const targetData = charStatInfo[infoData.charClass].find(
+      (data) => data.level === statData.playerLevel,
+    );
+
+    const maxHp = targetData.maxHp;
+
+    statData.playerHp += itemHp;
+    if (statData.playerMp > maxHp) {
+      statData.playerMp = maxHp;
+    }
+
+    super.notifyAll(payloadTypes.S_PICK_UP_ITEM_HP, {
+      playerId: accountId,
+      playerHp: statData.playerHp,
+    });
+
+    if (wantResult) {
+      return statData.playerHp;
+    }
+  }
+
+  recoveredMp(accountId, itemMp, wantResult) {
+    if (!(this.playerInfos.has(accountId) && this.playerStatus.has(accountId))) {
+      console.log('해당 플레이어가 존재하지 않음');
+      return null;
+    }
+    const { charStatInfo } = getGameAssets();
+
+    const infoData = this.playerInfos.get(accountId);
+    let statData = this.playerStatus.get(accountId);
+
+    const targetData = charStatInfo[infoData.charClass].find(
+      (data) => data.level === statData.playerLevel,
+    );
+
+    const maxMp = targetData.maxMp;
+
+    statData.playerMp += itemMp;
+    if (statData.playerMp > maxMp) {
+      statData.playerMp = maxMp;
+    }
+
+    super.notifyAll(payloadTypes.S_PICK_UP_ITEM_MP, {
+      playerId: accountId,
+      playerMp: statData.playerMp,
+    });
+
+    if (wantResult) {
+      return statData.playerMp;
+    }
   }
 }
 

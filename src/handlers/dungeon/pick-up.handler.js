@@ -13,23 +13,21 @@ const pickUpHandler = async (accountId) => {
   const pickUpItem = getItem(dungeonSession);
 
   const item = pickUpItems.find((data) => data.itemName === pickUpItem);
-  console.log('####', item);
 
   switch (item.itemIdx) {
     // 아이템을 획득했을 때 플레이어 정보를 변경
     case pickUpitemType.HP_POTION:
-      break;
+      dungeonSession.recoveredHp(accountId, item.HP);
+      return;
     case pickUpitemType.MP_POTION:
-      break;
+      dungeonSession.recoveredMp(accountId, item.MP);
+      return;
     case pickUpitemType.ITEM_BOX:
-      //dungeonSession.addItemBox;
-      break;
+      dungeonSession.addItemBox(accountId, item.BOX, false);
+      return;
     default:
       console.log('아이템을 획득하지 못하였습니다.');
       return null;
-
-    //S_PickUp
-    //아이템에 따라 변경 된 플레이어 정보를 패킷에 담아 모든 플레이어에게 통지
   }
 };
 
