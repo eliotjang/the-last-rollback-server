@@ -1,4 +1,4 @@
-import { pickUpitemType } from '../../constants/dungeon.constants.js';
+import { pickUpItemType } from '../../constants/dungeon.constants.js';
 import { getGameAssets } from '../../init/assets.js';
 import { getDungeonSessionByUserId } from '../../session/dungeon.session.js';
 import { dungeonSessions } from '../../session/sessions.js';
@@ -19,13 +19,13 @@ const pickUpHandler = async (accountId) => {
 
   switch (item) {
     // 아이템을 획득했을 때 플레이어 정보를 변경
-    case pickUpitemType.HP_POTION:
+    case pickUpItemType.HP_POTION:
       dungeonSession.recoveredHp(accountId, foundItem.HP, false);
       return;
-    case pickUpitemType.MP_POTION:
+    case pickUpItemType.MP_POTION:
       dungeonSession.recoveredMp(accountId, foundItem.MP, false);
       return;
-    case pickUpitemType.ITEM_BOX:
+    case pickUpItemType.ITEM_BOX:
       dungeonSession.addItemBox(accountId, foundItem.BOX, false);
       return;
     default:
