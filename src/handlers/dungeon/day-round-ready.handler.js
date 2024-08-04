@@ -19,6 +19,9 @@ const dayRoundReadyHandler = ({ socket, accountId, packet }) => {
   }
 
   const isReady = dungeon.toggleReadyState(user);
+  if (typeof isReady === 'undefined') {
+    return;
+  }
 
   // TODO: 준비 상태 변경 알림
   socket.sendResponse(

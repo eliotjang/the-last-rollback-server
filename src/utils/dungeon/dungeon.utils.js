@@ -1,4 +1,7 @@
+import Dungeon from '../../classes/models/dungeon.class.js';
 import { gameAssetConstants } from '../../constants/asset.constants.js';
+import dc from '../../constants/game.constants.js';
+import { payloadTypes } from '../../constants/packet.constants.js';
 import { getGameAssets } from '../../init/assets.js';
 import CustomError from '../error/customError.js';
 import { ErrorCodes } from '../error/errorCodes.js';
@@ -7,18 +10,12 @@ const monsterData = {};
 const stageData = {};
 
 export const initDungeonUtil = async () => {
-  let msg = initMonsterData();
-  if (msg) {
-    throw new CustomError(ErrorCodes.GAME_ASSETS_LOAD_ERROR, `몬스터 데이터 형식 오류: ${err}`);
-  }
-  msg = initStageData();
-  if (msg) {
-    throw new CustomError(ErrorCodes.GAME_ASSETS_LOAD_ERROR, `스테이지 데이터 형식 오류: ${err}`);
-  }
-  console.log('Finished initializing dungeonUtils.');
+  Promise.all([initMonsterData(), initStageData()]).then(() => {
+    console.log('Finished initializing dungeonUtils.');
+  }); // DO NOT CATCH, let the init index file handle it.
 };
 
-const initMonsterData = () => {
+const initMonsterData = async () => {
   try {
     getGameAssets()[gameAssetConstants.monsterInfo.NAME].data.forEach((data) => {
       monsterData[data.monsterModel] = {
@@ -28,11 +25,11 @@ const initMonsterData = () => {
     Object.freeze(monsterData);
     // console.log(monsterData);
   } catch (err) {
-    return err;
+    throw new CustomError(ErrorCodes.GAME_ASSETS_LOAD_ERROR, `Failed to load monster data: ${err}`);
   }
 };
 
-const initStageData = () => {
+const initStageData = async () => {
   try {
     getGameAssets()[gameAssetConstants.stage.NAME].data.forEach((data) => {
       if (!stageData[data.stage]) {
@@ -46,7 +43,7 @@ const initStageData = () => {
     });
     Object.freeze(stageData);
   } catch (err) {
-    return err;
+    throw new CustomError(ErrorCodes.GAME_ASSETS_LOAD_ERROR, `Failed to load stage data: ${err}`);
   }
 };
 

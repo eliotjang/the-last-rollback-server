@@ -1,6 +1,5 @@
-import { MAX_USERS } from '../constants/game.constants.js';
+import dc from '../constants/game.constants.js';
 import { townRedis } from '../utils/redis/town.redis.js';
-import { dungeonRedis } from '../utils/redis/dungeon.redis.js';
 import { getTownSessionByUserId } from '../session/town.session.js';
 import { addDungeonSession } from '../session/dungeon.session.js';
 import { getUserById } from '../session/user.session.js';
@@ -73,11 +72,9 @@ const printWaitingList = (dungeonCode) => {
  */
 export const checkWaitingList = async (dungeonCode) => {
   console.log('------------');
-  if (waitingLists[dungeonCode].length >= MAX_USERS) {
-    const users = waitingLists[dungeonCode].splice(0, MAX_USERS);
+  if (waitingLists[dungeonCode].length >= dc.general.MAX_USERS) {
+    const users = waitingLists[dungeonCode].splice(0, dc.general.MAX_USERS);
     console.log('checkWaitingList:', users);
-
-    // TODO: 위의 users에 있는 유저들을 포함하는 게임 세션 생성
 
     const accountIds = users.map((user) => user.accountId);
 

@@ -37,6 +37,7 @@ export const enterDungeonSession = async (dungeonSession, dungeonCode) => {
         transform: null,
         gold: 0,
         itemBox: 0,
+        killed: [],
       };
       playerInfos.set(accountId, playerInfo);
 
