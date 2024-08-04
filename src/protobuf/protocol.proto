@@ -3,16 +3,18 @@ syntax = 'proto3';
 package Google.Protobuf.Protocol;
 
 enum PacketId {
-    PING = 0;
-    REQUEST = 1;
-    RESPONSE = 2;
-    NOTIFICATION = 3;
+    UNDEFINED_PACKET = 0;
+    PING = 1;
+    REQUEST = 2;
+    RESPONSE = 3;
+    NOTIFICATION = 4;
 }
 
 enum MsgId {
-    C_ENTER = 0;
-    S_ENTER = 1;
-    S_SPAWN = 2;
+    UNDEFINED_PAYLOAD = 0;
+    C_ENTER = 1;
+    S_ENTER = 2;
+    S_SPAWN = 3;
     S_DESPAWN = 5;
     C_MOVE = 6;
     S_MOVE = 7;
@@ -46,18 +48,20 @@ enum MsgId {
     S_ANIMATION_PLAYER = 47;
     C_ANIMATION_MONSTER = 48;
     S_ANIMATION_MONSTER = 49;
-
-    S_DAY_ROUND_TIMER = 500;
-    C_DUNGEON_MATCH = 50;
-    S_DUNGEON_MATCH = 51;
-    S_ENTER_DUNGEON = 54;
-    S_LEAVE_DUNGEON = 55;
-    C_DAY_ROUND_READY = 56;
-    S_DAY_ROUND_READY = 57;
-    S_NIGHT_ROUND_START = 58;
-    S_NIGHT_ROUND_END = 59;
     C_MONSTER_MOVE = 60;
     S_MONSTER_MOVE = 61;
+
+    C_DUNGEON_MATCH = 100;
+    S_DUNGEON_MATCH = 101;
+    S_ENTER_DUNGEON = 104;
+    S_LEAVE_DUNGEON = 105;
+
+    C_DUNGEON_SCENE_READY = 106;
+    C_DAY_ROUND_READY = 107;
+    S_DAY_ROUND_READY = 108;
+    S_DAY_ROUND_TIMER = 109;
+    S_NIGHT_ROUND_START = 110;
+    S_NIGHT_ROUND_END = 111;
 
     S_SOME_NOTIFICATION = 300;
 }
@@ -178,41 +182,9 @@ message C_Chat{
   string chatMsg = 3;
 }
 
-message S_DayRoundTimer {
-  uint64 startTime = 1;
-  uint32 milliseconds = 2;
-}
-
-// 응답 패킷 - S_EnterDungeon
-message C_EnterDungeon{
-  int32 dungeonCode = 1;
-}
-
 message C_PlayerResponse{
   int32 responseCode = 1;
 }
-
-message C_DungeonMatch {
-  uint32 dungeonCode = 1;
-}
-
-message S_DungeonMatch {
-  uint32 dungeonCode = 1;
-  // ScreenText screenText = 2;
-}
-
-// Me
-message S_EnterDungeon{
-  DungeonInfo dungeonInfo = 1;
-	repeated PlayerInfo playerInfo = 2;
-  repeated PlayerStatus players = 3;
-  // repeated StatInfo statInfo = 3; // 전투 시에 사용하는
-  // optional ScreenText screenText = 3;
-  // optional BattleLog battleLog = 4;
-}
-
-// Me
-message S_LeaveDungeon { }
 
 // Me
 message S_ScreenText{
@@ -296,21 +268,57 @@ message S_PlayerAttacked{
 }
 
 // 개인 준비 완료 패킷
+// 100 대기열 입장 요청 패킷
+message C_DungeonMatch {
+  uint32 dungeonCode = 1;
+}
+
+// 101 대기열 입장 확인 응답 패킷
+message S_DungeonMatch {
+  uint32 dungeonCode = 1;
+  // ScreenText screenText = 2;
+}
+
+// 104 던전 입장 패킷
+message S_EnterDungeon{
+  DungeonInfo dungeonInfo = 1;
+	repeated PlayerInfo playerInfo = 2;
+  repeated PlayerStatus players = 3;
+  // repeated StatInfo statInfo = 3; // 전투 시에 사용하는
+  // optional ScreenText screenText = 3;
+  // optional BattleLog battleLog = 4;
+}
+
+// 105 던전 퇴장 패킷 (타운 씬 로딩)
+message S_LeaveDungeon { }
+
+// 106 최초 입장 씬 로딩 완료 패킷
+message C_DungeonSceneReady {
+  // 내용 없음
+}
+
+// 107 낮 라운드 개인 준비 완료 패킷
 message C_DayRoundReady {
   // 내용 없음
 }
 
-// 준비 완료 서버 응답
+// 108 준비 완료 서버 응답
 message S_DayRoundReady {
   bool isReady = 1; // 서버 기준 준비 상태 알림, 1이 준비 완료
 }
 
-// 마지막 유저 준비 완료 시 전체 통지
+// 109 낮 라운드 타이머 패킷
+message S_DayRoundTimer {
+  uint64 startTime = 1;
+  uint32 milliseconds = 2;
+}
+
+// 110 마지막 유저 준비 완료 시 전체 통지 패킷
 message S_NightRoundStart {
   // uint32 stageId = 1;
 }
 
-// 라운드의 마지막 몬스터가 처치됐을 시 전체 통지
+// 111 라운드의 마지막 몬스터가 처치됐을 시 전체 통지 패킷
 message S_NightRoundEnd {
   DungeonInfo dungeonInfo = 1; // 다음 라운드 몬스터 목록
   // 밤 라운드 정산에 필요한 정보 전송
@@ -428,8 +436,6 @@ message RequestPacket {
     C_Move cMove = 6;
     C_Animation cAnimation = 7;
     C_Chat cChat = 8;
-    C_DungeonMatch cDungeonMatch = 9;
-    C_EnterDungeon cEnterDungeon = 10;
     C_PlayerResponse cPlayerResponse = 11;
     C_SignUp cSignUp = 12;
     C_LogIn cLogIn = 13;
@@ -439,7 +445,10 @@ message RequestPacket {
     C_MonsterAttack cMonsterAttack = 27;
     C_AnimationMonster cAnimationMonster = 28;
     C_AnimationPlayer cAnimationPlayer = 29;
+
+    C_DungeonMatch cDungeonMatch = 9;
     C_DayRoundReady cDayRoundReady = 15;
+    C_DungeonSceneReady cDungeonSceneReady = 16;
   }
 }
 
@@ -460,7 +469,7 @@ message ResponsePacket {
     S_DungeonMatch sDungeonMatch = 23;
     S_EnterDungeon sEnterDungeon = 24;
     S_LeaveDungeon sLeaveDungeon = 12;
-    S_DayRoundReady sDayRoundReady = 25;
+    S_DayRoundReady sDayRoundReady = 27;
     
     S_ScreenText sScreenText = 13;
     S_ScreenDone sScreenDone = 14;
