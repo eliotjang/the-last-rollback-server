@@ -10,16 +10,16 @@ export const headerConstants = {
 };
 
 export const packetTypes = {
-  PING: 0,
-  REQUEST: 1,
-  RESPONSE: 2,
-  NOTIFICATION: 3,
+  PING: 1,
+  REQUEST: 2,
+  RESPONSE: 3,
+  NOTIFICATION: 4,
 };
 
 export const payloadTypes = {
-  C_ENTER: 0,
-  S_ENTER: 1,
-  S_SPAWN: 2,
+  C_ENTER: 1,
+  S_ENTER: 2,
+  S_SPAWN: 3,
   S_DESPAWN: 5, // 나 빼고 모두
   C_MOVE: 6,
   S_MOVE: 7, // 모두
@@ -27,10 +27,9 @@ export const payloadTypes = {
   S_ANIMATION: 9, // 모두
   C_CHAT: 12,
   S_CHAT: 13, // noti
-  // C_ENTER_DUNGEON: 14,
+
   C_PLAYER_RESPONSE: 15,
-  // S_ENTER_DUNGEON: 16,
-  S_LEAVE_DUNGEON: 17,
+
   S_SCREEN_TEXT: 18,
   S_SCREEN_DONE: 19,
   S_BATTLE_LOG: 20,
@@ -55,16 +54,19 @@ export const payloadTypes = {
   C_ANIMATION_MONSTER: 48,
   S_ANIMATION_MONSTER: 49,
 
-  C_DUNGEON_MATCH: 50,
-  S_DUNGEON_MATCH: 51,
-  S_ENTER_DUNGEON: 54,
-  // S_LEAVE_DUNGEON: 55,
-  C_DAY_ROUND_READY: 56,
-  S_DAY_ROUND_READY: 57,
-  S_NIGHT_ROUND_START: 58,
-  S_NIGHT_ROUND_END: 59,
   C_MONSTER_MOVE: 60,
   S_MONSTER_MOVE: 61,
+
+  C_DUNGEON_MATCH: 100,
+  S_DUNGEON_MATCH: 101,
+  S_ENTER_DUNGEON: 104,
+  S_LEAVE_DUNGEON: 105,
+  C_DUNGEON_SCENE_READY: 106,
+  C_DAY_ROUND_READY: 107,
+  S_DAY_ROUND_READY: 108,
+  S_DAY_ROUND_TIMER: 109,
+  S_NIGHT_ROUND_START: 110,
+  S_NIGHT_ROUND_END: 111,
 
   S_SOME_NOTIFICATION: 300,
 };
