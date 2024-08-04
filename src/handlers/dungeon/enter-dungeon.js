@@ -74,7 +74,7 @@ export const enterDungeonSession = async (dungeonSession, dungeonCode) => {
         playerId: playerChar.playerId,
         nickname: playerChar.nickname,
         charClass: playerChar.charClass,
-        transform: playerChar.transform,
+        transform: { posX: 0, posY: 1, posZ: 0, rot: 0 },
       };
       playerInfoArray.push(playerInfo2);
 

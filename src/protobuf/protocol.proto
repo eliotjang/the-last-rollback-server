@@ -35,6 +35,18 @@ enum MsgId {
     S_SIGN_UP = 27;
     C_LOG_IN = 28;
     S_LOG_IN = 29; 
+    C_PLAYER_ATTACK = 40;
+    S_PLAYER_ATTACK = 41;
+    C_MONSTER_ATTACKED = 42;
+    S_MONSTER_ATTACKED = 43;
+    C_MONSTER_ATTACK =  44;
+    S_PLAYER_ATTACKED = 45;
+    
+    C_ANIMATION_PLAYER = 46;
+    S_ANIMATION_PLAYER = 47;
+    C_ANIMATION_MONSTER = 48;
+    S_ANIMATION_MONSTER = 49;
+
     C_DUNGEON_MATCH = 50;
     S_DUNGEON_MATCH = 51;
     S_ENTER_DUNGEON = 54;
@@ -114,15 +126,40 @@ message S_MonsterMove {
   TransformInfo transform = 2;
 }
 
-// 응답 패킷 - S_Animation
 message C_Animation {
   int32 animCode = 1;
 }
 
-// ALL
 message S_Animation {
   string playerId = 1;
   int32 animCode = 2;
+}
+
+// 응답 패킷 - S_Animation
+message C_AnimationPlayer {
+  int32 animCode = 2;
+  optional int32 monsterIdx = 3;
+}
+
+// ALL
+message S_AnimationPlayer {
+  string playerId = 1;
+  int32 animCode = 2;
+  optional int32 monsterIdx = 3;
+}
+
+// 응답 패킷 - S_Animation
+message C_AnimationMonster {
+  int32 monsterIdx = 2;
+  int32 animCode = 1;
+  optional string playerId = 3;
+}
+
+// ALL
+message S_AnimationMonster {
+  int32 monsterIdx = 2;
+  int32 animCode = 1;
+  optional string playerId = 3;
 }
 
 
@@ -210,6 +247,46 @@ message S_PlayerAction {
 message S_MonsterAction {
   int32 actionMonsterIdx = 1;
   ActionSet actionSet = 2;
+}
+
+// My 플레이어의 공격만 서버에 전송
+message C_PlayerAttack{
+	int32 attackType = 2; // 공격 종류
+  int32 monsterIdx = 3; // 공격 받는 몬스터 Idx
+}
+
+// All
+message S_PlayerAttack{
+  string playerId = 1; // 공격하는 유저 accountId
+	int32 attackType = 2; // 공격 종류
+  int32 monsterIdx = 3; // 공격 받는 몬스터 Idx
+}
+
+// My 플레이어의 공격 판정에 당한 경우만 서버에 전송
+message C_MonsterAttacked{
+	int32 attackType = 2; // 공격 종류
+  int32 monsterIdx = 3; // 공격 받는 몬스터 Idx
+}
+
+// All
+message S_MonsterAttacked{
+  int32 monsterIdx = 3; // 공격 받은 몬스터 Idx
+  float monsterHp = 4; // 몬스터 남은 체력
+}
+
+// 몬스터가 플레이어를 공격할 경우(호스트만 전송)
+message C_MonsterAttack{
+  int32 monsterIdx = 1; // 공격 하는 몬스터 Idx
+  int32 attackType = 2;
+  string playerId = 3; // 공격받는 유저 accountId
+}
+
+// All
+message S_PlayerAttacked{
+  int32 monsterIdx = 1; // 공격 하는 몬스터 Idx
+  int32 attackType = 2;
+  string playerId = 3; // 공격받는 유저 accountId
+  float playerHp = 4; // 공격받은 유저 남은 체력
 }
 
 // 개인 준비 완료 패킷
@@ -350,6 +427,11 @@ message RequestPacket {
     C_SignUp cSignUp = 12;
     C_LogIn cLogIn = 13;
     C_MonsterMove cMonsterMove = 14;
+    C_PlayerAttack cPlayerAttack = 25;
+    C_MonsterAttacked cMonsterAttacked = 26;
+    C_MonsterAttack cMonsterAttack = 27;
+    C_AnimationMonster cAnimationMonster = 28;
+    C_AnimationPlayer cAnimationPlayer = 29;
   }
 }
 
@@ -383,6 +465,9 @@ message ResponsePacket {
 
     S_SignUp sSignUp = 21;
     S_LogIn sLogIn = 22;
+    S_PlayerAttack sPlayerAttack = 25;
+    S_MonsterAttacked sMonsterAttacked = 26;
+
   }
 }
 
@@ -398,6 +483,12 @@ message NotificationPacket {
     S_NightRoundEnd sNightRoundEnd = 7;
     S_MonsterMove sMonsterMove = 8;
 
+    S_PlayerAttack sPlayerAttack = 25;
+    S_MonsterAttacked sMonsterAttacked = 26;
+    S_PlayerAttacked sPlayerAttacked = 27;
+    S_AnimationMonster sAnimationMonster = 28;
+    S_AnimationPlayer sAnimationPlayer = 29;
+    // S_EnterDungeon sEnterDungeon = 11;
     S_Chat sChat = 9;
   }
 }
