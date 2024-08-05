@@ -2,8 +2,8 @@
   "name": "stage",
   "version": "1.0.0",
   "data": [
-    { "stageRound": 1, "monsterUnlock": [2001, 2002, 2003], "spawnCount": [5, 6, 7] },
-    { "stageRound": 2, "monsterUnlock": [2001, 2002, 2003, 2004, 2005, 2006], "spawnCount": [5, 6, 7, 8, 9, 10] },
-    { "stageRound": 3, "monsterUnlock": [2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009], "spawnCount": [5, 6, 7, 8, 9, 10, 11, 12, 13] }
+    { "stage": 1, "round": 1, "monsterUnlock": [2001, 2002, 2003], "spawnCount": [5, 6, 7] },
+    { "stage": 1, "round": 2, "monsterUnlock": [2001, 2002, 2003, 2004, 2005, 2006], "spawnCount": [5, 6, 7, 8, 9, 10] },
+    { "stage": 1, "round": 3, "monsterUnlock": [2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009], "spawnCount": [5, 6, 7, 8, 9, 10, 11, 12, 13] }
   ]
 }

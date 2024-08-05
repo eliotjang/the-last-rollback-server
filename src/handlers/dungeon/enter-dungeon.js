@@ -3,6 +3,7 @@ import { getDungeonSessionByUserId } from '../../session/dungeon.session.js';
 import { gameCharDB } from '../../db/game-char/game-char.db.js';
 import { payloadTypes } from '../../constants/packet.constants.js';
 import { SuccessCode } from '../../utils/error/errorCodes.js';
+import dungeonUtils from '../../utils/dungeon/dungeon.utils.js';
 
 export const enterDungeonSession = async (dungeonSession, dungeonCode) => {
   const { monsterInfo, charStatInfo, stageUnlock } = getGameAssets();
@@ -10,40 +11,11 @@ export const enterDungeonSession = async (dungeonSession, dungeonCode) => {
   const towerHp = stageUnlock.data[0].towerHp;
   dungeonSession.addTowerHp(towerHp);
 
-  const dungeonInfo = {
-    dungeonCode,
-    monsters: monsterInfo.data.map((monster, index) => ({
-      monsterIdx: index,
-      monsterModel: monster.monsterModel,
-      monsterName: monster.monsterName,
-      monsterHp: monster.monsterHp,
-    })),
-  };
-
-  const round1 = new Map();
-  const transform = {
-    posX: 43.5,
-    posY: 1.72,
-    poxZ: 119.63,
-    rot: 0,
-  };
-
-  for (let i = 0; i < dungeonInfo.monsters; i++) {
-    const monsterIdx = i;
-    const data = {
-      monsterModel: dungeonInfo.monsters[i].monsterModel,
-      monsterName: dungeonInfo.monsters[i].monsterName,
-      monsterTransform: transform,
-      killExp: 100,
-    };
-    round1.set(monsterIdx, data);
-  }
+  const dungeonInfo = dungeonUtils.fetchDungeonInfo(dungeonCode, 1);
 
   // 첫번째 몬스터 라운드 저장
-  const roundMonsters = dungeonSession.addRoundMonsters(1, round1, true);
+  const roundMonsters = dungeonSession.addRoundMonsters(1, dungeonInfo.monsters, true);
   console.log('roundMonsters : ', roundMonsters);
-
-  // const dungeonSession = getDungeonSessionByUserId(accountId);
 
   // dungeonSession.users.forEach((user) => {
   //   console.log(`sessionInfo for user ${user.accountId}:`, user.sessionInfo);
@@ -65,6 +37,7 @@ export const enterDungeonSession = async (dungeonSession, dungeonCode) => {
         transform: null,
         gold: 0,
         itemBox: 0,
+        killed: [],
       };
       playerInfos.set(accountId, playerInfo);
 
@@ -73,7 +46,7 @@ export const enterDungeonSession = async (dungeonSession, dungeonCode) => {
         playerId: playerChar.playerId,
         nickname: playerChar.nickname,
         charClass: playerChar.charClass,
-        transform: playerChar.transform,
+        transform: { posX: 0, posY: 1, posZ: 0, rot: 0 },
       };
       playerInfoArray.push(playerInfo2);
 
@@ -86,7 +59,7 @@ export const enterDungeonSession = async (dungeonSession, dungeonCode) => {
       playerStats.set(accountId, playerStatus);
 
       // 기존 코드
-      const charStats = charStatInfo['1001'];
+      const charStats = charStatInfo[playerChar.charClass];
       const playerStatus2 = charStats.map((stat) => ({
         playerLevel: stat.level,
         playerName: playerChar.nickname,
@@ -94,6 +67,12 @@ export const enterDungeonSession = async (dungeonSession, dungeonCode) => {
         playerFullMp: stat.maxMp,
         playerCurHp: stat.hp,
         playerCurMp: stat.mp,
+        atk: stat.atk,
+        def: stat.def,
+        magic: stat.magic,
+        speed: stat.speed,
+        attackRange: stat.attackRange,
+        coolTime: stat.coolTime,
       }))[0];
 
       playerStatusArray.push(playerStatus2);
@@ -104,6 +83,7 @@ export const enterDungeonSession = async (dungeonSession, dungeonCode) => {
   console.log('players : ', addPlayers);
 
   const data = { dungeonInfo, playerInfo: playerInfoArray, players: playerStatusArray };
+  console.log(data);
 
   for (const user of dungeonSession.users) {
     user.socket.sendResponse(

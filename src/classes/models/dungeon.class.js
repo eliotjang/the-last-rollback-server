@@ -1,29 +1,45 @@
-import { MAX_USERS } from '../../constants/game.constants.js';
+import dc from '../../constants/game.constants.js';
 import { payloadTypes } from '../../constants/packet.constants.js';
 import { sessionTypes } from '../../constants/session.constants.js';
 import { getGameAssets } from '../../init/assets.js';
+import dungeonUtils from '../../utils/dungeon/dungeon.utils.js';
+import CustomError from '../../utils/error/customError.js';
+import { ErrorCodes } from '../../utils/error/errorCodes.js';
 import Game from './game.class.js';
+import User from './user.class.js';
 import { userDB } from '../../db/user/user.db.js';
 import { SuccessCode } from '../../utils/error/errorCodes.js';
 import { getUserById } from '../../session/user.session.js';
 
-// const MAX_USERS = 4;
+// const dc.general.MAX_USERS = 4;
 
 class Dungeon extends Game {
-  constructor(id) {
-    super(id, MAX_USERS);
+  constructor(id, dungeonCode) {
+    super(id, dc.general.MAX_USERS);
     this.type = sessionTypes.DUNGEON;
-
     this.accountExpMap = {};
-    this._isNight = false;
+    this.dungeonCode = dungeonCode;
+    this.phase = dc.phases.STANDBY;
     this.readyStates = [];
     this.dungeonInfo = null;
-
     this.round = null;
     this.roundMonsters = null;
     this.playerInfos = null;
+    /*
+      const player1Info = {
+        nickname: 'eliot1Nick',
+        charClass: 1003,
+        transform: playerTransform.getTransform(),
+        gold: 0,
+        itemBox: 0,
+        killed: [],
+      };
+    */
     this.playerStatus = null;
     this.towerHp = null;
+    this.roundKillCount = 0;
+    this.timers = new Map();
+    this.startTime = Date.now();
   }
 
   addTowerHp(towerHp) {
@@ -89,7 +105,7 @@ class Dungeon extends Game {
     const data = this.playerStatus.get(accountId);
     if (data.playerHp - damage <= 0) {
       console.log(`${accountId} 플레이어 사망`);
-      this.killPlayer(accountId);
+      // this.killPlayer(accountId);
     }
 
     data.playerHp -= damage;
@@ -335,7 +351,8 @@ class Dungeon extends Game {
    */
   addRoundMonsters(round, monsters, wantResult) {
     this.round = round;
-    this.roundMonsters = new Map(monsters);
+    // this.roundMonsters = new Map(monsters);
+    this.setMonsters(monsters);
 
     if (wantResult) {
       return this.getRoundMonsters();
@@ -401,9 +418,11 @@ class Dungeon extends Game {
     }
     const data = this.roundMonsters.get(monsterIndex);
     if (data.monsterHp - damage <= 0) {
+      data.monsterHp -= damage;
+      this.roundMonsters.set(monsterIndex, data);
       console.log(`monsterIndex ${monsterIndex}번 몬스터 처치`);
       this.updatePlayerExp(accountId, data.killExp);
-      this.killMonster(monsterIndex);
+      this.killMonster(monsterIndex, accountId);
     } else {
       data.monsterHp -= damage;
       this.roundMonsters.set(monsterIndex, data);
@@ -417,11 +436,23 @@ class Dungeon extends Game {
   /**
    *
    * @param {number} monsterIndex 몬스터 인덱스
+   * @param {string} accountId
    * @description updatePlayerAttackMonster 내부에서 사용
    */
-  killMonster(monsterIndex) {
+  killMonster(monsterIndex, accountId) {
     // updatePlayerAttackMonster 내부에서 사용
-    this.roundMonsters.delete(monsterIndex);
+    // this.roundMonsters.delete(monsterIndex);
+    this.roundKillCount++;
+    const playerInfo = this.playerInfos.get(accountId);
+    playerInfo.killed.push(monsterIndex);
+    this.playerInfos.set(accountId, playerInfo);
+    console.log('------------KILL MONSTER----------', this.roundKillCount, this.roundMonsters.size);
+    if (this.roundMonsters.size === this.roundKillCount) {
+      // 밤 round 종료
+      console.log('------------END NIGHT ROUND----------');
+      this.roundKillCount = 0;
+      this.endNightRound();
+    }
   }
 
   /**
@@ -514,6 +545,31 @@ class Dungeon extends Game {
     }
   }
 
+  attackMonster(accountId, attackType, monsterIdx) {
+    super.notifyOthers(accountId, payloadTypes.S_PLAYER_ATTACK, {
+      playerId: accountId,
+      attackType,
+      monsterIdx,
+    });
+  }
+
+  // attackedMonster(monsterIdx, monsterHp) {
+  //   super.notifyAll(payloadTypes.S_MONSTER_ATTACKED, { monsterIdx, monsterHp });
+  // }
+
+  attackedMonster(accountId, monsterIdx, monsterHp) {
+    super.notifyOthers(accountId, payloadTypes.S_MONSTER_ATTACKED, { monsterIdx, monsterHp });
+  }
+
+  attackPlayer(monsterIdx, attackType, accountId, playerHp) {
+    super.notifyAll(payloadTypes.S_PLAYER_ATTACKED, {
+      monsterIdx,
+      attackType,
+      playerId: accountId,
+      playerHp,
+    });
+  }
+
   removeUser(accountId) {
     super.removeUser(accountId);
 
@@ -530,46 +586,164 @@ class Dungeon extends Game {
     super.notifyOthers(accountId, payloadType, payload);
   }
 
-  toggleReadyState(user) {
-    if (isNight) return true;
-    const idx = this.readyStates.findIndex((targetId) => targetId === user.accountId);
-    if (idx !== -1) {
-      this.readyStates.push(user.accountId);
-      if (this.readyStates.length === MAX_USERS) {
-        this.setNight();
-        // TODO: 모든 유저에게 S_NightRoundStart 전송
-        const data = {}; //
-        super.notifyAll(payloadTypes.S_NIGHT_ROUND_START, data);
-      }
-      return true;
-    } else {
-      this.readyStates.splice(idx, 1);
-      return false;
+  /**
+   * 던전 세션 실행 시 클라이언트에서 씬 로딩이 완료되었을 때 실행됩니다. 모든 유저가 준비되면 낮 라운드를 시작합니다.
+   * @param {string} accountId 유저의 accountId
+   */
+  async sceneReady(accountId) {
+    if (this.phase !== dc.phases.STANDBY) return;
+    const idx = this.users.findIndex((user) => user.accountId === accountId);
+    if (idx === -1) {
+      throw new CustomError(ErrorCodes.USER_NOT_FOUND, `유저가 세션에 없습니다: ${accountId}`);
+    }
+    this.readyStates.push(false);
+    if (this.readyStates.length >= dc.general.MAX_USERS && this.phase === dc.phases.STANDBY) {
+      this.phase = dc.phases.DAY;
+      this.startDayRoundTimer();
     }
   }
 
-  getReadyCount() {
-    return this.readyStates.length;
+  /**
+   *
+   * @param {User} user
+   * @returns 유저의 ready 상태 반환
+   */
+  toggleReadyState(user) {
+    if (this.phase !== dc.phases.DAY) return;
+    const idx = this.users.findIndex((targetId) => targetId === user.accountId);
+    if (idx === -1) {
+      throw new CustomError(ErrorCodes.USER_NOT_FOUND, `유저가 세션에 없습니다: ${accountId}`);
+    }
+    if (this.readyStates[idx]) {
+      return true;
+    }
+    this.readyStates[idx] = true; // !this.readyStates[idx];
+    for (const state of this.readyStates) {
+      if (!state) {
+        return this.readyStates[idx];
+      }
+    }
+    // all users are ready
+    this.phase = dc.phases.DAY_STARTED;
+    this.startDayRoundTimer();
   }
 
-  endNightRound() {
-    if (!isNight) return;
-    this.setDay();
-    const dungeonInfo = []; // 다음 라운드 몬스터 목록 받아오기
-    const roundResults = []; // 각 유저의 라운드 통계 받아오기
-    const data = {
-      dungeonInfo,
-      roundResults,
+  /**
+   * User 인스턴스로 해당 유저의 라운드 통계 정보를 불러옵니다.
+   * @param {User} user 유저 세션에 등록된 유저 인스턴스
+   * @returns {RoundResult} 유저의 라운드 통계 정보(RoundResult)를 담은 객체
+   */
+  fetchRoundStatsByUser(user) {
+    if (this.phase !== dc.phases.RESULT) return;
+    // TODO: 라운드 통계 (RoundResult) 반환
+
+    /*
+      message RoundResult {
+        string nickname = 1;
+        uint32 score = 2;
+        uint32 killCount = 3;
+        // 밤 라운드 정산 정보 있으면 여기에 추가?
+        
+      }
+    */
+
+    /*
+    const player1Info = {
+      nickname: 'eliot1Nick',
+      charClass: 1003,
+      transform: playerTransform.getTransform(),
+      gold: 0,
+      itemBox: 0,
+      killed: [],
+      score: 0,
     };
-    super.notifyAll(payloadTypes.S_NIGHT_ROUND_END, data);
+    */
+    const { nickname, score, killed } = this.playerInfos.get(user.accountId);
+    // const nickname = this.playerInfos.get(user.accountId).nickname;
+    // const score = ; // 임시
+    // const killed = 0; // 임시
+    return {
+      nickname,
+      score: score ? score : 0,
+      killed,
+    };
   }
 
-  setDay() {
-    this._isNight = false;
+  /**
+   * 밤 라운드를 종료시킵니다. 해당 라운드가 마지막 밤 라운드인 경우 S_GameEnd 패킷을 전송합니다.
+   */
+  endNightRound() {
+    if (this.phase !== dc.phases.NIGHT) return;
+    this.phase = dc.phases.RESULT; // dc.phases.RESULT
+    Promise.all([
+      (async () => {
+        const dungeonInfo = dungeonUtils.fetchDungeonInfo(this.dungeonCode, this.round + 1); // 다음 라운드 몬스터 목록 받아오기
+        if (dungeonInfo === null) {
+          return null;
+        }
+        this.setMonsters(dungeonInfo.monsters);
+        return dungeonInfo;
+      })(),
+      (async () => {
+        const roundResults = this.users.map((user) => this.fetchRoundStatsByUser(user)); // 각 유저의 라운드 통계 받아오기
+        return roundResults;
+      })(),
+    ]).then(([dungeonInfo, roundResults]) => {
+      this.phase = dc.phases.DAY;
+      if (!dungeonInfo) {
+        // 마지막 라운드가 종료됨 (gameEnd 전송)
+      } else {
+        // 아직 라운드가 남음
+        const data = {
+          dungeonInfo,
+          roundResults,
+        };
+        this.notifyAll(payloadTypes.S_NIGHT_ROUND_END, data);
+        this.startDayRoundTimer();
+      }
+    });
   }
 
-  setNight() {
-    this._isNight = true;
+  /**
+   *
+   * @param {[MonsterStatus]} monsters
+   */
+  setMonsters(monsters) {
+    this.roundMonsters = new Map();
+    monsters.forEach((monster) => {
+      const { monsterIdx, ...rest } = monster;
+      this.roundMonsters.set(monsterIdx, rest);
+    });
+    return monsters;
+  }
+
+  /**
+   * 낮 라운드의 타이머를 설정하고 시간을 전송합니다. 설정한 시간이 지나면 밤 라운드를 시작합니다.
+   */
+  startDayRoundTimer() {
+    if (this.phase !== dc.phases.DAY) return;
+    this.phase = dc.phases.DAY_STARTED;
+    (async () => {
+      setTimeout(() => {
+        this.phase = dc.phases.NIGHT;
+        this.notifyAll(payloadTypes.S_NIGHT_ROUND_START, {});
+      }, dc.general.DAY_DURATION);
+    })();
+    (async () => {
+      const data = {
+        startTime: Date.now(),
+        milliseconds: dc.general.DAY_DURATION,
+      };
+      this.notifyAll(payloadTypes.S_DAY_ROUND_TIMER, data);
+    })();
+  }
+
+  animationMonster(data) {
+    super.notifyAll(payloadTypes.S_ANIMATION_MONSTER, data);
+  }
+
+  animationPlayer(data) {
+    super.notifyAll(payloadTypes.S_ANIMATION_PLAYER, data);
   }
 }
 
