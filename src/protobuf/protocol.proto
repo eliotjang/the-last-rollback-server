@@ -191,11 +191,11 @@ message C_PlayerResponse{
 }
 
 
-message C_Tower {
-  string playerId = 1;
+message C_TowerAttacked {
+  int32 monsterIdx = 1;
 }
 
-message S_Tower {
+message S_TowerAttacked {
   int32 towerHp = 1;
 }
 
@@ -464,6 +464,8 @@ message RequestPacket {
     C_DungeonMatch cDungeonMatch = 9;
     C_DayRoundReady cDayRoundReady = 15;
     C_DungeonSceneReady cDungeonSceneReady = 16;
+
+    C_TowerAttacked cTowerAttacked = 30;
   }
 }
 
@@ -524,6 +526,7 @@ message NotificationPacket {
     S_AnimationPlayer sAnimationPlayer = 29;
     // S_EnterDungeon sEnterDungeon = 11;
     S_Chat sChat = 9;
-    // S_Tower sTower = 10;
+    
+    S_TowerAttacked sTowerAttacked = 30;
   }
 }
