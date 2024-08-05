@@ -204,10 +204,10 @@ message S_TowerAttacked {
 }
 
 message S_GameEnd {
-  bool result = 1;
+  int32 result = 1;
   string playerId = 2;
   int32 accountLevel = 3;
-  float accountExp = 4;
+  int32 accountExp = 4;
 }
 
 // Me

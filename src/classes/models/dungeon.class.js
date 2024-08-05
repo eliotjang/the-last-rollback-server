@@ -11,7 +11,7 @@ import { userDB } from '../../db/user/user.db.js';
 import { SuccessCode } from '../../utils/error/errorCodes.js';
 import { getUserById } from '../../session/user.session.js';
 import { getAllTownSessions, addTownSession } from '../../session/town.session.js';
-
+import lodash from 'lodash';
 // const dc.general.MAX_USERS = 4;
 
 class Dungeon extends Game {
@@ -37,6 +37,14 @@ class Dungeon extends Game {
       };
     */
     this.playerStatus = null;
+    /*
+      const player1Status = {
+        playerLevel: charStatInfo[player1Info.charClass][0].level,
+        playerExp: 0,
+        playerHp: charStatInfo[player1Info.charClass][0].hp,
+        playerMp: charStatInfo[player1Info.charClass][0].mp,
+      };
+    */
     this.towerHp = null;
     this.roundKillCount = 0;
     this.timers = new Map();
@@ -52,8 +60,20 @@ class Dungeon extends Game {
     if (this.towerHp <= 0) {
       this.towerHp = 0;
       this.updateGameOver();
+      // for (const [accountId, value] of this.playerStatus.entries()) {
+      //   console.log('accountId, value : ', accountId, value);
+      //   const user = this.getUser(accountId);
+      //   user.socket.sendResponse(SuccessCode.Success, '게임 패배', payloadTypes.S_GAME_END, {
+      //     result: 3, // 0 패배, 1 승리
+      //     playerId: accountId,
+      //     accountLevel: 3, //value.playerLevel,
+      //     accountExp: 3, //value.playerExp,
+      //   });
+      // }
     }
     super.notifyAll(payloadTypes.S_TOWER_ATTACKED, { towerHp: this.towerHp });
+
+    return this.towerHp;
   }
 
   /**
@@ -454,9 +474,7 @@ class Dungeon extends Game {
       this.endNightRound();
 
       const playerStatus = this.getPlayerStatus(accountId);
-      console.log('playerStatus : ', playerStatus);
       const gameExp = playerStatus.playerExp;
-      console.log('gameExp : ', gameExp);
       this.updateRoundResult(accountId, gameExp);
     }
   }
@@ -510,9 +528,8 @@ class Dungeon extends Game {
 
     // 죽은 라운드의 경험치는 포함안됨
     const playersExp = this.updateRoundResult();
-    console.log('playersExp : ', playersExp);
     // 1라운드 도중에 죽었을 때
-    if (playersExp === null) {
+    if (lodash.isEmpty(playersExp)) {
       this.users.forEach(async (user) => {
         const player = await userDB.updateExp(user.accountId, 50, true);
         console.log('player : ', player);
@@ -523,7 +540,7 @@ class Dungeon extends Game {
           SuccessCode.Success,
           '게임에서 패배하였습니다.',
           payloadTypes.S_GAME_END,
-          { result: 0, playerId: accountId, accountLevel: playerLevel, accountExp: totalExp },
+          { result: 3, playerId: user.accountId, accountLevel: playerLevel, accountExp: 50 },
         );
       });
     }
