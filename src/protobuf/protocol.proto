@@ -191,11 +191,13 @@ message C_PlayerResponse{
 }
 
 
-// message C_Tower{ }
+message C_Tower {
+  string playerId = 1;
+}
 
-// message S_Tower{
-//   int32 hp = 1;
-// }
+message S_Tower {
+  int32 towerHp = 1;
+}
 
 // Me
 message S_ScreenText{
