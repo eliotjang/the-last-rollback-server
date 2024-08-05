@@ -3,10 +3,11 @@ import { getAllTownSessions, addTownSession } from '../../session/town.session.j
 import { handleError } from '../../utils/error/errorHandler.js';
 import { getGameAssets } from '../../init/assets.js';
 
-const towerHpUpdateHandler = async ({ _, accountId, packet }) => {
+const towerHpUpdateHandler = async ({ socket, accountId, packet }) => {
   try {
     const { monsterInfo } = getGameAssets();
     const { monsterIdx } = packet;
+
     const amount = monsterInfo.data[monsterIdx].atk;
 
     const dungeonSession = getDungeonSessionByUserId(accountId);

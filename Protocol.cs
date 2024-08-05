@@ -202,7 +202,7 @@ namespace Google.Protobuf.Protocol {
             "d2VyQXR0YWNrZWQYHiABKAsyKS5Hb29nbGUuUHJvdG9idWYuUHJvdG9jb2wu",
             "U19Ub3dlckF0dGFja2VkSABCCQoHcGF5bG9hZCpXCghQYWNrZXRJZBIUChBV",
             "TkRFRklORURfUEFDS0VUEAASCAoEUElORxABEgsKB1JFUVVFU1QQAhIMCghS",
-            "RVNQT05TRRADEhAKDE5PVElGSUNBVElPThAEKqkHCgVNc2dJZBIVChFVTkRF",
+            "RVNQT05TRRADEhAKDE5PVElGSUNBVElPThAEKtcHCgVNc2dJZBIVChFVTkRF",
             "RklORURfUEFZTE9BRBAAEgsKB0NfRU5URVIQARILCgdTX0VOVEVSEAISCwoH",
             "U19TUEFXThADEg0KCVNfREVTUEFXThAFEgoKBkNfTU9WRRAGEgoKBlNfTU9W",
             "RRAHEg8KC0NfQU5JTUFUSU9OEAgSDwoLU19BTklNQVRJT04QCRIKCgZDX0NI",
@@ -222,8 +222,9 @@ namespace Google.Protobuf.Protocol {
             "Ul9EVU5HRU9OEGgSEwoPU19MRUFWRV9EVU5HRU9OEGkSGQoVQ19EVU5HRU9O",
             "X1NDRU5FX1JFQURZEGoSFQoRQ19EQVlfUk9VTkRfUkVBRFkQaxIVChFTX0RB",
             "WV9ST1VORF9SRUFEWRBsEhUKEVNfREFZX1JPVU5EX1RJTUVSEG0SFwoTU19O",
-            "SUdIVF9ST1VORF9TVEFSVBBuEhUKEVNfTklHSFRfUk9VTkRfRU5EEG8SGAoT",
-            "U19TT01FX05PVElGSUNBVElPThCsAmIGcHJvdG8z"));
+            "SUdIVF9ST1VORF9TVEFSVBBuEhUKEVNfTklHSFRfUk9VTkRfRU5EEG8SFQoQ",
+            "Q19UT1dFUl9BVFRBQ0tFRBCCARIVChBTX1RPV0VSX0FUVEFDS0VEEIMBEhgK",
+            "E1NfU09NRV9OT1RJRklDQVRJT04QrAJiBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Google.Protobuf.Protocol.PacketId), typeof(global::Google.Protobuf.Protocol.MsgId), }, null, new pbr::GeneratedClrTypeInfo[] {
@@ -356,6 +357,8 @@ namespace Google.Protobuf.Protocol {
     [pbr::OriginalName("S_DAY_ROUND_TIMER")] SDayRoundTimer = 109,
     [pbr::OriginalName("S_NIGHT_ROUND_START")] SNightRoundStart = 110,
     [pbr::OriginalName("S_NIGHT_ROUND_END")] SNightRoundEnd = 111,
+    [pbr::OriginalName("C_TOWER_ATTACKED")] CTowerAttacked = 130,
+    [pbr::OriginalName("S_TOWER_ATTACKED")] STowerAttacked = 131,
     [pbr::OriginalName("S_SOME_NOTIFICATION")] SSomeNotification = 300,
   }
 

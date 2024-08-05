@@ -15,6 +15,7 @@ import attackPlayerHandler from './dungeon/attack-player.handler.js';
 import animationMonsterHandler from './dungeon/animation-monster.handler.js';
 import animationPlayerHandler from './dungeon/animation-player.handler.js';
 import sceneReadyHandler from './dungeon/scene-ready.handler.js';
+import towerHpUpdateHandler from './dungeon/tower.handler.js';
 // import towerHpUpdateHandler from './dungeon/tower.handler.js';
 
 const handlers = {
@@ -24,7 +25,6 @@ const handlers = {
   [payloadTypes.C_MOVE]: locationUpdateHandler,
   [payloadTypes.C_MONSTER_MOVE]: monsterMoveHandler,
   [payloadTypes.C_DUNGEON_MATCH]: dungeonMatchHandler,
-  // [payloadTypes.C_TOWER]: towerHpUpdateHandler,
   [payloadTypes.C_CHAT]: chattingHandler,
   [payloadTypes.C_DAY_ROUND_READY]: dayRoundReadyHandler,
   [payloadTypes.C_PLAYER_ATTACK]: attackMonsterHandler,
@@ -33,6 +33,7 @@ const handlers = {
   [payloadTypes.C_ANIMATION_MONSTER]: animationMonsterHandler,
   [payloadTypes.C_ANIMATION_PLAYER]: animationPlayerHandler,
   [payloadTypes.C_DUNGEON_SCENE_READY]: sceneReadyHandler,
+  [payloadTypes.C_TOWER_ATTACKED]: towerHpUpdateHandler,
 };
 
 export const getHandlerByPayloadType = (payloadType) => {

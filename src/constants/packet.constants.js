@@ -68,6 +68,9 @@ export const payloadTypes = {
   S_NIGHT_ROUND_START: 110,
   S_NIGHT_ROUND_END: 111,
 
+  C_TOWER_ATTACKED: 130,
+  S_TOWER_ATTACKED: 131,
+
   S_SOME_NOTIFICATION: 300,
 };
 

@@ -67,6 +67,9 @@ enum MsgId {
     S_NIGHT_ROUND_START = 110;
     S_NIGHT_ROUND_END = 111;
 
+    C_TOWER_ATTACKED = 130;
+    S_TOWER_ATTACKED = 131;
+
     S_SOME_NOTIFICATION = 300;
 }
 
@@ -526,7 +529,7 @@ message NotificationPacket {
     S_AnimationPlayer sAnimationPlayer = 29;
     // S_EnterDungeon sEnterDungeon = 11;
     S_Chat sChat = 9;
-    
+
     S_TowerAttacked sTowerAttacked = 30;
   }
 }

@@ -52,7 +52,7 @@ class Dungeon extends Game {
     if (this.towerHp <= 0) {
       this.towerHp = 0;
     }
-    super.notifyAll(payloadTypes.S_TOWER, { towerHp: this.towerHp });
+    super.notifyAll(payloadTypes.S_TOWER_ATTACKED, { towerHp: this.towerHp });
 
     return this.towerHp;
   }
