@@ -490,7 +490,7 @@ class Dungeon extends Game {
       // 밤 round 종료
       console.log('------------END NIGHT ROUND----------');
       this.roundKillCount = 0;
-      this.endNightRound();
+      this.endNightRound(accountId);
     }
   }
 
@@ -760,7 +760,7 @@ class Dungeon extends Game {
   /**
    * 밤 라운드를 종료시킵니다. 해당 라운드가 마지막 밤 라운드인 경우 S_GameEnd 패킷을 전송합니다.
    */
-  endNightRound() {
+  endNightRound(accountId) {
     if (this.phase !== dc.phases.NIGHT) return;
     this.phase = dc.phases.RESULT; // dc.phases.RESULT
     Promise.all([
