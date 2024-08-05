@@ -584,7 +584,7 @@ class Dungeon extends Game {
   removeUser(accountId) {
     super.removeUser(accountId);
 
-    // super.notifyAll(payloadTypes.S_LEAVE_DUNGEON);
+    super.notifyAll(payloadTypes.S_LEAVE_DUNGEON);
   }
 
   async movePlayer(accountId, transform) {
