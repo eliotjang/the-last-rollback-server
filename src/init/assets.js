@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { gameAssetConstants } from '../constants/asset.constants.js';
 
 // import.meta.url은 현재 모듈의 URL을 나타내는 문자열
 // fileURLToPath는 URL 문자열을 파일 시스템의 경로로 변환
@@ -27,14 +28,22 @@ const readFileAsync = (filename) => {
 
 export const loadGameAssets = async () => {
   try {
-    const [charStatInfo, userInfo, stageUnlock, monsterInfo, pickUpItemInfo] = await Promise.all([
-      readFileAsync('char_stat_info.json'),
-      readFileAsync('user_info.json'),
-      readFileAsync('stage_unlock.json'),
-      readFileAsync('monster_info.json'),
-      readFileAsync('pick_up_item_info.json'),
-    ]);
-    gameAssets = { charStatInfo, userInfo, stageUnlock, monsterInfo, pickUpItemInfo };
+    const promises = Object.values(gameAssetConstants).map(async (v) => {
+      const value = await readFileAsync(v.PATH);
+      return [v.NAME, value];
+    });
+
+    gameAssets = Object.fromEntries(await Promise.all(promises));
+    Object.freeze(gameAssets);
+
+    // const [charStatInfo, userInfo, stageUnlock, monsterInfo] = await Promise.all([
+    //   readFileAsync('char_stat_info.json'),
+    //   readFileAsync('user_info.json'),
+    //   readFileAsync('stage.json'),
+    //   readFileAsync('stage_unlock.json'),
+    //   readFileAsync('monster_info.json'),
+    // ]);
+    // gameAssets = { charStatInfo, userInfo, stage, stageUnlock, monsterInfo };
     console.log('JSON 데이터 파일이 로드되었습니다.');
     return gameAssets;
   } catch (error) {
