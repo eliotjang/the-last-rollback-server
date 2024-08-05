@@ -8,6 +8,7 @@ import { townRedis } from '../../utils/redis/town.redis.js';
 import { getUserById } from '../../session/user.session.js';
 import { gameCharDB } from '../../db/game-char/game-char.db.js';
 import lodash from 'lodash';
+import { getDungeonSessionByUserId } from '../../session/dungeon.session.js';
 
 const enterTownHandler = async ({ socket, accountId, packet, playerInfo }) => {
   try {
