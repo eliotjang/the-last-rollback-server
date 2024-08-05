@@ -70,6 +70,7 @@ export const payloadTypes = {
 
   C_TOWER_ATTACKED: 130,
   S_TOWER_ATTACKED: 131,
+  S_GAME_END: 132,
 
   S_SOME_NOTIFICATION: 300,
 };

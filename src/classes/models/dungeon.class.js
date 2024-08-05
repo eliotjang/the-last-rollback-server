@@ -503,10 +503,13 @@ class Dungeon extends Game {
   async updateGameOver(townSession) {
     // 죽은 라운드의 경험치는 포함안됨
     const playersExp = this.updateRoundResult(); // updatePlayerExp로 변경
+    console.log('playersExp : ', playersExp);
 
     for (const [accountId, totalExp] of Object.entries(playersExp)) {
       const player = await userDB.updateExp(accountId, totalExp, true);
-      const playerLevel = player.player_level;
+      console.log('player : ', player);
+      const playerLevel = player.userLevel;
+      console.log('playerLevel : ', playerLevel);
 
       this.users.forEach((user) => {
         if (user.accountId === accountId) {
@@ -514,7 +517,7 @@ class Dungeon extends Game {
             SuccessCode.Success,
             '게임에서 패배하였습니다.',
             payloadTypes.S_GAME_END,
-            { result: 0, playerId: accountId, accountLevel: playerLevel, accountEXP: totalExp },
+            { result: 0, playerId: accountId, accountLevel: playerLevel, accountExp: totalExp },
           );
         }
       });

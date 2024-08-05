@@ -69,6 +69,7 @@ enum MsgId {
 
     C_TOWER_ATTACKED = 130;
     S_TOWER_ATTACKED = 131;
+    S_GAME_END = 132;
 
     S_SOME_NOTIFICATION = 300;
 }
@@ -200,6 +201,13 @@ message C_TowerAttacked {
 
 message S_TowerAttacked {
   int32 towerHp = 1;
+}
+
+message S_GameEnd {
+  bool result = 1;
+  string playerId = 2;
+  int32 accountLevel = 3;
+  float accountExp = 4;
 }
 
 // Me
@@ -506,6 +514,7 @@ message ResponsePacket {
     S_PlayerAttack sPlayerAttack = 25;
     S_MonsterAttacked sMonsterAttacked = 26;
 
+    S_GameEnd sGameEnd = 30;
   }
 }
 
