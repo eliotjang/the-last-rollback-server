@@ -18,11 +18,6 @@ const towerHpUpdateHandler = async ({ socket, accountId, packet }) => {
     }
 
     dungeonSession.updateTowerHp(amount); // 몬스터 공격력 임의로 설정
-
-    if (dungeonSession.updateTowerHp(amount) === 0) {
-      console.log('타워 파괴');
-      await dungeonSession.updateGameOver(townSession);
-    }
   } catch (error) {
     handleError(socket, error);
   }
