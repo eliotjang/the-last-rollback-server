@@ -75,6 +75,7 @@ class Dungeon extends Game {
       //   });
       // }
     }
+    console.log('타워 공격', this.towerHp);
     super.notifyAll(payloadTypes.S_TOWER_ATTACKED, { towerHp: this.towerHp });
 
     return this.towerHp;
