@@ -537,9 +537,7 @@ class Dungeon extends Game {
   updateRoundResult(accountId, gameExp) {
     // stage가 끝날 때마다 호출
     if (arguments.length === 0) {
-      return Object.fromEntries(
-        Object.entries(this.accountExpMap).map(([id, exp]) => [id, parseInt(id) + exp]),
-      );
+      return Object.fromEntries(Object.entries(this.accountExpMap).map(([id, exp]) => [id, exp]));
     }
 
     if (!this.accountExpMap[accountId]) {
@@ -606,9 +604,8 @@ class Dungeon extends Game {
     }
 
     const playersExp = this.updateRoundResult();
-
     for (const [accountId, totalExp] of Object.entries(playersExp)) {
-      const wineExp = totalExp + 100; // 승리 시 정산에서 얻은 경험치에서 100 추가
+      const wineExp = +totalExp + 100; // 승리 시 정산에서 얻은 경험치에서 100 추가
       const player = await userDB.updateExp(accountId, wineExp, true);
       const playerLevel = player.player_level;
 
@@ -625,7 +622,7 @@ class Dungeon extends Game {
 
       this.removeUser(accountId);
       const user = getUserById(accountId);
-      townSession.addUser(user);
+      // townSession.addUser(user);
     }
   }
 
