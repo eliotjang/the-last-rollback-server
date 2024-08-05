@@ -491,10 +491,6 @@ class Dungeon extends Game {
       console.log('------------END NIGHT ROUND----------');
       this.roundKillCount = 0;
       this.endNightRound();
-
-      const playerStatus = this.getPlayerStatus(accountId);
-      const gameExp = playerStatus.playerExp;
-      this.updateRoundResult(accountId, gameExp);
     }
   }
 
@@ -785,8 +781,14 @@ class Dungeon extends Game {
       this.round++;
       if (!dungeonInfo) {
         // 마지막 라운드가 종료됨 (gameEnd 전송)
+        const playerStatus = this.getPlayerStatus(accountId);
+        const gameExp = playerStatus.playerExp;
+        this.updateRoundResult(accountId, gameExp);
         this.updateGameWin();
       } else {
+        const playerStatus = this.getPlayerStatus(accountId);
+        const gameExp = playerStatus.playerExp;
+        this.updateRoundResult(accountId, gameExp);
         // 아직 라운드가 남음
         const data = {
           dungeonInfo,
