@@ -519,15 +519,33 @@ class Dungeon extends Game {
    */
   async sceneReady(accountId) {
     if (this.phase !== dc.phases.STANDBY) return;
-    const idx = this.users.findIndex((user) => user.accountId === accountId);
-    if (idx === -1) {
-      throw new CustomError(ErrorCodes.USER_NOT_FOUND, `유저가 세션에 없습니다: ${accountId}`);
-    }
-    this.readyStates.push(false);
-    if (this.readyStates.length >= dc.general.MAX_USERS && this.phase === dc.phases.STANDBY) {
-      this.phase = dc.phases.DAY;
-      this.startDayRoundTimer();
-    }
+    let found = false;
+    Promise.all(
+      this.users.map(async (user) => {
+        if (user.accountId === accountId) {
+          found = true;
+          this.readyStates.push(false);
+        }
+      }),
+    ).then(() => {
+      if (!found) {
+        throw new CustomError(ErrorCodes.USER_NOT_FOUND, `유저가 세션에 없습니다: ${accountId}`);
+      }
+      if (this.readyStates.length >= dc.general.MAX_USERS && this.phase === dc.phases.STANDBY) {
+        this.phase = dc.phases.DAY;
+        this.startDayRoundTimer();
+      }
+    });
+
+    // const idx = this.users.findIndex((user) => user.accountId === accountId);
+    // if (idx === -1) {
+    //   throw new CustomError(ErrorCodes.USER_NOT_FOUND, `유저가 세션에 없습니다: ${accountId}`);
+    // }
+    // this.readyStates.push(false);
+    // if (this.readyStates.length >= dc.general.MAX_USERS && this.phase === dc.phases.STANDBY) {
+    //   this.phase = dc.phases.DAY;
+    //   this.startDayRoundTimer();
+    // }
   }
 
   /**
@@ -585,14 +603,15 @@ class Dungeon extends Game {
       score: 0,
     };
     */
-    const { nickname, score, killed } = this.playerInfos.get(user.accountId);
-    // const nickname = this.playerInfos.get(user.accountId).nickname;
-    // const score = ; // 임시
-    // const killed = 0; // 임시
+    const { nickname, score, killed, itemBox, gold } = this.playerInfos.get(user.accountId);
+    // TODO: 상자깡?
+
     return {
       nickname,
       score: score ? score : 0,
       killed,
+      // items: [],
+      // gold,
     };
   }
 
@@ -617,7 +636,7 @@ class Dungeon extends Game {
       })(),
     ]).then(([dungeonInfo, roundResults]) => {
       this.phase = dc.phases.DAY;
-      round++;
+      this.round++;
       if (!dungeonInfo) {
         // 마지막 라운드가 종료됨 (gameEnd 전송)
       } else {
