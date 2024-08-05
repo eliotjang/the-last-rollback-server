@@ -52,7 +52,7 @@ const onData = (socket) => async (data) => {
       }
     }
   } catch (err) {
-    handleError(socket, err);
+    //handleError(socket, err);
   }
 };
 

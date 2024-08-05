@@ -1,6 +1,7 @@
 import dc from '../../constants/game.constants.js';
 import { payloadTypes } from '../../constants/packet.constants.js';
 import { sessionTypes } from '../../constants/session.constants.js';
+import pickUpHandler from '../../handlers/dungeon/pick-up.handler.js';
 import { getGameAssets } from '../../init/assets.js';
 import dungeonUtils from '../../utils/dungeon/dungeon.utils.js';
 import CustomError from '../../utils/error/customError.js';
@@ -32,6 +33,9 @@ class Dungeon extends Game {
     */
     this.playerStatus = null;
     this.towerHp = null;
+    this.itemNames = [];
+    this.itemProbability = [];
+    this.pickUpItems = [];
     this.roundKillCount = 0;
     this.timers = new Map();
     this.startTime = Date.now();
@@ -296,11 +300,16 @@ class Dungeon extends Game {
     }
 
     const data = this.playerInfos.get(accountId);
+    console.log('get 상자 : ', data.itemBox);
     data.itemBox++;
     this.playerInfos.set(accountId, data);
-
+    console.log('상자 획득!!!!!!!!!', data.itemBox);
+    super.notifyAll(payloadTypes.S_PICK_UP_ITEM_BOX, {
+      playerId: accountId,
+      updateBox: data.itemBox,
+    });
     if (wantResult) {
-      return this.getPlayerInfo(accountId);
+      return data.itemBox;
     }
   }
 
@@ -407,6 +416,7 @@ class Dungeon extends Game {
     }
     const data = this.roundMonsters.get(monsterIndex);
     if (data.monsterHp - damage <= 0) {
+      pickUpHandler(accountId);
       data.monsterHp -= damage;
       this.roundMonsters.set(monsterIndex, data);
       console.log(`monsterIndex ${monsterIndex}번 몬스터 처치`);
@@ -691,6 +701,97 @@ class Dungeon extends Game {
 
   animationPlayer(data) {
     super.notifyAll(payloadTypes.S_ANIMATION_PLAYER, data);
+  }
+
+  addPickUpList(data) {
+    const itemNames = data.map((item) => item.itemName);
+    const itemProbability = data.map((item) => item.probability);
+    const totalProbability = itemProbability.reduce((sum, cur) => sum + cur, 0);
+    const lastProbability = 100 - totalProbability;
+
+    if (totalProbability > 100) {
+      throw new CustomError(ErrorCodes.PROBABILITY_ERROR, '확률의 합이 100이 넘습니다.');
+    }
+
+    itemProbability.push(lastProbability);
+
+    this.itemNames = itemNames;
+    this.itemProbability = itemProbability;
+    this.pickUpItems = data;
+  }
+
+  getItemNames() {
+    return this.itemNames;
+  }
+
+  getItemProbability() {
+    return this.itemProbability;
+  }
+
+  getPickUpItems() {
+    return this.pickUpItems;
+  }
+
+  recoveredHp(accountId, itemHp, wantResult) {
+    if (!(this.playerInfos.has(accountId) && this.playerStatus.has(accountId))) {
+      console.log('해당 플레이어가 존재하지 않음');
+      return null;
+    }
+    const { charStatInfo } = getGameAssets();
+
+    const infoData = this.playerInfos.get(accountId);
+    let statData = this.playerStatus.get(accountId);
+
+    const targetData = charStatInfo[infoData.charClass].find(
+      (data) => data.level === statData.playerLevel,
+    );
+
+    const maxHp = targetData.maxHp;
+
+    statData.playerHp += itemHp;
+    if (statData.playerHp > maxHp) {
+      statData.playerHp = maxHp;
+    }
+    console.log('체력 획득!!!!!!!!!', statData.playerHp);
+    super.notifyAll(payloadTypes.S_PICK_UP_ITEM_HP, {
+      playerId: accountId,
+      playerHp: statData.playerHp,
+    });
+
+    if (wantResult) {
+      return statData.playerHp;
+    }
+  }
+
+  recoveredMp(accountId, itemMp, wantResult) {
+    if (!(this.playerInfos.has(accountId) && this.playerStatus.has(accountId))) {
+      console.log('해당 플레이어가 존재하지 않음');
+      return null;
+    }
+    const { charStatInfo } = getGameAssets();
+
+    const infoData = this.playerInfos.get(accountId);
+    let statData = this.playerStatus.get(accountId);
+
+    const targetData = charStatInfo[infoData.charClass].find(
+      (data) => data.level === statData.playerLevel,
+    );
+
+    const maxMp = targetData.maxMp;
+
+    statData.playerMp += itemMp;
+    if (statData.playerMp > maxMp) {
+      statData.playerMp = maxMp;
+    }
+    console.log('마나 획득!!!!!!!!!', statData.playerMp);
+    super.notifyAll(payloadTypes.S_PICK_UP_ITEM_MP, {
+      playerId: accountId,
+      playerMp: statData.playerMp,
+    });
+
+    if (wantResult) {
+      return statData.playerMp;
+    }
   }
 }
 
