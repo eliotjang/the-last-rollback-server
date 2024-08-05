@@ -37,6 +37,9 @@ enum MsgId {
     S_SIGN_UP = 27;
     C_LOG_IN = 28;
     S_LOG_IN = 29; 
+
+    // C_TOWER = 31;
+    // S_TOWER = 32;
     C_PLAYER_ATTACK = 40;
     S_PLAYER_ATTACK = 41;
     C_MONSTER_ATTACKED = 42;
@@ -48,6 +51,7 @@ enum MsgId {
     S_ANIMATION_PLAYER = 47;
     C_ANIMATION_MONSTER = 48;
     S_ANIMATION_MONSTER = 49;
+
     C_MONSTER_MOVE = 60;
     S_MONSTER_MOVE = 61;
 
@@ -65,6 +69,10 @@ enum MsgId {
     S_DAY_ROUND_TIMER = 109;
     S_NIGHT_ROUND_START = 110;
     S_NIGHT_ROUND_END = 111;
+
+    C_TOWER_ATTACKED = 130;
+    S_TOWER_ATTACKED = 131;
+    S_GAME_END = 132;
 
     S_SOME_NOTIFICATION = 300;
 }
@@ -187,6 +195,22 @@ message C_Chat{
 
 message C_PlayerResponse{
   int32 responseCode = 1;
+}
+
+
+message C_TowerAttacked {
+  int32 monsterIdx = 1;
+}
+
+message S_TowerAttacked {
+  int32 towerHp = 1;
+}
+
+message S_GameEnd {
+  int32 result = 1;
+  string playerId = 2;
+  int32 accountLevel = 3;
+  int32 accountExp = 4;
 }
 
 // Me
@@ -458,6 +482,8 @@ message RequestPacket {
     C_SignUp cSignUp = 12;
     C_LogIn cLogIn = 13;
     C_MonsterMove cMonsterMove = 14;
+    // C_Tower cTower = 17;
+
     C_PlayerAttack cPlayerAttack = 25;
     C_MonsterAttacked cMonsterAttacked = 26;
     C_MonsterAttack cMonsterAttack = 27;
@@ -467,6 +493,8 @@ message RequestPacket {
     C_DungeonMatch cDungeonMatch = 9;
     C_DayRoundReady cDayRoundReady = 15;
     C_DungeonSceneReady cDungeonSceneReady = 16;
+
+    C_TowerAttacked cTowerAttacked = 30;
   }
 }
 
@@ -503,7 +531,7 @@ message ResponsePacket {
     S_LogIn sLogIn = 22;
     S_PlayerAttack sPlayerAttack = 25;
     S_MonsterAttacked sMonsterAttacked = 26;
-
+    S_GameEnd sGameEnd = 31;
   }
 }
 
@@ -527,6 +555,8 @@ message NotificationPacket {
     S_AnimationPlayer sAnimationPlayer = 29;
     // S_EnterDungeon sEnterDungeon = 11;
     S_Chat sChat = 9;
+
+    S_TowerAttacked sTowerAttacked = 30;
     
     S_PickUpItemHp sPickUpItemHp = 12;
     S_PickUpItemMp sPickUpItemMp = 13;

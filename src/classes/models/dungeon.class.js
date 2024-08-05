@@ -8,16 +8,22 @@ import CustomError from '../../utils/error/customError.js';
 import { ErrorCodes } from '../../utils/error/errorCodes.js';
 import Game from './game.class.js';
 import User from './user.class.js';
-
+import { userDB } from '../../db/user/user.db.js';
+import { SuccessCode } from '../../utils/error/errorCodes.js';
+import { getUserById } from '../../session/user.session.js';
+import { getAllTownSessions, addTownSession } from '../../session/town.session.js';
+import lodash from 'lodash';
 // const dc.general.MAX_USERS = 4;
 
 class Dungeon extends Game {
   constructor(id, dungeonCode) {
     super(id, dc.general.MAX_USERS);
     this.type = sessionTypes.DUNGEON;
+    this.accountExpMap = {};
     this.dungeonCode = dungeonCode;
     this.phase = dc.phases.STANDBY;
     this.readyStates = [];
+    this.dungeonInfo = null;
     this.round = null;
     this.roundMonsters = null;
     this.playerInfos = null;
@@ -32,6 +38,14 @@ class Dungeon extends Game {
       };
     */
     this.playerStatus = null;
+    /*
+      const player1Status = {
+        playerLevel: charStatInfo[player1Info.charClass][0].level,
+        playerExp: 0,
+        playerHp: charStatInfo[player1Info.charClass][0].hp,
+        playerMp: charStatInfo[player1Info.charClass][0].mp,
+      };
+    */
     this.towerHp = null;
     this.itemNames = [];
     this.itemProbability = [];
@@ -45,8 +59,25 @@ class Dungeon extends Game {
     this.towerHp = towerHp;
   }
 
-  updateMonsterAttackTower() {
-    //
+  updateTowerHp(amount) {
+    this.towerHp -= amount;
+    if (this.towerHp <= 0) {
+      this.towerHp = 0;
+      this.updateGameOver();
+      // for (const [accountId, value] of this.playerStatus.entries()) {
+      //   console.log('accountId, value : ', accountId, value);
+      //   const user = this.getUser(accountId);
+      //   user.socket.sendResponse(SuccessCode.Success, '게임 패배', payloadTypes.S_GAME_END, {
+      //     result: 3, // 0 패배, 1 승리
+      //     playerId: accountId,
+      //     accountLevel: 3, //value.playerLevel,
+      //     accountExp: 3, //value.playerExp,
+      //   });
+      // }
+    }
+    super.notifyAll(payloadTypes.S_TOWER_ATTACKED, { towerHp: this.towerHp });
+
+    return this.towerHp;
   }
 
   /**
@@ -74,6 +105,10 @@ class Dungeon extends Game {
     return this.playerInfos.get(accountId);
   }
 
+  getPlayersInfo() {
+    return this.playerInfos;
+  }
+
   /**
    *
    * @param {string} accountId 계정 아이디
@@ -98,7 +133,10 @@ class Dungeon extends Game {
     const data = this.playerStatus.get(accountId);
     if (data.playerHp - damage <= 0) {
       console.log(`${accountId} 플레이어 사망`);
-      // this.killPlayer(accountId);
+      this.killPlayer(accountId);
+      if (this.getPlayersInfo().size === 0) {
+        this.updateGameOver();
+      }
     }
 
     data.playerHp -= damage;
@@ -115,6 +153,7 @@ class Dungeon extends Game {
    */
   killPlayer(accountId) {
     this.playerInfos.delete(accountId);
+    console.log('플레이어 사망 확인-------------', this.playerInfos);
     this.playerStatus.delete(accountId);
   }
 
@@ -451,6 +490,10 @@ class Dungeon extends Game {
       console.log('------------END NIGHT ROUND----------');
       this.roundKillCount = 0;
       this.endNightRound();
+
+      const playerStatus = this.getPlayerStatus(accountId);
+      const gameExp = playerStatus.playerExp;
+      this.updateRoundResult(accountId, gameExp);
     }
   }
 
@@ -476,10 +519,102 @@ class Dungeon extends Game {
   }
 
   addUser(user) {
-    // Promise.all(this.users.map((curUser) => curUser.getPlayerInfo())).then(() => {
-    //   super.addUser(user);
-    // });
     super.addUser(user);
+  }
+
+  updateRoundResult(accountId, gameExp) {
+    // stage가 끝날 때마다 호출
+    if (arguments.length === 0) {
+      return Object.fromEntries(
+        Object.entries(this.accountExpMap).map(([id, exp]) => [id, parseInt(id) + exp]),
+      );
+    }
+
+    if (!this.accountExpMap[accountId]) {
+      this.accountExpMap[accountId] = 0;
+    }
+
+    this.accountExpMap[accountId] += gameExp;
+  }
+
+  async updateGameOver() {
+    const townSessions = getAllTownSessions();
+    let townSession = townSessions.find((townSession) => !townSession.isFull());
+    if (!townSession) {
+      townSession = addTownSession();
+    }
+
+    // 죽은 라운드의 경험치는 포함안됨
+    const playersExp = this.updateRoundResult();
+    // 1라운드 도중에 죽었을 때
+    if (lodash.isEmpty(playersExp)) {
+      this.users.forEach(async (user) => {
+        const player = await userDB.updateExp(user.accountId, 50, true);
+        console.log('player : ', player);
+        const playerLevel = player.userLevel;
+        console.log('playerLevel : ', playerLevel);
+
+        user.socket.sendResponse(
+          SuccessCode.Success,
+          '게임에서 패배하였습니다.',
+          payloadTypes.S_GAME_END,
+          { result: 3, playerId: user.accountId, accountLevel: playerLevel, accountExp: 50 },
+        );
+      });
+    }
+
+    for (const [accountId, totalExp] of Object.entries(playersExp)) {
+      const player = await userDB.updateExp(accountId, totalExp, true);
+      console.log('player : ', player);
+      const playerLevel = player.userLevel;
+      console.log('playerLevel : ', playerLevel);
+
+      this.users.forEach((user) => {
+        if (user.accountId === accountId) {
+          user.socket.sendResponse(
+            SuccessCode.Success,
+            '게임에서 패배하였습니다.',
+            payloadTypes.S_GAME_END,
+            { result: 0, playerId: accountId, accountLevel: playerLevel, accountExp: totalExp },
+          );
+        }
+      });
+
+      this.removeUser(accountId);
+      const user = getUserById(accountId);
+      townSession.addUser(user);
+    }
+  }
+
+  async updateGameWin() {
+    const townSessions = getAllTownSessions();
+    let townSession = townSessions.find((townSession) => !townSession.isFull());
+    if (!townSession) {
+      townSession = addTownSession();
+    }
+
+    const playersExp = this.updateRoundResult();
+
+    for (const [accountId, totalExp] of Object.entries(playersExp)) {
+      const wineExp = totalExp + 100; // 승리 시 정산에서 얻은 경험치에서 100 추가
+      const player = await userDB.updateExp(accountId, wineExp, true);
+      const playerLevel = player.player_level;
+
+      this.users.forEach((user) => {
+        if (user.accountId === accountId) {
+          user.socket.sendResponse(
+            SuccessCode.Success,
+            '게임에서 승리하였습니다.',
+            payloadTypes.S_GAME_END,
+            { result: 1, playerId: accountId, accountLevel: playerLevel, accountEXP: wineExp },
+          );
+        }
+      });
+
+      this.removeUser(accountId);
+      const user = getUserById(accountId);
+      townSession.addUser(user);
+    }
   }
 
   attackMonster(accountId, attackType, monsterIdx) {
@@ -510,7 +645,7 @@ class Dungeon extends Game {
   removeUser(accountId) {
     super.removeUser(accountId);
 
-    super.notifyAll(payloadTypes.S_DESPAWN, { playerIds: [accountId] });
+    super.notifyAll(payloadTypes.S_LEAVE_DUNGEON, {});
   }
 
   async movePlayer(accountId, transform) {
@@ -649,6 +784,7 @@ class Dungeon extends Game {
       this.round++;
       if (!dungeonInfo) {
         // 마지막 라운드가 종료됨 (gameEnd 전송)
+        this.updateGameWin();
       } else {
         // 아직 라운드가 남음
         const data = {
