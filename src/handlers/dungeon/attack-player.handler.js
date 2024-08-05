@@ -46,17 +46,6 @@ const attackPlayerHandler = async ({ socket, accountId, packet }) => {
 
     dungeonSession.attackPlayer(monsterIdx, attackType, playerId, playerHp);
     console.log('attackPlayerHandler', packet);
-
-    // 플레이어 모두 사망 시 Lose
-    if (dungeonSession.getPlayerInfo(accountId).isEmpty()) {
-      const townSessions = getAllTownSessions();
-      let townSession = townSessions.find((townSession) => !townSession.isFull());
-      if (!townSession) {
-        townSession = addTownSession();
-      }
-
-      await dungeonSession.updateGameOver(townSession);
-    }
   } catch (e) {
     handleError(e);
   }

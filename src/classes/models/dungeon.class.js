@@ -81,6 +81,10 @@ class Dungeon extends Game {
     return this.playerInfos.get(accountId);
   }
 
+  getPlayersInfo() {
+    return this.playerInfos;
+  }
+
   /**
    *
    * @param {string} accountId 계정 아이디
@@ -105,7 +109,10 @@ class Dungeon extends Game {
     const data = this.playerStatus.get(accountId);
     if (data.playerHp - damage <= 0) {
       console.log(`${accountId} 플레이어 사망`);
-      // this.killPlayer(accountId);
+      this.killPlayer(accountId);
+      if (this.getPlayersInfo().size === 0) {
+        this.updateGameOver();
+      }
     }
 
     data.playerHp -= damage;
@@ -122,6 +129,7 @@ class Dungeon extends Game {
    */
   killPlayer(accountId) {
     this.playerInfos.delete(accountId);
+    console.log('플레이어 사망 확인-------------', this.playerInfos);
     this.playerStatus.delete(accountId);
   }
 
