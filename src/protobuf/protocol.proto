@@ -55,6 +55,9 @@ enum MsgId {
     C_MONSTER_MOVE = 60;
     S_MONSTER_MOVE = 61;
 
+    S_PICK_UP_ITEM_HP = 62;
+    S_PICK_UP_ITEM_MP = 63;
+    S_PICK_UP_ITEM_BOX = 64;
     C_DUNGEON_MATCH = 100;
     S_DUNGEON_MATCH = 101;
     S_ENTER_DUNGEON = 104;
@@ -349,6 +352,21 @@ message S_NightRoundEnd {
   repeated RoundResult roundResults = 2;
 }
 
+message S_PickUpItemHp {
+  string playerId = 1;
+  float playerHp = 2;
+}
+
+message S_PickUpItemMp {
+  string playerId = 1;
+  float playerMp = 2;
+}
+
+message S_PickUpItemBox {
+  string playerId = 1;
+  uint32 updateBox = 2;
+}
+
 // ---------------------------------
 // 정보 구조체
 
@@ -539,5 +557,9 @@ message NotificationPacket {
     S_Chat sChat = 9;
 
     S_TowerAttacked sTowerAttacked = 30;
+    
+    S_PickUpItemHp sPickUpItemHp = 12;
+    S_PickUpItemMp sPickUpItemMp = 13;
+    S_PickUpItemBox sPickUpItemBox = 14;
   }
 }

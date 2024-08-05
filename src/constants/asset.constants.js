@@ -19,4 +19,8 @@ export const gameAssetConstants = {
     NAME: 'monsterInfo',
     PATH: 'monster_info.json',
   },
+  pickUpItemInfo: {
+    NAME: 'pickUpItemInfo',
+    PATH: 'pick_up_item_info.json',
+  },
 };
