@@ -10,6 +10,7 @@ import User from './user.class.js';
 import { userDB } from '../../db/user/user.db.js';
 import { SuccessCode } from '../../utils/error/errorCodes.js';
 import { getUserById } from '../../session/user.session.js';
+import { getAllTownSessions, addTownSession } from '../../session/town.session.js';
 
 // const dc.general.MAX_USERS = 4;
 
@@ -452,6 +453,10 @@ class Dungeon extends Game {
       console.log('------------END NIGHT ROUND----------');
       this.roundKillCount = 0;
       this.endNightRound();
+
+      const playerStatus = this.getPlayerStatus(accountId);
+      const gameExp = playerStatus.playerExp;
+      this.updateRoundResult(accountId, gameExp);
     }
   }
 
@@ -520,7 +525,13 @@ class Dungeon extends Game {
     }
   }
 
-  async updateGameWin(townSession) {
+  async updateGameWin() {
+    const townSessions = getAllTownSessions();
+    let townSession = townSessions.find((townSession) => !townSession.isFull());
+    if (!townSession) {
+      townSession = addTownSession();
+    }
+
     const playersExp = this.updateRoundResult();
 
     for (const [accountId, totalExp] of Object.entries(playersExp)) {
@@ -692,6 +703,7 @@ class Dungeon extends Game {
       this.phase = dc.phases.DAY;
       if (!dungeonInfo) {
         // 마지막 라운드가 종료됨 (gameEnd 전송)
+        this.updateGameWin();
       } else {
         // 아직 라운드가 남음
         const data = {

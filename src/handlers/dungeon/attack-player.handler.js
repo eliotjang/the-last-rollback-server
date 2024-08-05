@@ -4,9 +4,10 @@ import { getUserById } from '../../session/user.session.js';
 import CustomError from '../../utils/error/customError.js';
 import { ErrorCodes, SuccessCode } from '../../utils/error/errorCodes.js';
 import { handleError } from '../../utils/error/errorHandler.js';
+import { getAllTownSessions, addTownSession } from '../../session/town.session.js';
 
 // 몬스터가 플레이어 공격 요청 시
-const attackPlayerHandler = ({ socket, accountId, packet }) => {
+const attackPlayerHandler = async ({ socket, accountId, packet }) => {
   try {
     const { monsterIdx, attackType, playerId } = packet;
 
@@ -45,6 +46,17 @@ const attackPlayerHandler = ({ socket, accountId, packet }) => {
 
     dungeonSession.attackPlayer(monsterIdx, attackType, playerId, playerHp);
     console.log('attackPlayerHandler', packet);
+
+    // 플레이어 모두 사망 시 Lose
+    if (dungeonSession.getPlayerInfo(accountId).isEmpty()) {
+      const townSessions = getAllTownSessions();
+      let townSession = townSessions.find((townSession) => !townSession.isFull());
+      if (!townSession) {
+        townSession = addTownSession();
+      }
+
+      await dungeonSession.updateGameOver(townSession);
+    }
   } catch (e) {
     handleError(e);
   }
