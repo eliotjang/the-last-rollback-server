@@ -76,6 +76,7 @@ class Dungeon extends Game {
       //   });
       // }
     }
+    console.log('타워 공격', this.towerHp);
     super.notifyAll(payloadTypes.S_TOWER_ATTACKED, { towerHp: this.towerHp });
 
     return this.towerHp;
@@ -504,11 +505,7 @@ class Dungeon extends Game {
       // 밤 round 종료
       console.log('------------END NIGHT ROUND----------');
       this.roundKillCount = 0;
-      this.endNightRound();
-
-      const playerStatus = this.getPlayerStatus(accountId);
-      const gameExp = playerStatus.playerExp;
-      this.updateRoundResult(accountId, gameExp);
+      this.endNightRound(accountId);
     }
   }
 
@@ -782,7 +779,7 @@ class Dungeon extends Game {
   /**
    * 밤 라운드를 종료시킵니다. 해당 라운드가 마지막 밤 라운드인 경우 S_GameEnd 패킷을 전송합니다.
    */
-  endNightRound() {
+  endNightRound(accountId) {
     if (this.phase !== dc.phases.NIGHT) return;
     this.phase = dc.phases.RESULT; // dc.phases.RESULT
     Promise.all([
@@ -803,8 +800,14 @@ class Dungeon extends Game {
       this.round++;
       if (!dungeonInfo) {
         // 마지막 라운드가 종료됨 (gameEnd 전송)
+        const playerStatus = this.getPlayerStatus(accountId);
+        const gameExp = playerStatus.playerExp;
+        this.updateRoundResult(accountId, gameExp);
         this.updateGameWin();
       } else {
+        const playerStatus = this.getPlayerStatus(accountId);
+        const gameExp = playerStatus.playerExp;
+        this.updateRoundResult(accountId, gameExp);
         // 아직 라운드가 남음
         const data = {
           dungeonInfo,
