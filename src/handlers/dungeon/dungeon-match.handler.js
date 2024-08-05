@@ -1,5 +1,5 @@
 import { payloadTypes } from '../../constants/packet.constants.js';
-import { matchDequeue, matchEnqueue } from '../../match_queue/producers/match_queue.producer.js';
+import { matchDequeue, matchEnqueue } from '../../match_queue/producers/match-queue.producer.js';
 import { getUserById } from '../../session/user.session.js';
 import CustomError from '../../utils/error/customError.js';
 import { ErrorCodes, SuccessCode } from '../../utils/error/errorCodes.js';
@@ -22,8 +22,8 @@ const dungeonMatchHandler = async ({ socket, accountId, packet }) => {
   }
 
   // 이미 큐에 있다면 제거 후 새로운 매칭 큐에 추가
-  matchDequeue(user);
-  matchEnqueue(dungeonCode, user);
+  matchDequeue(accountId);
+  matchEnqueue(dungeonCode, accountId);
 
   // Response 보내기도 전에 즉시 매칭된 경우는??
 
