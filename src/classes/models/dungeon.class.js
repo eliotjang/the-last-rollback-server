@@ -604,7 +604,7 @@ class Dungeon extends Game {
     this.phase = dc.phases.RESULT; // dc.phases.RESULT
     Promise.all([
       (async () => {
-        const dungeonInfo = dungeonUtils.fetchDungeonInfo(this.dungeonCode, this.round++); // 다음 라운드 몬스터 목록 받아오기
+        const dungeonInfo = dungeonUtils.fetchDungeonInfo(this.dungeonCode, this.round + 1); // 다음 라운드 몬스터 목록 받아오기
         if (dungeonInfo === null) {
           return null;
         }
@@ -617,6 +617,7 @@ class Dungeon extends Game {
       })(),
     ]).then(([dungeonInfo, roundResults]) => {
       this.phase = dc.phases.DAY;
+      round++;
       if (!dungeonInfo) {
         // 마지막 라운드가 종료됨 (gameEnd 전송)
       } else {
