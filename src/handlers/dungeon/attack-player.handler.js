@@ -43,9 +43,10 @@ const attackPlayerHandler = async ({ socket, accountId, packet }) => {
     const playerStatus = dungeonSession.updateMonsterAttackPlayer(playerId, 10, true);
 
     const playerHp = playerStatus.playerHp;
-
-    dungeonSession.attackPlayer(monsterIdx, attackType, playerId, playerHp);
-    console.log('attackPlayerHandler', packet);
+    if (playerHp) {
+      dungeonSession.attackPlayer(monsterIdx, attackType, playerId, playerHp);
+    }
+    console.log('attackPlayerHandler', packet, playerHp);
   } catch (e) {
     handleError(e);
   }

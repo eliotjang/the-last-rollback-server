@@ -35,6 +35,7 @@ class Dungeon extends Game {
         gold: 0,
         itemBox: 0,
         killed: [],
+        isDead: false,
       };
     */
     this.playerStatus = null;
@@ -131,12 +132,10 @@ class Dungeon extends Game {
       return null;
     }
     const data = this.playerStatus.get(accountId);
-    if (data.playerHp - damage <= 0) {
-      console.log(`${accountId} 플레이어 사망`);
-      this.killPlayer(accountId);
-      if (this.getPlayersInfo().size === 0) {
-        this.updateGameOver();
-      }
+
+    if (data.isDead) {
+      console.log('player is already dead');
+      return null;
     }
 
     data.playerHp -= damage;
@@ -152,9 +151,25 @@ class Dungeon extends Game {
    * @param {string} accountId 계정 아이디
    */
   killPlayer(accountId) {
-    this.playerInfos.delete(accountId);
-    console.log('플레이어 사망 확인-------------', this.playerInfos);
-    this.playerStatus.delete(accountId);
+    // this.playerInfos.delete(accountId);
+    // console.log('플레이어 사망 확인-------------', this.playerInfos);
+    // this.playerStatus.delete(accountId);
+
+    const playerInfo = this.playerInfos.get(accountId);
+    playerInfo.isDead = true;
+    this.playerInfos.set(accountId, playerInfo);
+    console.log('kilpl', playerInfo);
+
+    let isAllDead = true;
+    for (const playerInfo of this.playerInfos.values()) {
+      if (!playerInfo.isDead) {
+        isAllDead = false;
+        break;
+      }
+    }
+    if (isAllDead) {
+      this.updateGameOver();
+    }
   }
 
   /**
@@ -453,17 +468,17 @@ class Dungeon extends Game {
       console.log('해당 몬스터가 존재하지 않음');
       return null;
     }
+
     const data = this.roundMonsters.get(monsterIndex);
-    if (data.monsterHp - damage <= 0) {
-      pickUpHandler(accountId);
-      data.monsterHp -= damage;
-      this.roundMonsters.set(monsterIndex, data);
+
+    data.monsterHp -= damage;
+    this.roundMonsters.set(monsterIndex, data);
+
+    if (data.monsterHp <= 0) {
       console.log(`monsterIndex ${monsterIndex}번 몬스터 처치`);
+      pickUpHandler(accountId);
       this.updatePlayerExp(accountId, data.killExp);
       this.killMonster(monsterIndex, accountId);
-    } else {
-      data.monsterHp -= damage;
-      this.roundMonsters.set(monsterIndex, data);
     }
 
     if (wantResult) {
@@ -634,6 +649,10 @@ class Dungeon extends Game {
   }
 
   attackPlayer(monsterIdx, attackType, accountId, playerHp) {
+    if (playerHp <= 0) {
+      console.log(`${accountId} 플레이어 사망`);
+      this.killPlayer(accountId);
+    }
     super.notifyAll(payloadTypes.S_PLAYER_ATTACKED, {
       monsterIdx,
       attackType,
@@ -836,6 +855,10 @@ class Dungeon extends Game {
   }
 
   animationPlayer(data) {
+    if (this.playerInfos.get(data.playerId).isDead && data.animCode !== 1) {
+      console.log('해당 플레이어가 행동불가 상태');
+      return;
+    }
     super.notifyAll(payloadTypes.S_ANIMATION_PLAYER, data);
   }
 
