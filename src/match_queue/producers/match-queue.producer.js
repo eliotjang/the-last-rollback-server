@@ -43,12 +43,12 @@ export const matchDequeue = async (accountId) => {
 
 const validateArgUser = (accountId) => {
   try {
-    if (!(user instanceof User)) {
-      throw new CustomError(
-        ErrorCodes.INVALID_ARGUMENT,
-        `user가 User 클래스의 인스턴스가 아닙니다. ${user}`,
-      );
-    }
+    // if (!(user instanceof User)) {
+    //   throw new CustomError(
+    //     ErrorCodes.INVALID_ARGUMENT,
+    //     `user가 User 클래스의 인스턴스가 아닙니다. ${accountId}`,
+    //   );
+    // }
   } catch (err) {
     console.error(err);
   }
