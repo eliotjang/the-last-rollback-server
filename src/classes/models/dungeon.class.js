@@ -591,10 +591,6 @@ class Dungeon extends Game {
           );
         }
       });
-
-      this.removeUser(accountId);
-      const user = getUserById(accountId);
-      townSession.addUser(user);
     }
   }
 
@@ -622,10 +618,6 @@ class Dungeon extends Game {
           );
         }
       });
-
-      this.removeUser(accountId);
-      const user = getUserById(accountId);
-      townSession.addUser(user);
     }
   }
 
@@ -647,6 +639,7 @@ class Dungeon extends Game {
 
   attackPlayer(monsterIdx, attackType, accountId, playerHp) {
     if (playerHp <= 0) {
+      playerHp = 0;
       console.log(`${accountId} 플레이어 사망`);
       this.killPlayer(accountId);
     }
@@ -660,8 +653,6 @@ class Dungeon extends Game {
 
   removeUser(accountId) {
     super.removeUser(accountId);
-
-    super.notifyAll(payloadTypes.S_LEAVE_DUNGEON, {});
   }
 
   async movePlayer(accountId, transform) {
