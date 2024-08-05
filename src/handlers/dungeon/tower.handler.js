@@ -11,13 +11,8 @@ const towerHpUpdateHandler = async ({ socket, accountId, packet }) => {
     const amount = monsterInfo.data[monsterIdx].atk;
 
     const dungeonSession = getDungeonSessionByUserId(accountId);
-    const townSessions = getAllTownSessions();
-    let townSession = townSessions.find((townSession) => !townSession.isFull());
-    if (!townSession) {
-      townSession = addTownSession();
-    }
 
-    dungeonSession.updateTowerHp(amount); // 몬스터 공격력 임의로 설정
+    dungeonSession.updateTowerHp(amount);
   } catch (error) {
     handleError(socket, error);
   }
