@@ -45,6 +45,10 @@ class Town extends Game {
     super.notifyAll(payloadTypes.S_MOVE, { playerId: accountId, transform });
   }
 
+  actionPlayer(accountId, animCode) {
+    super.notifyAll(payloadTypes.S_ANIMATION_PLAYER, { playerId: accountId, animCode });
+  }
+
   chatPlayer(accountId, chatMsg) {
     super.notifyAll(payloadTypes.S_CHAT, { playerId: accountId, chatMsg });
   }
@@ -67,6 +71,10 @@ class Town extends Game {
       chatMsg,
       system: true,
     });
+  }
+
+  animationPlayer(data) {
+    super.notifyAll(payloadTypes.S_ANIMATION_PLAYER, data);
   }
 }
 
