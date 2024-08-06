@@ -76,9 +76,14 @@ export const userDB = {
     }
 
     let targetData = userInfo.data.find((data) => data.level === user.userLevel);
+    let currentExperience;
+    if (user.userExperience === 0) {
+      currentExperience = experience;
+    }
+    currentExperience = user.userExperience + experience;
 
-    while (experience >= targetData.maxExp) {
-      experience -= targetData.maxExp;
+    while (currentExperience >= targetData.maxExp) {
+      currentExperience -= targetData.maxExp;
       user = await this.updateLevel(accountId, true);
 
       if (user.userLevel >= userInfo.data[userInfo.data.length - 1].level) {
@@ -87,7 +92,7 @@ export const userDB = {
       }
       targetData = userInfo.data.find((data) => data.level === user.userLevel);
     }
-    await pools.USER_DB.query(USER_QUERIES.UPDATE_EXP, [experience, accountId]);
+    await pools.USER_DB.query(USER_QUERIES.UPDATE_EXP, [currentExperience, accountId]);
 
     if (wantResult) {
       return await this.getUser(accountId);
