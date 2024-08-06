@@ -13,6 +13,7 @@ import { SuccessCode } from '../../utils/error/errorCodes.js';
 import { getUserById } from '../../session/user.session.js';
 import { getAllTownSessions, addTownSession } from '../../session/town.session.js';
 import lodash from 'lodash';
+import { getDungeonSession } from '../../session/dungeon.session.js';
 // const dc.general.MAX_USERS = 4;
 
 class Dungeon extends Game {
@@ -359,6 +360,7 @@ class Dungeon extends Game {
     data.itemBox++;
     this.playerInfos.set(accountId, data);
     console.log('상자 획득!!!!!!!!!', data.itemBox);
+    this.systemChat(accountId, '상자를 획득하였습니다.');
     super.notifyAll(payloadTypes.S_PICK_UP_ITEM_BOX, {
       playerId: accountId,
       updateBox: data.itemBox,
@@ -477,9 +479,9 @@ class Dungeon extends Game {
 
     if (data.monsterHp <= 0) {
       console.log(`monsterIndex ${monsterIndex}번 몬스터 처치`);
-      pickUpHandler(accountId);
       this.updatePlayerExp(accountId, data.killExp);
       this.killMonster(monsterIndex, accountId);
+      pickUpHandler(accountId);
     }
 
     if (wantResult) {
@@ -496,6 +498,8 @@ class Dungeon extends Game {
   killMonster(monsterIndex, accountId) {
     // updatePlayerAttackMonster 내부에서 사용
     // this.roundMonsters.delete(monsterIndex);
+    const monsterName = this.roundMonsters.get(monsterIndex).monsterName;
+    this.systemChat(accountId, `${monsterName}를 처치`);
     this.roundKillCount++;
     const playerInfo = this.playerInfos.get(accountId);
     playerInfo.killed.push(monsterIndex);
@@ -915,6 +919,7 @@ class Dungeon extends Game {
       statData.playerHp = maxHp;
     }
     console.log('체력 획득!!!!!!!!!', statData.playerHp);
+    this.systemChat(accountId, '체력 포션 획득');
     super.notifyAll(payloadTypes.S_PICK_UP_ITEM_HP, {
       playerId: accountId,
       playerHp: statData.playerHp,
@@ -946,6 +951,7 @@ class Dungeon extends Game {
       statData.playerMp = maxMp;
     }
     console.log('마나 획득!!!!!!!!!', statData.playerMp);
+    this.systemChat(accountId, '마나 포션 획득');
     super.notifyAll(payloadTypes.S_PICK_UP_ITEM_MP, {
       playerId: accountId,
       playerMp: statData.playerMp,
@@ -954,6 +960,30 @@ class Dungeon extends Game {
     if (wantResult) {
       return statData.playerMp;
     }
+  }
+
+  chatPlayer(accountId, chatMsg) {
+    super.notifyAll(payloadTypes.S_CHAT, { playerId: accountId, chatMsg });
+  }
+
+  systemChat(accountId, chatMsg) {
+    super.notifyUser(accountId, payloadTypes.S_CHAT, {
+      playerId: accountId,
+      chatMsg,
+      system: true,
+    });
+  }
+
+  systemChatAll(accountId, chatMsg) {
+    super.notifyAll(payloadTypes.S_CHAT, { playerId: accountId, chatMsg, system: true });
+  }
+
+  systemChatOthers(accountId, chatMsg) {
+    super.notifyOthers(accountId, payloadTypes.S_CHAT, {
+      playerId: accountId,
+      chatMsg,
+      system: true,
+    });
   }
 }
 
