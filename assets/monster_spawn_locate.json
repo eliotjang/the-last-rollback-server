@@ -1,0 +1,26 @@
+{
+  "name": "monster_spawn_locate",
+  "version": "1.0.0",
+  "data": [
+    { "dungeonCode": 1, "posX": 43.5, "posY": 1.72, "posZ": 119.63 },
+    { "dungeonCode": 1, "posX": -5.93, "posY": 1.06, "posZ": 92.43 },
+    { "dungeonCode": 1, "posX": -46.71, "posY": 0.48, "posZ": 132.75 },
+    { "dungeonCode": 1, "posX": -41.66, "posY": 0.48, "posZ": 90.63 },
+    { "dungeonCode": 1, "posX": 35.48, "posY": 0.48, "posZ": 88.26 },
+    { "dungeonCode": 2, "posX": 43.5, "posY": 1.72, "posZ": 119.63 },
+    { "dungeonCode": 2, "posX": -5.93, "posY": 1.06, "posZ": 92.43 },
+    { "dungeonCode": 2, "posX": -46.71, "posY": 0.48, "posZ": 132.75 },
+    { "dungeonCode": 2, "posX": -41.66, "posY": 0.48, "posZ": 90.63 },
+    { "dungeonCode": 2, "posX": 35.48, "posY": 0.48, "posZ": 88.26 },
+    { "dungeonCode": 3, "posX": 43.5, "posY": 1.72, "posZ": 119.63 },
+    { "dungeonCode": 3, "posX": -5.93, "posY": 1.06, "posZ": 92.43 },
+    { "dungeonCode": 3, "posX": -46.71, "posY": 0.48, "posZ": 132.75 },
+    { "dungeonCode": 3, "posX": -41.66, "posY": 0.48, "posZ": 90.63 },
+    { "dungeonCode": 3, "posX": 35.48, "posY": 0.48, "posZ": 88.26 },
+    { "dungeonCode": 4, "posX": 43.5, "posY": 1.72, "posZ": 119.63 },
+    { "dungeonCode": 4, "posX": -5.93, "posY": 1.06, "posZ": 92.43 },
+    { "dungeonCode": 4, "posX": -46.71, "posY": 0.48, "posZ": 132.75 },
+    { "dungeonCode": 4, "posX": -41.66, "posY": 0.48, "posZ": 90.63 },
+    { "dungeonCode": 4, "posX": 35.48, "posY": 0.48, "posZ": 88.26 }
+  ]
+}

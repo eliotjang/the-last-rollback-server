@@ -3,6 +3,7 @@ import { gameAssetConstants } from '../../constants/asset.constants.js';
 import dc from '../../constants/game.constants.js';
 import { payloadTypes } from '../../constants/packet.constants.js';
 import { getGameAssets } from '../../init/assets.js';
+import MonsterTransformInfo from '../../protobuf/classes/info/monster-transform-info.proto.js';
 import CustomError from '../error/customError.js';
 import { ErrorCodes } from '../error/errorCodes.js';
 
@@ -65,16 +66,11 @@ const dungeonUtils = {
     let index = 0;
     for (let i = 0; i < roundData.monsterUnlock.length; i++) {
       for (let j = 0; j < roundData.spawnCount[i]; j++) {
+        const monsterTransform = new MonsterTransformInfo(dungeonCode);
         monsters.push({
           monsterIdx: index++,
           ...monsterData[roundData.monsterUnlock[i]],
-          monsterTransform: {
-            // 임시
-            posX: 43.5,
-            posY: 1.72,
-            poxZ: 119.63,
-            rot: 0,
-          },
+          monsterTransform: monsterTransform.getTransform(),
         });
       }
     }
