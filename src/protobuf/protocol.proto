@@ -183,6 +183,7 @@ message S_AnimationMonster {
 message S_Chat{
   string playerId = 1;
   string chatMsg = 2;
+  bool system = 3;
 }
 
 

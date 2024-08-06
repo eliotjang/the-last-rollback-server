@@ -54,8 +54,9 @@ const enterTownHandler = async ({ socket, accountId, packet, playerInfo }) => {
 
     townSession.addUser(user);
 
-    socket.sendResponse(SuccessCode.Success, message, payloadTypes.S_ENTER, { player: playerInfo });
-
+    socket.sendResponse(SuccessCode.Success, message, payloadTypes.S_ENTER, {
+      player: playerInfo,
+    });
     // const othersPlayer = await townRedis.getOthersPlayerInfo(accountId);
     // if (!lodash.isEmpty(othersPlayer)) {
     //   socket.sendNotification(payloadTypes.S_SPAWN, { players: othersPlayer });
