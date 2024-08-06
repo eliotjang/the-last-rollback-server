@@ -569,6 +569,6 @@ message NotificationPacket {
     S_PickUpItemBox sPickUpItemBox = 14;
     S_Animation sAnimation = 15;
     
-    S_GameEnd sGameEnd = 16
+    S_GameEnd sGameEnd = 16;
   }
 }
