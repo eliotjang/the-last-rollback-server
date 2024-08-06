@@ -183,6 +183,7 @@ message S_AnimationMonster {
 message S_Chat{
   string playerId = 1;
   string chatMsg = 2;
+  bool system = 3;
 }
 
 
@@ -559,13 +560,14 @@ message NotificationPacket {
     S_AnimationPlayer sAnimationPlayer = 29;
     // S_EnterDungeon sEnterDungeon = 11;
     S_Chat sChat = 9;
-
+   
     S_TowerAttacked sTowerAttacked = 30;
     
     S_PickUpItemHp sPickUpItemHp = 12;
     S_PickUpItemMp sPickUpItemMp = 13;
     S_PickUpItemBox sPickUpItemBox = 14;
-
-    S_GameEnd sGameEnd = 15;
+    S_Animation sAnimation = 15;
+    
+    S_GameEnd sGameEnd = 16
   }
 }

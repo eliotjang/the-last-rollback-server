@@ -7,15 +7,15 @@ import { handleError } from '../../utils/error/errorHandler.js';
 const animationPlayerHandler = ({ socket, accountId, packet }) => {
   try {
     const { animCode, monsterIdx } = packet;
-
+    console.log('animCode', animCode);
     const user = getUserById(accountId);
     const dungeonSession = user.getSession();
-    if (!dungeonSession || dungeonSession.type !== sessionTypes.DUNGEON) {
+    if (!dungeonSession) {
       throw new CustomError(ErrorCodes.GAME_NOT_FOUND, 'Dungeon Session을 찾을 수 없습니다.');
     }
 
     const data = { animCode, playerId: accountId, monsterIdx };
-
+    console.log('data', data);
     dungeonSession.animationPlayer(data);
   } catch (e) {
     handleError(e);
