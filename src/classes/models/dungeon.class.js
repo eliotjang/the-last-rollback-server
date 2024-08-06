@@ -623,7 +623,6 @@ class Dungeon extends Game {
     }
 
     const playersExp = this.updateRoundResult();
-
     for (const [accountId, totalExp] of Object.entries(playersExp)) {
       const winExp = +totalExp + 100; // 승리 시 정산에서 얻은 경험치에서 100 추가
       console.log('winExp : ', winExp);

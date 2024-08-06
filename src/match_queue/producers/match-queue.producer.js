@@ -7,7 +7,7 @@ import {
   MATCH_ENQUEUE_JOB_NAME,
   MATCH_QUEUE_NAME,
 } from '../../constants/match.constants.js';
-import { setProcessors } from '../consumers/match_queue.consumer.js';
+import { setProcessors } from '../consumers/match-queue.consumer.js';
 
 const matchQueue = new Bull(MATCH_QUEUE_NAME);
 setProcessors();
@@ -15,14 +15,14 @@ setProcessors();
 /**
  *
  * @param {number} dungeonCode
- * @param {User} user
+ * @param {string} accountId
  */
-export const matchEnqueue = async (dungeonCode, user) => {
-  validateArgUser(user);
+export const matchEnqueue = async (dungeonCode, accountId) => {
+  validateArgUser(accountId);
 
   const data = {
     dungeonCode,
-    user,
+    accountId,
   };
 
   console.log('matchEnqueue called');
@@ -30,25 +30,25 @@ export const matchEnqueue = async (dungeonCode, user) => {
   // checkAndResume(); // await?
 };
 
-export const matchDequeue = async (user) => {
-  validateArgUser(user);
+export const matchDequeue = async (accountId) => {
+  // validateArgUser(accountId);
 
   const data = {
-    user,
+    accountId,
   };
 
   console.log('matchDequeue called');
   matchQueue.add(MATCH_DEQUEUE_JOB_NAME, data);
 };
 
-const validateArgUser = (user) => {
+const validateArgUser = (accountId) => {
   try {
-    if (!(user instanceof User)) {
-      throw new CustomError(
-        ErrorCodes.INVALID_ARGUMENT,
-        `user가 User 클래스의 인스턴스가 아닙니다. ${user}`,
-      );
-    }
+    // if (!(user instanceof User)) {
+    //   throw new CustomError(
+    //     ErrorCodes.INVALID_ARGUMENT,
+    //     `user가 User 클래스의 인스턴스가 아닙니다. ${accountId}`,
+    //   );
+    // }
   } catch (err) {
     console.error(err);
   }

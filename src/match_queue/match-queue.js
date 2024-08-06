@@ -17,29 +17,31 @@ export const initWaitingLists = () => {
  * @param {Object} data
  */
 export const addToWaitingList = (data) => {
-  const { dungeonCode, user } = data;
+  const { dungeonCode, accountId } = data;
 
   // TODO: init 파일로 모든 던전 코드에 대해 waitingList initialize 하고 이 if문 제거
   if (!waitingLists[dungeonCode]) {
     waitingLists[dungeonCode] = [];
   }
-  const idx = getWaitingListIndex(dungeonCode, user);
+  const idx = getWaitingListIndex(dungeonCode, accountId);
   console.log('idx:', idx);
   if (idx === -1) {
     // 유저가 큐에 존재하지 않을 때
-    waitingLists[dungeonCode].push(user);
+    waitingLists[dungeonCode].push(accountId);
   } else {
-    console.log(`User ${user.accountId} already in queue.`);
+    console.log(`User ${accountId} already in queue.`);
   }
 
   printWaitingList(dungeonCode);
   // console.log('waitingLists[dungeonCode]:', waitingLists[dungeonCode]);
 };
 
+export const addToWaitingListEx = (data) => {};
+
 // TODO: 시간복잡도 줄일 수 있는 구조 고민해보기 (전송했던 dungeonCode 저장?)
-export const clearFromWaitingLists = (user) => {
+export const clearFromWaitingLists = (accountId) => {
   for (const dungeonCode in Object.keys(waitingLists)) {
-    const idx = getWaitingListIndex(dungeonCode, user);
+    const idx = getWaitingListIndex(dungeonCode, accountId);
     if (idx !== -1) {
       // 유저를 찾으면 제거
       console.log('Found user:', idx);
@@ -48,9 +50,9 @@ export const clearFromWaitingLists = (user) => {
   }
 };
 
-const getWaitingListIndex = (dungeonCode, user) => {
+const getWaitingListIndex = (dungeonCode, accountId) => {
   if (waitingLists[dungeonCode]) {
-    return waitingLists[dungeonCode].findIndex((item) => item.accountId === user.accountId);
+    return waitingLists[dungeonCode].findIndex((item) => item === accountId);
   }
   return -1;
 };
@@ -59,7 +61,7 @@ const printWaitingList = (dungeonCode) => {
   if (waitingLists[dungeonCode]) {
     console.log(
       'waitingList:',
-      waitingLists[dungeonCode].map((user) => user.accountId),
+      waitingLists[dungeonCode].map((accountId) => accountId),
     );
   } else {
     console.log('???');
@@ -73,10 +75,10 @@ const printWaitingList = (dungeonCode) => {
 export const checkWaitingList = async (dungeonCode) => {
   console.log('------------');
   if (waitingLists[dungeonCode].length >= dc.general.MAX_USERS) {
-    const users = waitingLists[dungeonCode].splice(0, dc.general.MAX_USERS);
-    console.log('checkWaitingList:', users);
+    const accountIds = waitingLists[dungeonCode].splice(0, dc.general.MAX_USERS);
+    console.log('checkWaitingList:', accountIds);
 
-    const accountIds = users.map((user) => user.accountId);
+    // const accountIds = accountIds.map((user) => user.accountId);
 
     // BattleSession 생성
     // redis
@@ -86,25 +88,37 @@ export const checkWaitingList = async (dungeonCode) => {
     // 인메모리
     const dungeonSession = addDungeonSession(dungeonCode);
 
-    for (const accountId of accountIds) {
-      // 각 유저의 town session 내 다른 유저에게 Despawn 패킷 전송
-      const townSession = getTownSessionByUserId(accountId);
-      townSession.removeUser(accountId);
+    Promise.all(
+      accountIds.map(async (accountId) => {
+        const townSession = getTownSessionByUserId(accountId);
+        townSession.removeUser(accountId);
+        const user = getUserById(accountId);
+        dungeonSession.addUser(user);
+        await townRedis.removePlayer(accountId, false);
+      }),
+    ).then(() => {
+      enterDungeonSession(dungeonSession, dungeonCode);
+    });
 
-      // users의 유저를 battle session에 추가
-      // redis
-      // const playerInfo = await townRedis.getPlayerInfo(accountId);
-      // await dungeonRedis.createGuest(playerInfo, hostId, accountId);
-      // 인메모리
-      const user = getUserById(accountId);
-      dungeonSession.addUser(user);
+    // for (const accountId of accountIds) {
+    // 각 유저의 town session 내 다른 유저에게 Despawn 패킷 전송
+    // const townSession = getTownSessionByUserId(accountId);
+    // townSession.removeUser(accountId);
 
-      // town session에서 유저 제거
-      await townRedis.removePlayer(accountId, false);
+    // users의 유저를 battle session에 추가
+    // redis
+    // const playerInfo = await townRedis.getPlayerInfo(accountId);
+    // await dungeonRedis.createGuest(playerInfo, hostId, accountId);
+    // 인메모리
+    // const user = getUserById(accountId);
+    // dungeonSession.addUser(user);
 
-      // 각 클라이언트에게 S_EnterDungeon 패킷 전송
-      // enterDungeonSession(accountId, dungeonCode);
-    }
-    enterDungeonSession(dungeonSession, dungeonCode);
+    // town session에서 유저 제거
+    // await townRedis.removePlayer(accountId, false);
+
+    // 각 클라이언트에게 S_EnterDungeon 패킷 전송
+    // enterDungeonSession(accountId, dungeonCode);
+    // }
+    // enterDungeonSession(dungeonSession, dungeonCode);
   }
 };
