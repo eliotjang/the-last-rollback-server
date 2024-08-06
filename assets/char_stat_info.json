@@ -2,38 +2,38 @@
   "name": "charStatInfo",
   "version": "1.0.0",
   "1001": [
-    { "id": 1, "level": 1, "maxExp": 1000, "hp": 100, "maxHp": 100, "mp": 100, "maxMp": 100, "atk": 35, "def": 10, "magic": 10, "speed": 5, "attackRange": 4, "coolTime": 1.2 },
-    { "id": 2, "level": 2, "maxExp": 2000, "hp": 110, "maxHp": 110, "mp": 110, "maxMp": 110, "atk": 11, "def": 11, "magic": 11, "speed": 3 },
-    { "id": 3, "level": 3, "maxExp": 4000, "hp": 120, "maxHp": 120, "mp": 120, "maxMp": 120, "atk": 12, "def": 12, "magic": 12, "speed": 3 },
-    { "id": 4, "level": 4, "maxExp": 8000, "hp": 130, "maxHp": 130, "mp": 130, "maxMp": 130, "atk": 13, "def": 13, "magic": 13, "speed": 3 },
-    { "id": 5, "level": 5, "maxExp": 16000, "hp": 140, "maxHp": 140, "mp": 140, "maxMp": 140, "atk": 14, "def": 14, "magic": 14, "speed": 3 }
+    { "id": 1, "level": 1, "maxExp": 1000, "hp": 100, "maxHp": 100, "mp": 100, "maxMp": 100, "atk": 35, "def": 17, "specialAtk": 80, "speed": 5, "attackRange": 4, "coolTime": 1.2 },
+    { "id": 2, "level": 2, "maxExp": 2000, "hp": 110, "maxHp": 110, "mp": 110, "maxMp": 110, "atk": 40, "def": 20, "specialAtk": 85, "speed": 5, "attackRange": 4, "coolTime": 1.2 },
+    { "id": 3, "level": 3, "maxExp": 4000, "hp": 120, "maxHp": 120, "mp": 120, "maxMp": 120, "atk": 45, "def": 22, "specialAtk": 90, "speed": 5, "attackRange": 4, "coolTime": 1.2 },
+    { "id": 4, "level": 4, "maxExp": 8000, "hp": 130, "maxHp": 130, "mp": 130, "maxMp": 130, "atk": 50, "def": 25, "specialAtk": 95, "speed": 5, "attackRange": 4, "coolTime": 1.2 },
+    { "id": 5, "level": 5, "maxExp": 16000, "hp": 140, "maxHp": 140, "mp": 140, "maxMp": 140, "atk": 55, "def": 27, "specialAtk": 100, "speed": 5, "attackRange": 4, "coolTime": 1.2 }
   ],
   "1002": [
-    { "id": 1, "level": 1, "maxExp": 1000, "hp": 100, "maxHp": 100, "mp": 100, "maxMp": 100, "atk": 40, "def": 10, "magic": 10, "speed": 5.3, "attackRange": 3, "coolTime": 1 },
-    { "id": 2, "level": 2, "maxExp": 2000, "hp": 110, "maxHp": 110, "mp": 110, "maxMp": 110, "atk": 11, "def": 11, "magic": 11, "speed": 3 },
-    { "id": 3, "level": 3, "maxExp": 4000, "hp": 120, "maxHp": 120, "mp": 120, "maxMp": 120, "atk": 12, "def": 12, "magic": 12, "speed": 3 },
-    { "id": 4, "level": 4, "maxExp": 8000, "hp": 130, "maxHp": 130, "mp": 130, "maxMp": 130, "atk": 13, "def": 13, "magic": 13, "speed": 3 },
-    { "id": 5, "level": 5, "maxExp": 16000, "hp": 140, "maxHp": 140, "mp": 140, "maxMp": 140, "atk": 14, "def": 14, "magic": 14, "speed": 3 }
+    { "id": 1, "level": 1, "maxExp": 1000, "hp": 100, "maxHp": 100, "mp": 100, "maxMp": 100, "atk": 40, "def": 20, "specialAtk": 80, "speed": 5.3, "attackRange": 3, "coolTime": 1 },
+    { "id": 2, "level": 2, "maxExp": 2000, "hp": 110, "maxHp": 110, "mp": 110, "maxMp": 110, "atk": 45, "def": 22, "specialAtk": 85, "speed": 5.3, "attackRange": 3, "coolTime": 1 },
+    { "id": 3, "level": 3, "maxExp": 4000, "hp": 120, "maxHp": 120, "mp": 120, "maxMp": 120, "atk": 50, "def": 25, "specialAtk": 90, "speed": 5.3, "attackRange": 3, "coolTime": 1 },
+    { "id": 4, "level": 4, "maxExp": 8000, "hp": 130, "maxHp": 130, "mp": 130, "maxMp": 130, "atk": 55, "def": 27, "specialAtk": 95, "speed": 5.3, "attackRange": 3, "coolTime": 1 },
+    { "id": 5, "level": 5, "maxExp": 16000, "hp": 140, "maxHp": 140, "mp": 140, "maxMp": 140, "atk": 60, "def": 30, "specialAtk": 10, "speed": 5.3, "attackRange": 3, "coolTime": 1 }
   ],
   "1003": [
-    { "id": 1, "level": 1, "maxExp": 1000, "hp": 100, "maxHp": 100, "mp": 100, "maxMp": 100, "atk": 30, "def": 10, "magic": 10, "speed": 4.2, "attackRange": 6.5, "coolTime": 1.25 },
-    { "id": 2, "level": 2, "maxExp": 2000, "hp": 110, "maxHp": 110, "mp": 110, "maxMp": 110, "atk": 11, "def": 11, "magic": 11, "speed": 3 },
-    { "id": 3, "level": 3, "maxExp": 4000, "hp": 120, "maxHp": 120, "mp": 120, "maxMp": 120, "atk": 12, "def": 12, "magic": 12, "speed": 3 },
-    { "id": 4, "level": 4, "maxExp": 8000, "hp": 130, "maxHp": 130, "mp": 130, "maxMp": 130, "atk": 13, "def": 13, "magic": 13, "speed": 3 },
-    { "id": 5, "level": 5, "maxExp": 16000, "hp": 140, "maxHp": 140, "mp": 140, "maxMp": 140, "atk": 14, "def": 14, "magic": 14, "speed": 3 }
+    { "id": 1, "level": 1, "maxExp": 1000, "hp": 100, "maxHp": 100, "mp": 100, "maxMp": 100, "atk": 30, "def": 15, "specialAtk": 80, "speed": 4.2, "attackRange": 6.5, "coolTime": 1.25 },
+    { "id": 2, "level": 2, "maxExp": 2000, "hp": 110, "maxHp": 110, "mp": 110, "maxMp": 110, "atk": 35, "def": 17, "specialAtk": 85, "speed": 4.2, "attackRange": 6.5, "coolTime": 1.25 },
+    { "id": 3, "level": 3, "maxExp": 4000, "hp": 120, "maxHp": 120, "mp": 120, "maxMp": 120, "atk": 40, "def": 20, "specialAtk": 90, "speed": 4.2, "attackRange": 6.5, "coolTime": 1.25 },
+    { "id": 4, "level": 4, "maxExp": 8000, "hp": 130, "maxHp": 130, "mp": 130, "maxMp": 130, "atk": 45, "def": 22, "specialAtk": 95, "speed": 4.2, "attackRange": 6.5, "coolTime": 1.25 },
+    { "id": 5, "level": 5, "maxExp": 16000, "hp": 140, "maxHp": 140, "mp": 140, "maxMp": 140, "atk": 50, "def": 25, "specialAtk": 100, "speed": 4.2, "attackRange": 6.5, "coolTime": 1.25 }
   ],
   "1004": [
-    { "id": 1, "level": 1, "maxExp": 1000, "hp": 100, "maxHp": 100, "mp": 100, "maxMp": 100, "atk": 50, "def": 10, "magic": 10, "speed": 4.8, "attackRange": 3.5, "coolTime": 2 },
-    { "id": 2, "level": 2, "maxExp": 2000, "hp": 110, "maxHp": 110, "mp": 110, "maxMp": 110, "atk": 11, "def": 11, "magic": 11, "speed": 3 },
-    { "id": 3, "level": 3, "maxExp": 4000, "hp": 120, "maxHp": 120, "mp": 120, "maxMp": 120, "atk": 12, "def": 12, "magic": 12, "speed": 3 },
-    { "id": 4, "level": 4, "maxExp": 8000, "hp": 130, "maxHp": 130, "mp": 130, "maxMp": 130, "atk": 13, "def": 13, "magic": 13, "speed": 3 },
-    { "id": 5, "level": 5, "maxExp": 16000, "hp": 140, "maxHp": 140, "mp": 140, "maxMp": 140, "atk": 14, "def": 14, "magic": 14, "speed": 3 }
+    { "id": 1, "level": 1, "maxExp": 1000, "hp": 100, "maxHp": 100, "mp": 100, "maxMp": 100, "atk": 50, "def": 25, "specialAtk": 80, "speed": 4.8, "attackRange": 3.5, "coolTime": 2 },
+    { "id": 2, "level": 2, "maxExp": 2000, "hp": 110, "maxHp": 110, "mp": 110, "maxMp": 110, "atk": 55, "def": 27, "specialAtk": 85, "speed": 4.8, "attackRange": 3.5, "coolTime": 2 },
+    { "id": 3, "level": 3, "maxExp": 4000, "hp": 120, "maxHp": 120, "mp": 120, "maxMp": 120, "atk": 60, "def": 30, "specialAtk": 90, "speed": 4.8, "attackRange": 3.5, "coolTime": 2 },
+    { "id": 4, "level": 4, "maxExp": 8000, "hp": 130, "maxHp": 130, "mp": 130, "maxMp": 130, "atk": 65, "def": 32, "specialAtk": 95, "speed": 4.8, "attackRange": 3.5, "coolTime": 2 },
+    { "id": 5, "level": 5, "maxExp": 16000, "hp": 140, "maxHp": 140, "mp": 140, "maxMp": 140, "atk": 70, "def": 35, "specialAtk": 100, "speed": 4.8, "attackRange": 3.5, "coolTime": 2 }
   ],
   "1005": [
-    { "id": 1, "level": 1, "maxExp": 1000, "hp": 100, "maxHp": 100, "mp": 100, "maxMp": 100, "atk": 25, "def": 10, "magic": 10, "speed": 3.8, "attackRange": 8, "coolTime": 1.5 },
-    { "id": 2, "level": 2, "maxExp": 2000, "hp": 110, "maxHp": 110, "mp": 110, "maxMp": 110, "atk": 11, "def": 11, "magic": 11, "speed": 3 },
-    { "id": 3, "level": 3, "maxExp": 4000, "hp": 120, "maxHp": 120, "mp": 120, "maxMp": 120, "atk": 12, "def": 12, "magic": 12, "speed": 3 },
-    { "id": 4, "level": 4, "maxExp": 8000, "hp": 130, "maxHp": 130, "mp": 130, "maxMp": 130, "atk": 13, "def": 13, "magic": 13, "speed": 3 },
-    { "id": 5, "level": 5, "maxExp": 16000, "hp": 140, "maxHp": 140, "mp": 140, "maxMp": 140, "atk": 14, "def": 14, "magic": 14, "speed": 3 }
+    { "id": 1, "level": 1, "maxExp": 1000, "hp": 100, "maxHp": 100, "mp": 100, "maxMp": 100, "atk": 100, "def": 12, "specialAtk": 80, "speed": 10, "attackRange": 20, "coolTime": 1.5 },
+    { "id": 2, "level": 2, "maxExp": 2000, "hp": 110, "maxHp": 110, "mp": 110, "maxMp": 110, "atk": 30, "def": 15, "specialAtk": 85, "speed": 3.8, "attackRange": 8, "coolTime": 1.5 },
+    { "id": 3, "level": 3, "maxExp": 4000, "hp": 120, "maxHp": 120, "mp": 120, "maxMp": 120, "atk": 35, "def": 17, "specialAtk": 90, "speed": 3.8, "attackRange": 8, "coolTime": 1.5 },
+    { "id": 4, "level": 4, "maxExp": 8000, "hp": 130, "maxHp": 130, "mp": 130, "maxMp": 130, "atk": 40, "def": 20, "specialAtk": 95, "speed": 3.8, "attackRange": 8, "coolTime": 1.5 },
+    { "id": 5, "level": 5, "maxExp": 16000, "hp": 140, "maxHp": 140, "mp": 140, "maxMp": 140, "atk": 45, "def": 22, "specialAtk": 100, "speed": 3.8, "attackRange": 8, "coolTime": 1.5 }
   ]
 }
