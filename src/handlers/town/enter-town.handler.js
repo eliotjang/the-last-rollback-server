@@ -8,11 +8,32 @@ import { townRedis } from '../../utils/redis/town.redis.js';
 import { getUserById } from '../../session/user.session.js';
 import { gameCharDB } from '../../db/game-char/game-char.db.js';
 import lodash from 'lodash';
+import { getDungeonSessionByUserId } from '../../session/dungeon.session.js';
 
 const enterTownHandler = async ({ socket, accountId, packet, playerInfo }) => {
   try {
     const { nickname, charClass } = packet;
     let message;
+
+    const dungeonSession = getDungeonSessionByUserId(accountId);
+    if (dungeonSession) {
+      const townSessions = getAllTownSessions();
+      let townSession = townSessions.find((townSession) => !townSession.isFull());
+      if (!townSession) {
+        townSession = addTownSession();
+      }
+
+      dungeonSession.removeUser(accountId);
+      const user = getUserById(accountId);
+      townSession.addUser(user);
+      const transform = new TransformInfo().getTransform();
+      playerInfo = await townRedis.addPlayer(accountId, nickname, charClass, transform, true);
+
+      socket.sendResponse(SuccessCode.Success, '타운으로 돌아갑니다.', payloadTypes.S_ENTER, {
+        player: playerInfo,
+      });
+      return;
+    }
 
     if (!playerInfo) {
       const isExistPlayerNickname = await gameCharDB.getGameCharByNickname(nickname);
