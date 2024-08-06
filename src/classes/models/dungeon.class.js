@@ -590,9 +590,9 @@ class Dungeon extends Game {
         }
       });
 
-      this.removeUser(accountId);
-      const user = getUserById(accountId);
-      townSession.addUser(user);
+      // this.removeUser(accountId);
+      // const user = getUserById(accountId);
+      // townSession.addUser(user);
     }
   }
 
@@ -620,8 +620,8 @@ class Dungeon extends Game {
         }
       });
 
-      this.removeUser(accountId);
-      const user = getUserById(accountId);
+      // this.removeUser(accountId);
+      // const user = getUserById(accountId);
       // townSession.addUser(user);
     }
   }
