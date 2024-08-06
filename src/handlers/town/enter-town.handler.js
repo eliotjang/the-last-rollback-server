@@ -3,14 +3,11 @@ import { addTownSession, getAllTownSessions } from '../../session/town.session.j
 import CustomError from '../../utils/error/customError.js';
 import { handleError } from '../../utils/error/errorHandler.js';
 import TransformInfo from '../../protobuf/classes/info/transform-info.proto.js';
-import { playerInfoToObject } from '../../utils/transform-object.utils.js';
 import { ErrorCodes, SuccessCode } from '../../utils/error/errorCodes.js';
 import { townRedis } from '../../utils/redis/town.redis.js';
 import { getUserById } from '../../session/user.session.js';
 import { gameCharDB } from '../../db/game-char/game-char.db.js';
 import lodash from 'lodash';
-import { socketRedis } from '../../utils/redis/socket.redis.js';
-import { sendNotificationSocket, sendResponseSocket } from '../../utils/packet-sender.utils.js';
 
 const enterTownHandler = async ({ socket, accountId, packet, playerInfo }) => {
   try {
@@ -57,8 +54,9 @@ const enterTownHandler = async ({ socket, accountId, packet, playerInfo }) => {
 
     townSession.addUser(user);
 
-    socket.sendResponse(SuccessCode.Success, message, payloadTypes.S_ENTER, { player: playerInfo });
-
+    socket.sendResponse(SuccessCode.Success, message, payloadTypes.S_ENTER, {
+      player: playerInfo,
+    });
     // const othersPlayer = await townRedis.getOthersPlayerInfo(accountId);
     // if (!lodash.isEmpty(othersPlayer)) {
     //   socket.sendNotification(payloadTypes.S_SPAWN, { players: othersPlayer });

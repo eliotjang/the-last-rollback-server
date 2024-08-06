@@ -1,6 +1,7 @@
 import { payloadTypes } from '../../constants/packet.constants.js';
 import Game from './game.class.js';
 import { sessionTypes } from '../../constants/session.constants.js';
+import { getTownSession } from '../../session/town.session.js';
 
 const MAX_USERS = 20;
 
@@ -23,7 +24,10 @@ class Town extends Game {
         user.getPlayerInfo().then((userInfo) => {
           super.notifyOthers(user.accountId, payloadTypes.S_SPAWN, { players: [userInfo] });
           // console.log('기존 유저에게 새로 들어온 유저 정보를 전송:', userInfo);
+          this.systemChatAll(user.accountId, `${user.accountId}님이 입장하였습니다.`);
         });
+      } else {
+        this.systemChat(user.accountId, `${user.accountId}님이 입장하였습니다.`);
       }
     });
   }
@@ -47,6 +51,26 @@ class Town extends Game {
 
   chatPlayer(accountId, chatMsg) {
     super.notifyAll(payloadTypes.S_CHAT, { playerId: accountId, chatMsg });
+  }
+
+  systemChat(accountId, chatMsg) {
+    super.notifyUser(accountId, payloadTypes.S_CHAT, {
+      playerId: accountId,
+      chatMsg,
+      system: true,
+    });
+  }
+
+  systemChatAll(accountId, chatMsg) {
+    super.notifyAll(payloadTypes.S_CHAT, { playerId: accountId, chatMsg, system: true });
+  }
+
+  systemChatOthers(accountId, chatMsg) {
+    super.notifyOthers(accountId, payloadTypes.S_CHAT, {
+      playerId: accountId,
+      chatMsg,
+      system: true,
+    });
   }
 }
 
