@@ -1,10 +1,14 @@
 import { getGameAssets } from '../init/assets.js';
+import MonsterTransformInfo from '../protobuf/classes/info/monster-transform-info.proto.js';
 import TransformInfo from '../protobuf/classes/info/transform-info.proto.js';
 import { addDungeonSession } from './dungeon.session.js';
 import { addUser, removeUser } from './user.session.js';
 
 const dungeonSessionConnection = async () => {
   const { monsterInfo, charStatInfo } = getGameAssets();
+  const testTran = new MonsterTransformInfo(1);
+  console.log(testTran.getTransform());
+
   const round1 = new Map();
   for (let i = 0; i < 3; i++) {
     const monsterIdx = i;
@@ -72,34 +76,34 @@ const dungeonSessionConnection = async () => {
     posZ: 11,
     rot: 8,
   };
-  const test2 = dungeonSession.updateMonsterTransform(2, testTransform, true);
-  // console.log(test2);
-  const test3 = dungeonSession.addPlayers(playerInfos, playerStatus, true);
-  // console.log(test3);
-  const test4 = dungeonSession.getPlayerInfo(player1Id);
-  // console.log(test4);
-  const test5 = dungeonSession.getPlayerStatus(player2Id);
-  // console.log(test5);
-  const test6 = dungeonSession.updateMonsterAttackPlayer(player2Id, 30, true);
-  // console.log(test6);
-  const test7 = dungeonSession.updatePlayerUseSkill(player1Id, 40, true);
-  // console.log(test7);
-  const test8 = dungeonSession.updatePlayerAttackMonster(player1Id, 0, 20, true);
-  // console.log(test8);
-  const test9 = dungeonSession.updatePlayerExp(player1Id, 14000, true);
-  // console.log(test9);
-  const test10 = dungeonSession.updatePlayerTransform(player1Id, testTransform, true);
-  // console.log(test10);
-  const test11 = dungeonSession.addPlayerGold(player1Id, 500, true);
-  // console.log(test11);
-  const test12 = dungeonSession.removePlayerGold(player1Id, 200, true);
-  // console.log(test12);
-  const test13 = dungeonSession.addItemBox(player1Id, true);
-  // console.log(test13);
-  const test14 = dungeonSession.removeItemBox(player1Id, true);
-  // console.log(test14);
-  const test15 = dungeonSession.addItemBox(player1Id, 1, true);
-  //console.log(test15);
+  // const test2 = dungeonSession.updateMonsterTransform(2, testTransform, true);
+  // // console.log(test2);
+  // const test3 = dungeonSession.addPlayers(playerInfos, playerStatus, true);
+  // // console.log(test3);
+  // const test4 = dungeonSession.getPlayerInfo(player1Id);
+  // // console.log(test4);
+  // const test5 = dungeonSession.getPlayerStatus(player2Id);
+  // // console.log(test5);
+  // const test6 = dungeonSession.updateMonsterAttackPlayer(player2Id, 30, true);
+  // // console.log(test6);
+  // const test7 = dungeonSession.updatePlayerUseSkill(player1Id, 40, true);
+  // // console.log(test7);
+  // const test8 = dungeonSession.updatePlayerAttackMonster(player1Id, 0, 20, true);
+  // // console.log(test8);
+  // const test9 = dungeonSession.updatePlayerExp(player1Id, 14000, true);
+  // // console.log(test9);
+  // const test10 = dungeonSession.updatePlayerTransform(player1Id, testTransform, true);
+  // // console.log(test10);
+  // const test11 = dungeonSession.addPlayerGold(player1Id, 500, true);
+  // // console.log(test11);
+  // const test12 = dungeonSession.removePlayerGold(player1Id, 200, true);
+  // // console.log(test12);
+  // const test13 = dungeonSession.addItemBox(player1Id, true);
+  // // console.log(test13);
+  // const test14 = dungeonSession.removeItemBox(player1Id, true);
+  // // console.log(test14);
+  // const test15 = dungeonSession.addItemBox(player1Id, 1, true);
+  // //console.log(test15);
   removeUser('socket1');
   removeUser('socket2');
 };
