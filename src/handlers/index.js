@@ -1,7 +1,6 @@
 import { payloadTypes } from '../constants/packet.constants.js';
 import CustomError from '../utils/error/customError.js';
 import { ErrorCodes } from '../utils/error/errorCodes.js';
-import actionInteractHandler from './game/actionInteract.handler.js';
 import locationUpdateHandler from './game/locationUpdate.handler.js';
 import enterTownHandler from './town/enter-town.handler.js';
 import loginAccountHandler from './account/login-account.handler.js';
@@ -28,7 +27,6 @@ const handlers = {
   [payloadTypes.C_DUNGEON_MATCH]: dungeonMatchHandler,
   [payloadTypes.C_CHAT]: chattingHandler,
   [payloadTypes.C_DAY_ROUND_READY]: dayRoundReadyHandler,
-  [payloadTypes.C_ANIMATION]: actionInteractHandler,
   [payloadTypes.C_PLAYER_ATTACK]: attackMonsterHandler,
   [payloadTypes.C_MONSTER_ATTACKED]: attackedMonsterHandler,
   [payloadTypes.C_MONSTER_ATTACK]: attackPlayerHandler,
