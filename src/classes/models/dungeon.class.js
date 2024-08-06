@@ -55,6 +55,7 @@ class Dungeon extends Game {
     this.roundKillCount = 0;
     this.timers = new Map();
     this.startTime = Date.now();
+    this.playersResultArray = [];
   }
 
   addTowerHp(towerHp) {
@@ -561,14 +562,14 @@ class Dungeon extends Game {
   }
 
   // 다음 레벨까지 남은 경험치
-  getExpToNextLevel(player, playerLevel) {
-    const { userInfo } = getGameAssets();
-    const nextLevel = playerLevel + 1;
-    const nextExp = userInfo.data[nextLevel].maxExp;
-    const currentDbExp = player.userExperience;
-    const expToNextLevel = nextExp - currentDbExp;
-    return expToNextLevel;
-  }
+  // getExpToNextLevel(player, playerLevel) {
+  //   const { userInfo } = getGameAssets();
+  //   const nextLevel = playerLevel + 1;
+  //   const nextExp = userInfo.data[nextLevel].maxExp;
+  //   const currentDbExp = player.userExperience;
+  //   const expToNextLevel = nextExp - currentDbExp;
+  //   return expToNextLevel;
+  // }
 
   async updateGameOver() {
     const townSessions = getAllTownSessions();
@@ -587,12 +588,16 @@ class Dungeon extends Game {
         const playerLevel = player.userLevel;
         console.log('playerLevel : ', playerLevel);
 
-        user.socket.sendResponse(
-          SuccessCode.Success,
-          '게임에서 패배하였습니다.',
-          payloadTypes.S_GAME_END,
-          { result: 0, playerId: user.accountId, accountLevel: playerLevel, accountExp: 10 },
-        );
+        this.playersResultArray.push({
+          playerId: user.accountId,
+          accountLevel: playerLevel,
+          accountExp: 10,
+        });
+      });
+
+      super.notifyAll(payloadTypes.S_GAME_END, {
+        result: 1,
+        playersResult: this.playersResultArray,
       });
     }
 
@@ -602,17 +607,16 @@ class Dungeon extends Game {
       const playerLevel = player.userLevel;
       console.log('playerLevel : ', playerLevel);
 
-      this.users.forEach((user) => {
-        if (user.accountId === accountId) {
-          user.socket.sendResponse(
-            SuccessCode.Success,
-            '게임에서 패배하였습니다.',
-            payloadTypes.S_GAME_END,
-            { result: 0, playerId: accountId, accountLevel: playerLevel, accountExp: totalExp },
-          );
-        }
+      this.playersResultArray.push({
+        playerId: accountId,
+        accountLevel: playerLevel,
+        accountExp: totalExp,
       });
+
+      console.log('playersResultArray : ', this.playersResultArray);
     }
+
+    super.notifyAll(payloadTypes.S_GAME_END, { result: 1, playersResult: this.playersResultArray });
   }
 
   async updateGameWin() {
@@ -623,23 +627,21 @@ class Dungeon extends Game {
     }
 
     const playersExp = this.updateRoundResult();
+
     for (const [accountId, totalExp] of Object.entries(playersExp)) {
       const winExp = +totalExp + 100; // 승리 시 정산에서 얻은 경험치에서 100 추가
       const player = await userDB.updateExp(accountId, winExp, true);
       console.log('player : ', player);
       const playerLevel = player.userLevel;
 
-      this.users.forEach((user) => {
-        if (user.accountId === accountId) {
-          user.socket.sendResponse(
-            SuccessCode.Success,
-            '게임에서 승리하였습니다.',
-            payloadTypes.S_GAME_END,
-            { result: 1, playerId: accountId, accountLevel: playerLevel, accountExp: winExp },
-          );
-        }
+      this.playersResultArray.push({
+        playerId: accountId,
+        accountLevel: playerLevel,
+        accountExp: winExp,
       });
     }
+
+    super.notifyAll(payloadTypes.S_GAME_END, { result: 2, playersResult: this.playersResultArray });
   }
 
   attackMonster(accountId, attackType, monsterIdx) {

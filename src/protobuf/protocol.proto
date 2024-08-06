@@ -208,10 +208,9 @@ message S_TowerAttacked {
 
 message S_GameEnd {
   int32 result = 1;
-  string playerId = 2;
-  int32 accountLevel = 3;
-  int32 accountExp = 4;
+  repeated PlayersResult playersResult = 2;
 }
+
 
 // Me
 message S_ScreenText{
@@ -463,6 +462,12 @@ message RoundResult {
   
 }
 
+message PlayersResult {
+  string playerId = 1;
+  int32 accountLevel = 2;
+  int32 accountExp = 3;
+}
+
 // 패킷
 message PingPacket {
   uint64 timestamp = 1;
@@ -531,7 +536,6 @@ message ResponsePacket {
     S_LogIn sLogIn = 22;
     S_PlayerAttack sPlayerAttack = 25;
     S_MonsterAttacked sMonsterAttacked = 26;
-    S_GameEnd sGameEnd = 31;
   }
 }
 
@@ -561,5 +565,7 @@ message NotificationPacket {
     S_PickUpItemHp sPickUpItemHp = 12;
     S_PickUpItemMp sPickUpItemMp = 13;
     S_PickUpItemBox sPickUpItemBox = 14;
+
+    S_GameEnd sGameEnd = 15;
   }
 }
