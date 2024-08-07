@@ -25,7 +25,6 @@ class Dungeon extends Game {
     this.dungeonCode = dungeonCode;
     this.phase = dc.phases.STANDBY;
     this.readyStates = [];
-    this.dungeonInfo = null;
     this.round = null;
     this.roundMonsters = null;
     this.playerInfos = null;
@@ -863,13 +862,14 @@ class Dungeon extends Game {
         this.notifyAll(payloadTypes.S_NIGHT_ROUND_START, {});
       }, dc.general.DAY_DURATION);
     })();
-    (async () => {
+    const now = Date.now();
+    this.users.forEach(async (user) => {
       const data = {
-        startTime: Date.now(),
+        startTime: now,
         milliseconds: dc.general.DAY_DURATION,
       };
-      this.notifyAll(payloadTypes.S_DAY_ROUND_TIMER, data);
-    })();
+      user.socket.sendNotification(payloadTypes.S_DAY_ROUND_TIMER, data);
+    });
   }
 
   animationMonster(data) {
