@@ -1,0 +1,11 @@
+{
+  "name": "mystery_box_info",
+  "version": "1.0.0",
+  "data": [
+    { "gold": 100, "probability": 30 },
+    { "gold": 300, "probability": 25 },
+    { "gold": 500, "probability": 20 },
+    { "gold": 700, "probability": 15 },
+    { "gold": 900, "probability": 10 }
+  ]
+}

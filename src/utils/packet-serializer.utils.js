@@ -49,8 +49,8 @@ export const serializeEx = (packetType, payloadType, data) => {
 
   const msg = MessageType.verify(data);
   if (msg) {
-    console.log('failed data:', data);
-    console.log('failed data:', data[payloadKeyNames[payloadType]]);
+    console.log('failed data:', JSON.stringify(data));
+    console.log(msg);
     throw new CustomError(ErrorCodes.INVALID_PACKET, '직렬화 에러:', msg);
   }
 
