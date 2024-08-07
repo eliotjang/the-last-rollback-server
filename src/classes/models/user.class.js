@@ -18,6 +18,7 @@ class User {
       type: sessionTypes.NULL, // 세션 타입 (0: null || 1: town || 2: battle)
       id: null, // 세션 id
     };
+    this.updatedAt = Date.now();
     this.ping();
     IntervalManager.getInstance().add(
       this.accountId,
