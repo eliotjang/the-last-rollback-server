@@ -587,7 +587,7 @@ class Dungeon extends Game {
     const playersExp = this.updateRoundResult();
     // 1라운드 도중에 죽었을 때
     if (lodash.isEmpty(playersExp)) {
-      this.users.forEach(async (user) => {
+      const playerPromises = this.users.map(async (user) => {
         const player = await userDB.updateExp(user.accountId, 10, true);
         console.log('player : ', player);
         const playerLevel = player.userLevel;
@@ -600,10 +600,14 @@ class Dungeon extends Game {
         });
       });
 
+      await Promise.all(playerPromises);
+      console.log('playersResultArray : ', this.playersResultArray);
+
       super.notifyAll(payloadTypes.S_GAME_END, {
         result: 1,
         playersResult: this.playersResultArray,
       });
+      return;
     }
 
     for (const [accountId, totalExp] of Object.entries(playersExp)) {
