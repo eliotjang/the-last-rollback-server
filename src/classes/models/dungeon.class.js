@@ -1,5 +1,5 @@
 import dc from '../../constants/game.constants.js';
-import { payloadTypes } from '../../constants/packet.constants.js';
+import { payloadKeyNames, payloadTypes } from '../../constants/packet.constants.js';
 import { sessionTypes } from '../../constants/session.constants.js';
 import pickUpHandler from '../../handlers/dungeon/pick-up.handler.js';
 import { getGameAssets } from '../../init/assets.js';
@@ -25,7 +25,6 @@ class Dungeon extends Game {
     this.dungeonCode = dungeonCode;
     this.phase = dc.phases.STANDBY;
     this.readyStates = [];
-    this.dungeonInfo = null;
     this.round = null;
     this.roundMonsters = null;
     this.playerInfos = null;
@@ -45,8 +44,8 @@ class Dungeon extends Game {
       const player1Status = {
         playerLevel: charStatInfo[player1Info.charClass][0].level,
         playerExp: 0,
-        playerHp: charStatInfo[player1Info.charClass][0].hp,
-        playerMp: charStatInfo[player1Info.charClass][0].mp,
+        playerCurHp: charStatInfo[player1Info.charClass][0].hp,
+        playerCurMp: charStatInfo[player1Info.charClass][0].mp,
       };
     */
     this.towerHp = null;
@@ -787,15 +786,35 @@ class Dungeon extends Game {
       score: 0,
     };
     */
-    const { nickname, score, killed, itemBox, gold } = this.playerInfos.get(user.accountId);
+    const playerInfo = this.playerInfos.get(user.accountId);
+    const playerStatus = this.playerStatus.get(user.accountId);
     // TODO: 상자깡?
 
+    const boxGold = this.mysteryBoxOpen(user.accountId, playerInfo.itemBox);
+    const roundGold = +this.roundGold(user.accountId, this.round);
+    console.log('boxGold', boxGold);
+    console.log('roundGold', roundGold);
+
+    const totalBoxGold = boxGold.reduce((sum, cur) => sum + cur, 0);
+    playerInfo.itemBox = 0;
+    playerInfo.gold += totalBoxGold;
+    console.log('gold11111', playerInfo.gold);
+    playerInfo.gold += roundGold;
+    console.log('gold22222', playerInfo.gold);
+
+    this.playerInfos.set(user.accountId, playerInfo);
+
     return {
-      nickname,
-      score: score ? score : 0,
-      killed,
-      // items: [],
-      // gold,
+      playerInfo: playerInfo,
+      playerStatus: {
+        playerLevel: playerStatus.playerLevel,
+        playerExp: playerStatus.playerExp,
+        playerCurHp: playerStatus.playerHp,
+        playerCurMp: playerStatus.playerMp,
+        nickName: playerInfo.nickname,
+      },
+      boxGold: boxGold,
+      roundGold: roundGold,
     };
   }
 
@@ -836,8 +855,10 @@ class Dungeon extends Game {
           dungeonInfo,
           roundResults,
         };
+        console.log('########', JSON.stringify(data));
         this.notifyAll(payloadTypes.S_NIGHT_ROUND_END, data);
-        this.startDayRoundTimer();
+        setTimeout(this.startDayRoundTimer.bind(this), 10000); // temp
+        // this.startDayRoundTimer();
       }
     });
   }
@@ -867,13 +888,14 @@ class Dungeon extends Game {
         this.notifyAll(payloadTypes.S_NIGHT_ROUND_START, {});
       }, dc.general.DAY_DURATION);
     })();
-    (async () => {
+    const now = Date.now();
+    this.users.forEach(async (user) => {
       const data = {
-        startTime: Date.now(),
+        startTime: now,
         milliseconds: dc.general.DAY_DURATION,
       };
-      this.notifyAll(payloadTypes.S_DAY_ROUND_TIMER, data);
-    })();
+      user.socket.sendNotification(payloadTypes.S_DAY_ROUND_TIMER, data);
+    });
   }
 
   animationMonster(data) {
@@ -1003,6 +1025,55 @@ class Dungeon extends Game {
       chatMsg,
       system: true,
     });
+  }
+
+  mysteryBoxOpen(accountId, itemBox) {
+    if (!(this.playerInfos.has(accountId) && this.playerStatus.has(accountId))) {
+      console.log('해당 플레이어가 존재하지 않음');
+      return null;
+    }
+
+    const { mysteryBoxInfo } = getGameAssets();
+    const golds = mysteryBoxInfo.data.map((data) => data.gold);
+    const goldProbability = mysteryBoxInfo.data.map((data) => data.probability);
+    const totalProbability = goldProbability.reduce((sum, cur) => sum + cur, 0);
+
+    if (totalProbability != 100) {
+      throw new CustomError(ErrorCodes.PROBABILITY_ERROR, '확률의 합이 100이 아닙니다.');
+    }
+
+    let boxGold = [];
+
+    for (let i = 0; i < itemBox; i++) {
+      const randomNumber = Math.floor(Math.random() * 100 + 1);
+      let result = 0;
+      let accumulationNumber = 0;
+
+      for (let i = 0; i < golds.length; i++) {
+        accumulationNumber += goldProbability[i];
+        if (accumulationNumber >= randomNumber) {
+          result = golds[i];
+          break;
+        }
+      }
+
+      boxGold.push(result);
+    }
+    return boxGold;
+  }
+
+  roundGold(accountId, round) {
+    if (!(this.playerInfos.has(accountId) && this.playerStatus.has(accountId))) {
+      console.log('해당 플레이어가 존재하지 않음');
+      return null;
+    }
+
+    const { stage } = getGameAssets();
+
+    const curStage = stage.data.find((data) => data.round == round);
+    const reward = curStage.reward;
+
+    return reward;
   }
 }
 
