@@ -375,6 +375,10 @@ message PlayerInfo {
   string nickname = 2;  // C_EnterGame 에서 지정한 이름
   int32 charClass = 3;      // C_EnterGame 에서 지정한 직업 정보, 이 정보를 통해 캐릭터가 결정
   TransformInfo transform = 4;
+  int32 gold = 5;
+  int32 itemBox = 6;
+  repeated int32 killed = 7;
+  bool isDead = 8;
 }
 
 // C_Enter 를 통해 입장했을때는 서버에서 랜덤으로 위치값 생성 / 기본값은 하단 밸류 참조
@@ -439,12 +443,13 @@ message PlayerStatus {
   float playerFullMp = 5;
   float playerCurHp = 6;
   float playerCurMp = 7;
-  float atk = 8;
-  float def = 9;
-  float specialAtk = 10;
-  float speed = 11; 
-  float attackRange = 12;
-  float coolTime = 13;
+  float playerExp = 8;
+  float atk = 9;
+  float def = 10;
+  float specialAtk = 11;
+  float speed = 12; 
+  float attackRange = 13;
+  float coolTime = 14;
 }
 
 message BattleLog {
@@ -459,11 +464,11 @@ message BtnInfo {
 }
 
 message RoundResult {
-  string nickname = 1;
-  uint32 score = 2;
-  uint32 killCount = 3;
+  PlayerInfo playerInfo = 1;
+  PlayerStatus playerStatus = 2;
+  repeated int32 boxGold = 3;
+  int32 roundGold = 4;
   // 밤 라운드 정산 정보 있으면 여기에 추가?
-  
 }
 
 message PlayersResult {
