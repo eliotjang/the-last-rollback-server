@@ -5,14 +5,15 @@ import { getGameAssets } from '../../init/assets.js';
 
 const towerHpUpdateHandler = async ({ socket, accountId, packet }) => {
   try {
-    const { monsterInfo } = getGameAssets();
+    // const { monsterInfo } = getGameAssets();
     const { monsterIdx } = packet;
 
-    const amount = monsterInfo.data[monsterIdx].atk;
+    // const amount = monsterInfo.data[monsterIdx].atk;
 
     const dungeonSession = getDungeonSessionByUserId(accountId);
+    dungeonSession.get;
 
-    dungeonSession.updateTowerHp(amount);
+    dungeonSession.updateTowerHp(monsterIdx);
   } catch (error) {
     handleError(socket, error);
   }

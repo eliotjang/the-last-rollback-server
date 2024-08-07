@@ -5,6 +5,7 @@ import CustomError from '../../utils/error/customError.js';
 import { ErrorCodes, SuccessCode } from '../../utils/error/errorCodes.js';
 import { handleError } from '../../utils/error/errorHandler.js';
 import { getAllTownSessions, addTownSession } from '../../session/town.session.js';
+import { getGameAssets } from '../../init/assets.js';
 
 // 몬스터가 플레이어 공격 요청 시
 const attackPlayerHandler = async ({ socket, accountId, packet }) => {
@@ -39,8 +40,9 @@ const attackPlayerHandler = async ({ socket, accountId, packet }) => {
     //     damage = 0;
     // }
     // monsterHp -= damage;
+    const { monsterInfo } = getGameAssets();
 
-    const playerStatus = dungeonSession.updateMonsterAttackPlayer(playerId, 10, true);
+    const playerStatus = dungeonSession.updateMonsterAttackPlayer(playerId, monsterIdx, true);
 
     const playerHp = playerStatus.playerHp;
     if (playerHp) {
@@ -48,7 +50,7 @@ const attackPlayerHandler = async ({ socket, accountId, packet }) => {
     }
     console.log('attackPlayerHandler', packet, playerHp);
   } catch (e) {
-    handleError(e);
+    handleError(socket, e);
   }
 };
 
