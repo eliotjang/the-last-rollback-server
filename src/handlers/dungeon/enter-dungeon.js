@@ -46,7 +46,7 @@ export const enterDungeonSession = async (dungeonSession, dungeonCode) => {
         nickname: playerChar.nickname,
         charClass: playerChar.charClass,
         transform: null,
-        gold: 0,
+        gold: 3000,
         itemBox: 0,
         killed: [],
       };

@@ -16,6 +16,8 @@ import animationMonsterHandler from './dungeon/animation-monster.handler.js';
 import animationPlayerHandler from './dungeon/animation-player.handler.js';
 import sceneReadyHandler from './dungeon/scene-ready.handler.js';
 import towerHpUpdateHandler from './dungeon/tower.handler.js';
+import defensiveStructureHandler from './dungeon/defensive-structure.handler.js';
+import attackDefensiveStructureHandler from './dungeon/attack-defensive-structure.handler.js';
 // import towerHpUpdateHandler from './dungeon/tower.handler.js';
 
 const handlers = {
@@ -34,6 +36,8 @@ const handlers = {
   [payloadTypes.C_ANIMATION_PLAYER]: animationPlayerHandler,
   [payloadTypes.C_DUNGEON_SCENE_READY]: sceneReadyHandler,
   [payloadTypes.C_TOWER_ATTACKED]: towerHpUpdateHandler,
+  [payloadTypes.C_DEFENSIVE_STRUCTURE]: defensiveStructureHandler,
+  [payloadTypes.C_ATTACK_DEFENSIVE_STRUCTURE]: attackDefensiveStructureHandler,
 };
 
 export const getHandlerByPayloadType = (payloadType) => {

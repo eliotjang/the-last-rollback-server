@@ -28,6 +28,13 @@ class Dungeon extends Game {
     this.dungeonInfo = null;
     this.round = null;
     this.roundMonsters = null;
+    /*
+      monsterModel: 2001,
+      monsterName: "mushroom",
+      monsterHp: 100,
+      killExp: 10,
+      atk: 10
+    */
     this.playerInfos = null;
     /*
       const player1Info = {
@@ -57,6 +64,14 @@ class Dungeon extends Game {
     this.timers = new Map();
     this.startTime = Date.now();
     this.playersResultArray = [];
+    this.defensiveStructure = new Map();
+    /* defensive_structure.json에 정의된 그대로 저장
+      defenseModel: 1,
+      defenseName: woodenFence,
+      hp: 20,
+      maxHp: 20,
+      gold: 500
+    */
   }
 
   addTowerHp(towerHp) {
@@ -148,6 +163,36 @@ class Dungeon extends Game {
     if (wantResult) {
       return this.getPlayerStatus(accountId);
     }
+  }
+
+  attackDefensiveStructure(accountId, monsterIdx, attackType, defenseIdx) {
+    const monster = this.getMonster(monsterIdx);
+    // console.log('monster : ', monster);
+    const data = this.getDefenseStructure(defenseIdx);
+
+    if (data.hp <= 0) {
+      this.systemChat(accountId, `${data.defenseName}이(가) 이미 파괴되었습니다.`);
+      return;
+    }
+
+    if (data.hp - monster.atk <= 0) {
+      console.log('방어 구조물 파괴');
+      data.hp = 0;
+      data.isDestroyed = true;
+      this.defensiveStructure.set(defenseIdx, data);
+      this.systemChat(accountId, `${data.defenseName}이(가) 파괴되었습니다.`);
+      // 방어 구조물 파괴
+      return;
+    }
+
+    data.hp -= monster.atk;
+    this.defensiveStructure.set(defenseIdx, data);
+    this.notifyAll(payloadTypes.S_ATTACK_DEFENSIVE_STRUCTURE, {
+      monsterIdx,
+      attackType,
+      defenseIdx,
+      defenseHp: data.hp,
+    });
   }
 
   /**
@@ -317,31 +362,36 @@ class Dungeon extends Game {
     }
   }
 
-  /**
-   *
-   * @param {string} accountId 계정 아이디
-   * @param {number} gold 사용 골드
-   * @param {boolean} wantResult 반환 여부
-   * @returns 플레이어 상태
-   */
-  removePlayerGold(accountId, gold, wantResult) {
-    if (!(this.playerInfos.has(accountId) && this.playerStatus.has(accountId))) {
-      console.log('해당 플레이어가 존재하지 않음');
+  getDefenseStructure(defenseIdx) {
+    return this.defensiveStructure.get(defenseIdx);
+  }
+
+  buyDefenseStructure(accountId, data, defenseIdx, wantResult) {
+    if (this.defensiveStructure.has(defenseIdx)) {
+      console.log('동일한 defenseIdx를 가진 방어 구조물이 존재함');
       return null;
     }
 
-    const data = this.playerInfos.get(accountId);
+    const playerInfo = this.playerInfos.get(accountId);
 
-    if (data.gold - gold < 0) {
-      console.log('골드가 부족합니다.');
+    if (playerInfo.gold - data.gold < 0) {
+      this.systemChat(accountId, `${data.defenseName}을(를) 구매할 골드가 부족합니다.`);
       return null;
     }
 
-    data.gold -= gold;
-    this.playerInfos.set(accountId, data);
+    playerInfo.gold -= data.gold;
+    this.playerInfos.set(accountId, playerInfo);
+
+    this.defensiveStructure.set(defenseIdx, data);
+
+    super.notifyAll(payloadTypes.S_DEFENSIVE_STRUCTURE, {
+      defenseModel: data.defenseModel,
+      defenseIdx,
+      gold: playerInfo.gold,
+    });
 
     if (wantResult) {
-      return this.getPlayerInfo(accountId);
+      return this.getDefenseStructure(defenseIdx);
     }
   }
 

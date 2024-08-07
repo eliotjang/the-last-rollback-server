@@ -1,0 +1,8 @@
+{
+  "name": "defensive_structure",
+  "version": "1.0.0",
+  "data": [
+    { "defenseModel": 1, "defenseName": "woodenFence", "hp": 20, "maxHp": 20, "gold": 500 },
+    { "defenseModel": 2, "defenseName": "metalFence", "hp": 40, "maxHp": 40, "gold": 1000 }
+  ]
+}

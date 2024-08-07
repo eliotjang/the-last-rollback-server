@@ -74,6 +74,11 @@ enum MsgId {
     S_TOWER_ATTACKED = 131;
     S_GAME_END = 132;
 
+    C_DEFENSIVE_STRUCTURE = 133;
+    S_DEFENSIVE_STRUCTURE = 134;
+    C_ATTACK_DEFENSIVE_STRUCTURE = 135;
+    S_ATTACK_DEFENSIVE_STRUCTURE = 136;
+
     S_SOME_NOTIFICATION = 300;
 }
 
@@ -367,6 +372,31 @@ message S_PickUpItemBox {
   uint32 updateBox = 2;
 }
 
+message C_DefensiveStructure {
+  uint32 defenseModel = 1;
+}
+
+message S_DefensiveStructure {
+  uint32 defenseModel = 1;
+  uint32 defenseIdx = 2;
+  uint32 gold = 3;
+}
+
+// 몬스터가 방어 구조물을 공격할 경우(호스트만 전송)
+message C_AttackDefensiveStructure{
+  int32 monsterIdx = 1; // 공격 하는 몬스터 Idx
+  int32 attackType = 2;
+  int32 defenseIdx = 3; // 공격받는 방어 구조물 Idx
+}
+
+// All
+message S_AttackDefensiveStructure{
+  int32 monsterIdx = 1; // 공격 하는 몬스터 Idx
+  int32 attackType = 2;
+  int32 defenseIdx = 3; // 공격받는 방어 구조물 Idx
+  int32 defenseHp = 4;
+}
+
 // ---------------------------------
 // 정보 구조체
 
@@ -504,6 +534,9 @@ message RequestPacket {
     C_DungeonSceneReady cDungeonSceneReady = 16;
 
     C_TowerAttacked cTowerAttacked = 30;
+
+    C_DefensiveStructure cDefensiveStructure = 31;
+    C_AttackDefensiveStructure cAttackDefensiveStructure = 32;
   }
 }
 
@@ -572,5 +605,8 @@ message NotificationPacket {
     S_Animation sAnimation = 15;
     
     S_GameEnd sGameEnd = 16;
+
+    S_DefensiveStructure sDefensiveStructure = 17;
+    S_AttackDefensiveStructure sAttackDefensiveStructure = 18;
   }
 }
