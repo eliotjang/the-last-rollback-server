@@ -223,23 +223,24 @@ class Dungeon extends Game {
       return null;
     }
 
-    let targetData = charStatInfo[infoData.charClass].find(
-      (data) => data.level === statData.playerLevel,
-    );
+    // let targetData = charStatInfo[infoData.charClass].find(
+    //   (data) => data.level === statData.playerLevel,
+    // );
 
-    while (killExp >= targetData.maxExp) {
-      killExp -= targetData.maxExp;
-      this.updatePlayerLevel(accountId);
+    // while (killExp >= targetData.maxExp) {
+    //   killExp -= targetData.maxExp;
 
-      statData = this.playerStatus.get(accountId);
-      if (statData.playerLevel >= lastData.level) {
-        console.log('최대 레벨 도달');
-        return;
-      }
-      targetData = charStatInfo[infoData.charClass].find(
-        (data) => data.level === statData.playerLevel,
-      );
-    }
+    //   this.updatePlayerLevel(accountId);
+
+    //   statData = this.playerStatus.get(accountId);
+    //   if (statData.playerLevel >= lastData.level) {
+    //     console.log('최대 레벨 도달');
+    //     return;
+    //   }
+    //   targetData = charStatInfo[infoData.charClass].find(
+    //     (data) => data.level === statData.playerLevel,
+    //   );
+    // }
     statData.playerExp += killExp;
 
     if (wantResult) {
@@ -786,21 +787,40 @@ class Dungeon extends Game {
       score: 0,
     };
     */
+    const { charStatInfo } = getGameAssets();
+
     const playerInfo = this.playerInfos.get(user.accountId);
-    const playerStatus = this.playerStatus.get(user.accountId);
+    let playerStatus = this.playerStatus.get(user.accountId);
+    const lastData =
+      charStatInfo[playerInfo.charClass][charStatInfo[playerInfo.charClass].length - 1];
+
+    let targetData = charStatInfo[playerInfo.charClass].find(
+      (data) => data.level === playerStatus.playerLevel,
+    );
+
+    while (playerStatus.playerExp >= targetData.maxExp) {
+      playerStatus.playerExp -= targetData.maxExp;
+
+      this.updatePlayerLevel(user.accountId);
+
+      playerStatus = this.playerStatus.get(user.accountId);
+      if (playerStatus.playerLevel >= lastData.level) {
+        console.log('최대 레벨 도달');
+        return;
+      }
+      targetData = charStatInfo[playerInfo.charClass].find(
+        (data) => data.level === playerStatus.playerLevel,
+      );
+    }
     // TODO: 상자깡?
 
     const boxGold = this.mysteryBoxOpen(user.accountId, playerInfo.itemBox);
     const roundGold = +this.roundGold(user.accountId, this.round);
-    console.log('boxGold', boxGold);
-    console.log('roundGold', roundGold);
 
     const totalBoxGold = boxGold.reduce((sum, cur) => sum + cur, 0);
     playerInfo.itemBox = 0;
     playerInfo.gold += totalBoxGold;
-    console.log('gold11111', playerInfo.gold);
     playerInfo.gold += roundGold;
-    console.log('gold22222', playerInfo.gold);
 
     this.playerInfos.set(user.accountId, playerInfo);
 
@@ -812,6 +832,11 @@ class Dungeon extends Game {
         playerCurHp: playerStatus.playerHp,
         playerCurMp: playerStatus.playerMp,
         nickName: playerInfo.nickname,
+        playerFullHp: targetData.maxHp,
+        playerFullMp: targetData.maxMp,
+        atk: targetData.atk,
+        def: targetData.def,
+        specialAtk: targetData.specialAtk,
       },
       boxGold: boxGold,
       roundGold: roundGold,
