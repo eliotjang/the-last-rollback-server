@@ -43,6 +43,7 @@ export const enterDungeonSession = async (dungeonSession, dungeonCode) => {
     for (const accountId of accountIds) {
       const playerChar = await gameCharDB.getGameChar(accountId);
       const playerInfo = {
+        playerId: accountId,
         nickname: playerChar.nickname,
         charClass: playerChar.charClass,
         transform: null,
