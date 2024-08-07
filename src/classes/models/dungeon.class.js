@@ -511,7 +511,8 @@ class Dungeon extends Game {
       // 밤 round 종료
       console.log('------------END NIGHT ROUND----------');
       this.roundKillCount = 0;
-      this.endNightRound(accountId);
+      setTimeout(this.endNightRound.bind(this, accountId), 6000);
+      //this.endNightRound(accountId);
     }
   }
 

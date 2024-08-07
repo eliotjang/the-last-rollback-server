@@ -16,6 +16,19 @@ export function sendPacket(payloadType, data) {
   // this.write(packet);
 }
 
+export async function sendPing(timestamp, dontSend = false) {
+  const packetData = {
+    timestamp,
+  };
+  const serialized = serializeEx(packetTypes.PING, 0, packetData);
+  const header = writeHeader(serialized.length, packetTypes.PING);
+  const packet = Buffer.concat([header, serialized]);
+  if (dontSend) {
+    return packet;
+  }
+  this.write(packet);
+}
+
 /**
  *
  * @param {uint32} code
@@ -63,13 +76,13 @@ export const sendNotification = async function (payloadType, payload) {
       payload,
     };
     const serializedPacket = serializeEx(packetTypes.NOTIFICATION, payloadType, packetData);
-    // if (payloadType !== payloadTypes.S_MOVE) {
-    //   console.log('deserialize test:', deserializeTest(packetTypes.NOTIFICATION, serializedPacket));
-    // }
+    if (payloadType !== payloadTypes.S_MOVE && payloadType !== payloadTypes.S_MONSTER_MOVE) {
+      deserializeTest(packetTypes.NOTIFICATION, serializedPacket);
+    }
     const header = writeHeader(serializedPacket.length, packetTypes.NOTIFICATION);
     const packet = Buffer.concat([header, serializedPacket]);
     this.write(packet);
   } catch (err) {
-    console.log('NOTIFICATIO ERROR');
+    console.log('NOTIFICATION ERROR');
   }
 };

@@ -78,12 +78,12 @@ export const enterDungeonSession = async (dungeonSession, dungeonCode) => {
         playerFullMp: stat.maxMp,
         playerCurHp: stat.hp,
         playerCurMp: stat.mp,
-        // atk: stat.atk,
-        // def: stat.def,
-        // magic: stat.magic,
-        // speed: stat.speed,
-        // attackRange: stat.attackRange,
-        // coolTime: stat.coolTime,
+        atk: stat.atk,
+        def: stat.def,
+        specialAtk: stat.specialAtk,
+        speed: stat.speed,
+        attackRange: stat.attackRange,
+        coolTime: stat.coolTime,
       }))[0];
 
       playerStatusArray.push(playerStatus2);

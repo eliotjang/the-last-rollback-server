@@ -45,6 +45,7 @@ export const loadGameAssets = async () => {
     // ]);
     // gameAssets = { charStatInfo, userInfo, stage, stageUnlock, monsterInfo };
     console.log('JSON 데이터 파일이 로드되었습니다.');
+    // console.log(gameAssets);
     return gameAssets;
   } catch (error) {
     throw new Error('Failed to load game assets: ' + error.message);
