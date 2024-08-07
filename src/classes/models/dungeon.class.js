@@ -836,7 +836,8 @@ class Dungeon extends Game {
           roundResults,
         };
         this.notifyAll(payloadTypes.S_NIGHT_ROUND_END, data);
-        this.startDayRoundTimer();
+        setTimeout(this.startDayRoundTimer.bind(this), 10000); // temp
+        // this.startDayRoundTimer();
       }
     });
   }
