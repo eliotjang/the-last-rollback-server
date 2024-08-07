@@ -13,7 +13,7 @@ class Town extends Game {
 
   addUser(user) {
     console.log('In townSession', this.users);
-    Promise.all(this.users.map((curUser) => curUser.getPlayerInfo())).then((playerInfos) => {
+    Promise.all(this.users.map(async (curUser) => curUser.getPlayerInfo())).then((playerInfos) => {
       super.addUser(user);
 
       if (playerInfos.length) {
