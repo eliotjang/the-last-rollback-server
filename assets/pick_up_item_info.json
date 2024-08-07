@@ -2,8 +2,8 @@
   "name": "pick_up_item_info",
   "version": "1.0.0",
   "data": [
-    { "itemIdx": 101, "itemName": "hpPotion", "HP": 50, "MP": 0, "BOX": 0, "probability": 30 },
-    { "itemIdx": 102, "itemName": "mpPotion", "HP": 0, "MP": 50, "BOX": 0, "probability": 30 },
-    { "itemIdx": 103, "itemName": "itemBox", "HP": 0, "MP": 0, "BOX": 1, "probability": 30 }
+    { "itemIdx": 101, "itemName": "hpPotion", "HP": 50, "MP": 0, "BOX": 0, "probability": 60 },
+    { "itemIdx": 102, "itemName": "mpPotion", "HP": 0, "MP": 50, "BOX": 0, "probability": 20 },
+    { "itemIdx": 103, "itemName": "itemBox", "HP": 0, "MP": 0, "BOX": 1, "probability": 20 }
   ]
 }
