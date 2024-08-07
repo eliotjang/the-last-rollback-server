@@ -7,6 +7,7 @@ import { readHeader } from '../utils/packet-header.utils.js';
 import { deserialize, deserializeByPacketType } from '../utils/packet-serializer.utils.js';
 import { config } from '../config/config.js';
 import CustomError from '../utils/error/customError.js';
+import { getUserBySocket } from '../session/user.session.js';
 
 const headerSize = headerConstants.TOTAL_LENGTH + headerConstants.PACKET_TYPE_LENGTH;
 
@@ -23,8 +24,12 @@ const onData = (socket) => async (data) => {
 
       switch (packetType) {
         case packetTypes.PING: {
-          //
           // console.log('PING RECEIVED');
+          const user = getUserBySocket(socket);
+          if (!user) {
+            throw new CustomError(ErrorCodes.USER_NOT_FOUND, 'Ping을 수신할 유저가 없습니다.');
+          }
+          user.pong(deserialize(packetTypes.PING, packet));
           break;
         }
         case packetTypes.REQUEST: {

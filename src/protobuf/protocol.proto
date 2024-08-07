@@ -396,10 +396,6 @@ message StatInfo {
   float maxHp = 3;
   float mp = 4;
   float maxMp = 5;
-  float atk = 6;
-  float def = 7;
-  float magic = 8;
-  float speed = 9; 
 }
 
 message ScreenText{
@@ -431,6 +427,7 @@ message MonsterStatus {
   int32 monsterModel = 2;
   string monsterName = 3;
   float monsterHp = 4;
+  TransformInfo monsterTransform = 5;
 }
 
 message ActionSet {
@@ -447,6 +444,12 @@ message PlayerStatus {
   float playerCurHp = 6;
   float playerCurMp = 7;
   float playerExp = 8;
+  float atk = 8;
+  float def = 9;
+  float specialAtk = 10;
+  float speed = 11; 
+  float attackRange = 12;
+  float coolTime = 13;
 }
 
 message BattleLog {

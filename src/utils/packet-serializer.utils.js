@@ -72,13 +72,7 @@ export const deserialize = (packetType, data) => {
   }
   const decoded = MessageType.decode(data);
 
-  const obj = {
-    ...decoded,
-  };
-  obj.payload = decoded[payloadKeyNames[payloadType]];
-  delete obj[payloadKeyNames[payloadType]];
-
-  return obj;
+  return decoded;
 };
 
 export const deserializeByPacketType = (packetType, data) => {

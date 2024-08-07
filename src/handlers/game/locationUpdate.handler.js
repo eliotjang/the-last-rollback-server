@@ -1,3 +1,4 @@
+import { sessionTypes } from '../../constants/session.constants.js';
 import { getUserById } from '../../session/user.session.js';
 import CustomError from '../../utils/error/customError.js';
 import { ErrorCodes } from '../../utils/error/errorCodes.js';
@@ -18,7 +19,9 @@ const locationUpdateHandler = async ({ socket, accountId, packet }) => {
       throw new CustomError(ErrorCodes.GAME_NOT_FOUND, '세션을 찾을 수 없습니다.');
     }
 
-    // await townRedis.updatePlayerTransform(transform, accountId);
+    if (gameSession.type === sessionTypes.TOWN) {
+      await townRedis.updatePlayerTransform(transform, accountId);
+    }
 
     // 현재 추측항법 적용 X
     gameSession.movePlayer(accountId, transform);
