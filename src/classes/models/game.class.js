@@ -15,6 +15,7 @@ class Game {
   addUser(user) {
     user.setSession(this.type, this.id);
     this.users.push(user);
+    console.log('In Game------------------------------------------------------', this.users);
   }
 
   // remove from Session

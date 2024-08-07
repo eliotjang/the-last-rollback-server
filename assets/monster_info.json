@@ -2,7 +2,7 @@
   "name": "monster_info",
   "version": "1.0.0",
   "data": [
-    { "monsterModel": 2001, "monsterName": "mushroom", "monsterHp": 100, "killExp": 10, "atk": 10 },
+    { "monsterModel": 2001, "monsterName": "mushroom", "monsterHp": 100, "killExp": 10, "atk": 500 },
     { "monsterModel": 2002, "monsterName": "slime", "monsterHp": 100, "killExp": 10, "atk": 10 },
     { "monsterModel": 2003, "monsterName": "turtleShell", "monsterHp": 100, "killExp": 10, "atk": 10 },
     { "monsterModel": 2004, "monsterName": "fishman", "monsterHp": 100, "killExp": 10, "atk": 10 },

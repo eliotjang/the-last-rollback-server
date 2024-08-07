@@ -15,18 +15,23 @@ class Town extends Game {
     console.log('In townSession', this.users);
     Promise.all(this.users.map((curUser) => curUser.getPlayerInfo())).then((playerInfos) => {
       super.addUser(user);
+      console.log('실행확인1');
 
       if (playerInfos.length) {
+        console.log('실행확인2');
         // console.log('기존 유저 : ', user.accountId, playerInfos);
         super.notifyUser(user.accountId, payloadTypes.S_SPAWN, { players: playerInfos });
+        console.log('실행확인3');
         // console.log('현재 들어온 유저에게 다른 모든 유저 정보를 전송:', playerInfos);
 
         user.getPlayerInfo().then((userInfo) => {
+          console.log('실행확인4');
           super.notifyOthers(user.accountId, payloadTypes.S_SPAWN, { players: [userInfo] });
           // console.log('기존 유저에게 새로 들어온 유저 정보를 전송:', userInfo);
           this.systemChatAll(user.accountId, `${user.accountId}님이 입장하였습니다.`);
         });
       } else {
+        console.log('실행확인5');
         this.systemChat(user.accountId, `${user.accountId}님이 입장하였습니다.`);
       }
     });

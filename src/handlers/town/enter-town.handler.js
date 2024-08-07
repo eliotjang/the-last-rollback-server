@@ -16,16 +16,24 @@ const enterTownHandler = async ({ socket, accountId, packet, playerInfo }) => {
     let message;
 
     const dungeonSession = getDungeonSessionByUserId(accountId);
+    console.log('dungeonSession------------------------------ : ', dungeonSession);
     if (dungeonSession) {
       const townSessions = getAllTownSessions();
+      console.log('townSessions----------------------- : ', townSessions);
       let townSession = townSessions.find((townSession) => !townSession.isFull());
       if (!townSession) {
         townSession = addTownSession();
       }
 
       dungeonSession.removeUser(accountId);
+      console.log('dungeonSession.removeUser(accountId) : ', dungeonSession);
       const user = getUserById(accountId);
+      console.log(
+        'getUserById(accountId)--------------------------------------------------- : ',
+        user,
+      );
       townSession.addUser(user);
+      console.log('townSession.addUser(user) : ', townSession);
       const transform = new TransformInfo().getTransform();
       playerInfo = await townRedis.addPlayer(accountId, nickname, charClass, transform, true);
 
