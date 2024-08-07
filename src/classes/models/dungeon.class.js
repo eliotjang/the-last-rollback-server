@@ -13,7 +13,6 @@ import { SuccessCode } from '../../utils/error/errorCodes.js';
 import { getUserById } from '../../session/user.session.js';
 import { getAllTownSessions, addTownSession } from '../../session/town.session.js';
 import lodash from 'lodash';
-import { getDungeonSession } from '../../session/dungeon.session.js';
 // const dc.general.MAX_USERS = 4;
 
 class Dungeon extends Game {
@@ -492,14 +491,12 @@ class Dungeon extends Game {
   }
 
   /**
-   *
+   * 몬스터 사망 판정을 위한 호출
    * @param {number} monsterIndex 몬스터 인덱스
    * @param {string} accountId
    * @description updatePlayerAttackMonster 내부에서 사용
    */
   killMonster(monsterIndex, accountId) {
-    // updatePlayerAttackMonster 내부에서 사용
-    // this.roundMonsters.delete(monsterIndex);
     const monsterName = this.roundMonsters.get(monsterIndex).monsterName;
     this.systemChat(accountId, `${monsterName}를 처치`);
     this.roundKillCount++;
@@ -585,47 +582,29 @@ class Dungeon extends Game {
 
     // 죽은 라운드의 경험치는 포함안됨
     const playersExp = this.updateRoundResult();
-    // 1라운드 도중에 죽었을 때
-    if (lodash.isEmpty(playersExp)) {
-      const playerPromises = this.users.map(async (user) => {
-        const player = await userDB.updateExp(user.accountId, 10, true);
-        console.log('player : ', player);
-        const playerLevel = player.userLevel;
-        console.log('playerLevel : ', playerLevel);
 
-        this.playersResultArray.push({
-          playerId: user.accountId,
+    Promise.all(
+      this.users.map(async (user) => {
+        const totalExp = playersExp[user.accountId] || 10;
+        const player = await userDB.updateExp(user.accountId, totalExp, true);
+        return {
+          playerId: accountId,
           accountLevel: playerLevel,
-          accountExp: 10,
-        });
-      });
-
-      await Promise.all(playerPromises);
-      console.log('playersResultArray : ', this.playersResultArray);
-
+          accountExp: totalExp,
+        };
+      }),
+    ).then(([...data]) => {
+      this.playersResultArray.push(...data);
       super.notifyAll(payloadTypes.S_GAME_END, {
         result: 1,
         playersResult: this.playersResultArray,
       });
-      return;
-    }
-
-    for (const [accountId, totalExp] of Object.entries(playersExp)) {
-      const player = await userDB.updateExp(accountId, totalExp, true);
-      console.log('player : ', player);
-      const playerLevel = player.userLevel;
-      console.log('playerLevel : ', playerLevel);
-
-      this.playersResultArray.push({
-        playerId: accountId,
-        accountLevel: playerLevel,
-        accountExp: totalExp,
-      });
-
       console.log('playersResultArray : ', this.playersResultArray);
-    }
-
-    super.notifyAll(payloadTypes.S_GAME_END, { result: 1, playersResult: this.playersResultArray });
+      // TODO: 던전 퇴장 (타운 입장)
+      // this.removeUser(accountId);
+      // const user = getUserById(accountId);
+      // townSession.addUser(user);
+    });
   }
 
   async updateGameWin() {
@@ -636,21 +615,27 @@ class Dungeon extends Game {
     }
 
     const playersExp = this.updateRoundResult();
-
-    for (const [accountId, totalExp] of Object.entries(playersExp)) {
-      const winExp = +totalExp + 100; // 승리 시 정산에서 얻은 경험치에서 100 추가
-      const player = await userDB.updateExp(accountId, winExp, true);
-      console.log('player : ', player);
-      const playerLevel = player.userLevel;
-
-      this.playersResultArray.push({
-        playerId: accountId,
-        accountLevel: playerLevel,
-        accountExp: winExp,
+    Promise.all(
+      this.users.map(async (user) => {
+        const totalExp = (playersExp[user.accountId] ? playersExp[user.accountId] : 0) + 100; // 승리 시 정산에서 얻은 경험치에서 100 추가
+        const player = await userDB.updateExp(user.accountId, totalExp, true);
+        return {
+          playerId: user.accountId,
+          accountLevel: player.playerLevel,
+          accountEXP: totalExp,
+        };
+      }),
+    ).then(([...data]) => {
+      this.playersResultArray.push(...data);
+      super.notifyAll(payloadTypes.S_GAME_END, {
+        result: 2,
+        playersResult: this.playersResultArray,
       });
-    }
-
-    super.notifyAll(payloadTypes.S_GAME_END, { result: 2, playersResult: this.playersResultArray });
+      // TODO: 던전 퇴장 (타운 입장)
+      // this.removeUser(accountId);
+      // const user = getUserById(accountId);
+      // townSession.addUser(user);
+    });
   }
 
   attackMonster(accountId, attackType, monsterIdx) {
@@ -813,6 +798,7 @@ class Dungeon extends Game {
       );
     }
     // TODO: 상자깡?
+    // const items = 상자깡();
 
     const boxGold = this.mysteryBoxOpen(user.accountId, playerInfo.itemBox);
     const roundGold = +this.roundGold(user.accountId, this.round);
@@ -858,31 +844,27 @@ class Dungeon extends Game {
         this.setMonsters(dungeonInfo.monsters);
         return dungeonInfo;
       })(),
-      (async () => {
-        const roundResults = this.users.map((user) => this.fetchRoundStatsByUser(user)); // 각 유저의 라운드 통계 받아오기
-        return roundResults;
-      })(),
+      Promise.all(this.users.map(async (user) => this.fetchRoundStatsByUser(user))),
     ]).then(([dungeonInfo, roundResults]) => {
       this.phase = dc.phases.DAY;
       this.round++;
+      const playerStatus = this.getPlayerStatus(accountId);
+      const gameExp = playerStatus.playerExp;
+      this.updateRoundResult(accountId, gameExp);
       if (!dungeonInfo) {
         // 마지막 라운드가 종료됨 (gameEnd 전송)
-        const playerStatus = this.getPlayerStatus(accountId);
-        const gameExp = playerStatus.playerExp;
-        this.updateRoundResult(accountId, gameExp);
         this.updateGameWin();
       } else {
-        const playerStatus = this.getPlayerStatus(accountId);
-        const gameExp = playerStatus.playerExp;
-        this.updateRoundResult(accountId, gameExp);
         // 아직 라운드가 남음
+        console.log(roundResults);
         const data = {
           dungeonInfo,
           roundResults,
         };
         console.log('########', JSON.stringify(data));
         this.notifyAll(payloadTypes.S_NIGHT_ROUND_END, data);
-        this.startDayRoundTimer();
+        setTimeout(this.startDayRoundTimer.bind(this), 10000); // temp
+        // this.startDayRoundTimer();
       }
     });
   }
