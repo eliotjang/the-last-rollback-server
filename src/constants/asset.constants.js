@@ -26,6 +26,7 @@ export const gameAssetConstants = {
   mysteryBoxInfo: {
     NAME: 'mysteryBoxInfo',
     PATH: 'mystery_box_info.json',
+  },
   monsterSpawnLocate: {
     NAME: 'monsterSpawnLocate',
     PATH: 'monster_spawn_locate.json',

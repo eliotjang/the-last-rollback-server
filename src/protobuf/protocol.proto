@@ -444,12 +444,12 @@ message PlayerStatus {
   float playerCurHp = 6;
   float playerCurMp = 7;
   float playerExp = 8;
-  float atk = 8;
-  float def = 9;
-  float specialAtk = 10;
-  float speed = 11; 
-  float attackRange = 12;
-  float coolTime = 13;
+  float atk = 9;
+  float def = 10;
+  float specialAtk = 11;
+  float speed = 12; 
+  float attackRange = 13;
+  float coolTime = 14;
 }
 
 message BattleLog {

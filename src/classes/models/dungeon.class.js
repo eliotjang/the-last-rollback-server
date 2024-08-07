@@ -811,6 +811,7 @@ class Dungeon extends Game {
         playerExp: playerStatus.playerExp,
         playerCurHp: playerStatus.playerHp,
         playerCurMp: playerStatus.playerMp,
+        nickName: playerInfo.nickname,
       },
       boxGold: boxGold,
     };
