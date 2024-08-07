@@ -11,6 +11,7 @@ const sceneReadyHandler = ({ socket, accountId, packet }) => {
   if (!dungeonSession) {
     throw new CustomError(ErrorCodes.INVALID_PACKET, `유저가 게임 중이 아닙니다: ${accountId}`);
   }
+  if (!dungeonSession.sceneReady) return;
   dungeonSession.sceneReady(accountId);
 };
 

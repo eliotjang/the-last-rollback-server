@@ -17,6 +17,8 @@ const enterTownHandler = async ({ socket, accountId, packet, playerInfo }) => {
 
     const dungeonSession = getDungeonSessionByUserId(accountId);
     if (dungeonSession) {
+      const user = getUserById(accountId);
+
       const townSessions = getAllTownSessions();
       let townSession = townSessions.find((townSession) => !townSession.isFull());
       if (!townSession) {
@@ -24,13 +26,19 @@ const enterTownHandler = async ({ socket, accountId, packet, playerInfo }) => {
       }
 
       dungeonSession.removeUser(accountId);
-      const user = getUserById(accountId);
       townSession.addUser(user);
+
       const transform = new TransformInfo().getTransform();
-      playerInfo = await townRedis.addPlayer(accountId, nickname, charClass, transform, true);
+      const playerEnterInfo = await townRedis.addPlayer(
+        accountId,
+        nickname,
+        charClass,
+        transform,
+        true,
+      );
 
       socket.sendResponse(SuccessCode.Success, '타운으로 돌아갑니다.', payloadTypes.S_ENTER, {
-        player: playerInfo,
+        player: playerEnterInfo,
       });
       return;
     }

@@ -588,8 +588,8 @@ class Dungeon extends Game {
         const totalExp = playersExp[user.accountId] || 10;
         const player = await userDB.updateExp(user.accountId, totalExp, true);
         return {
-          playerId: accountId,
-          accountLevel: playerLevel,
+          playerId: user.accountId,
+          accountLevel: player.playerLevel,
           accountExp: totalExp,
         };
       }),
@@ -622,7 +622,7 @@ class Dungeon extends Game {
         return {
           playerId: user.accountId,
           accountLevel: player.playerLevel,
-          accountEXP: totalExp,
+          accountExP: totalExp,
         };
       }),
     ).then(([...data]) => {
