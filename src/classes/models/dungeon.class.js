@@ -61,8 +61,9 @@ class Dungeon extends Game {
     this.towerHp = towerHp;
   }
 
-  updateTowerHp(amount) {
-    this.towerHp -= amount;
+  updateTowerHp(monsterIdx) {
+    const monsterInfo = this.roundMonsters.get(monsterIdx);
+    this.towerHp -= monsterInfo.atk;
     if (this.towerHp <= 0) {
       this.towerHp = 0;
       this.updateGameOver();
@@ -124,11 +125,11 @@ class Dungeon extends Game {
   /**
    *
    * @param {string} accountId 계정 아이디
-   * @param {number} damage 몬스터가 가한 데미지
+   * @param {number} monsterIdx 몬스터가 가한 데미지
    * @param {boolean} wantResult 반환 여부
    * @returns 플레이어 상태
    */
-  updateMonsterAttackPlayer(accountId, damage, wantResult) {
+  updateMonsterAttackPlayer(accountId, monsterIdx, wantResult) {
     if (!(this.playerInfos.has(accountId) && this.playerStatus.has(accountId))) {
       console.log('해당 플레이어가 존재하지 않음');
       return null;
@@ -139,8 +140,8 @@ class Dungeon extends Game {
       console.log('player is already dead');
       return null;
     }
-
-    data.playerHp -= damage;
+    const monsterInfo = this.roundMonsters.get(monsterIdx);
+    data.playerHp -= monsterInfo.atk;
     this.playerStatus.set(accountId, data);
 
     if (wantResult) {
@@ -589,7 +590,7 @@ class Dungeon extends Game {
         const player = await userDB.updateExp(user.accountId, totalExp, true);
         return {
           playerId: user.accountId,
-          accountLevel: player.playerLevel,
+          accountLevel: player.userLevel,
           accountExp: totalExp,
         };
       }),
@@ -621,8 +622,8 @@ class Dungeon extends Game {
         const player = await userDB.updateExp(user.accountId, totalExp, true);
         return {
           playerId: user.accountId,
-          accountLevel: player.playerLevel,
-          accountExP: totalExp,
+          accountLevel: player.userLevel,
+          accountExp: totalExp,
         };
       }),
     ).then(([...data]) => {
