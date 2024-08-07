@@ -467,6 +467,7 @@ message RoundResult {
   PlayerInfo playerInfo = 1;
   PlayerStatus playerStatus = 2;
   repeated int32 boxGold = 3;
+  int32 roundGold = 4;
   // 밤 라운드 정산 정보 있으면 여기에 추가?
 }
 
