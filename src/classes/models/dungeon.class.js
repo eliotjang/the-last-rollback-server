@@ -791,8 +791,8 @@ class Dungeon extends Game {
 
       playerStatus = this.playerStatus.get(user.accountId);
       if (playerStatus.playerLevel >= lastData.level) {
-        console.log('최대 레벨 도달');
-        return;
+        console.log(`${playerInfo.nickname}님 최대 레벨 도달`);
+        break;
       }
       targetData = charStatInfo[playerInfo.charClass].find(
         (data) => data.level === playerStatus.playerLevel,
