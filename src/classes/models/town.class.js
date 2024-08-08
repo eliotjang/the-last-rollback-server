@@ -26,10 +26,12 @@ class Town extends Game {
           user.getPlayerInfo().then((userInfo) => {
             super.notifyOthers(user.accountId, payloadTypes.S_SPAWN, { players: [userInfo] });
             // console.log('기존 유저에게 새로 들어온 유저 정보를 전송:', userInfo);
-            this.systemChatAll(user.accountId, `${user.accountId}님이 입장하였습니다.`);
+            this.systemChatAll(user.accountId, `${userInfo.nickname}님이 입장하였습니다.`);
           });
         } else {
-          this.systemChat(user.accountId, `${user.accountId}님이 입장하였습니다.`);
+          user.getPlayerInfo().then((userInfo) => {
+            this.systemChat(user.accountId, `${userInfo.nickname}님이 입장하였습니다.`);
+          });
         }
       })
       .catch((err) => {
