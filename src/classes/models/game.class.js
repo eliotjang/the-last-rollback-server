@@ -15,7 +15,10 @@ class Game {
   addUser(user) {
     user.setSession(this.type, this.id);
     this.users.push(user);
-    console.log('In Game------------------------------------------------------', this.users);
+    console.log(
+      'In Game------------------------------------------------------',
+      this.users.map((user) => user.accountId),
+    );
   }
 
   // remove from Session

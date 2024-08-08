@@ -13,6 +13,7 @@ import { SuccessCode } from '../../utils/error/errorCodes.js';
 import { getUserById } from '../../session/user.session.js';
 import { getAllTownSessions, addTownSession } from '../../session/town.session.js';
 import lodash from 'lodash';
+import { handleError } from '../../utils/error/errorHandler.js';
 // const dc.general.MAX_USERS = 4;
 
 class Dungeon extends Game {
@@ -469,26 +470,48 @@ class Dungeon extends Game {
    * @returns 해당 몬스터 정보
    */
   updatePlayerAttackMonster(accountId, monsterIndex, damage, wantResult) {
-    if (!this.roundMonsters.has(monsterIndex)) {
+    const data = this.roundMonsters.get(monsterIndex);
+    if (!data) {
       console.log('해당 몬스터가 존재하지 않음');
       return null;
     }
-
-    const data = this.roundMonsters.get(monsterIndex);
+    console.log(`[${monsterIndex}] monster hit, damage: -${damage}, current state: `, data);
+    if (data.monsterHp <= 0) {
+      return null;
+    }
 
     data.monsterHp -= damage;
     this.roundMonsters.set(monsterIndex, data);
-
-    if (data.monsterHp <= 0) {
-      console.log(`monsterIndex ${monsterIndex}번 몬스터 처치`);
-      this.updatePlayerExp(accountId, data.killExp);
-      this.killMonster(monsterIndex, accountId);
-      pickUpHandler(accountId);
-    }
-
-    if (wantResult) {
-      return this.getMonster(monsterIndex);
-    }
+    // 여기까지 Bull
+    // 여기서부터 비동기
+    (async () => {
+      if (data.monsterHp <= 0) {
+        console.log(`monsterIndex ${monsterIndex}번 몬스터 처치`);
+        this.updatePlayerExp(accountId, data.killExp);
+        this.killMonster(monsterIndex, accountId);
+        pickUpHandler(accountId);
+      }
+      const monster = this.getMonster(monsterIndex);
+      // this.getUser(accountId).socket.sendResponse(
+      //   SuccessCode.Success,
+      //   `몬스터(${monsterIndex})가 플레이어(${accountId})에 의해 피격, 몬스터 남은 체력: ${
+      //     monster.monsterHp
+      //   }`,
+      //   payloadTypes.S_MONSTER_ATTACKED,
+      //   {
+      //     monsterIndex,
+      //     monsterHp: monster.monsterHp,
+      //   },
+      // );
+      this.notifyAll(payloadTypes.S_MONSTER_ATTACKED, {
+        monsterIdx: monsterIndex,
+        monsterHp: monster.monsterHp,
+      });
+      // this.attackedMonster(accountId, monsterIndex, monster.monsterHp);
+      // if (wantResult) {
+      //   return this.getMonster(monsterIndex);
+      // }
+    })();
   }
 
   /**
@@ -818,7 +841,7 @@ class Dungeon extends Game {
         playerExp: playerStatus.playerExp,
         playerCurHp: playerStatus.playerHp,
         playerCurMp: playerStatus.playerMp,
-        nickName: playerInfo.nickname,
+        playerName: playerInfo.nickname,
         playerFullHp: targetData.maxHp,
         playerFullMp: targetData.maxMp,
         atk: targetData.atk,
@@ -845,29 +868,39 @@ class Dungeon extends Game {
         this.setMonsters(dungeonInfo.monsters);
         return dungeonInfo;
       })(),
-      Promise.all(this.users.map(async (user) => this.fetchRoundStatsByUser(user))),
-    ]).then(([dungeonInfo, roundResults]) => {
-      this.phase = dc.phases.DAY;
-      this.round++;
-      const playerStatus = this.getPlayerStatus(accountId);
-      const gameExp = playerStatus.playerExp;
-      this.updateRoundResult(accountId, gameExp);
-      if (!dungeonInfo) {
-        // 마지막 라운드가 종료됨 (gameEnd 전송)
-        this.updateGameWin();
-      } else {
-        // 아직 라운드가 남음
-        console.log(roundResults);
-        const data = {
-          dungeonInfo,
-          roundResults,
-        };
-        console.log('########', JSON.stringify(data));
-        this.notifyAll(payloadTypes.S_NIGHT_ROUND_END, data);
-        setTimeout(this.startDayRoundTimer.bind(this), 10000); // temp
-        // this.startDayRoundTimer();
-      }
-    });
+      Promise.all(
+        this.users.map(async (user) => {
+          const roundResult = this.fetchRoundStatsByUser(user);
+          const playerStatus = this.getPlayerStatus(accountId);
+          const gameExp = playerStatus.playerExp;
+          this.updateRoundResult(accountId, gameExp);
+          return roundResult;
+        }),
+      ),
+    ])
+      .then(([dungeonInfo, roundResults]) => {
+        this.phase = dc.phases.DAY;
+        this.round++;
+
+        if (!dungeonInfo) {
+          // 마지막 라운드가 종료됨 (gameEnd 전송)
+          this.updateGameWin();
+        } else {
+          // 아직 라운드가 남음
+          // console.log(roundResults);
+          const data = {
+            dungeonInfo,
+            roundResults,
+          };
+          // console.log('########', JSON.stringify(data));
+          this.notifyAll(payloadTypes.S_NIGHT_ROUND_END, data);
+          setTimeout(this.startDayRoundTimer.bind(this), 10000); // temp
+          // this.startDayRoundTimer();
+        }
+      })
+      .catch((err) => {
+        handleError(null, err);
+      });
   }
 
   /**
