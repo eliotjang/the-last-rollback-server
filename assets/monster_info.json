@@ -14,8 +14,8 @@
     { "monsterModel": 2010, "monsterName": "chestMonster", "monsterHp": 100, "killExp": 10, "atk": 19 },
     { "monsterModel": 2011, "monsterName": "salamander", "monsterHp": 100, "killExp": 10, "atk": 20 },
     { "monsterModel": 2012, "monsterName": "crabMonster", "monsterHp": 100, "killExp": 10, "atk": 21 },
-    { "monsterModel": 2013, "monsterName": "nagaWizard", "monsterHp": 3000, "killExp": 200, "atk": 100 },
-    { "monsterModel": 2014, "monsterName": "cactus", "monsterHp": 3000, "killExp": 200, "atk": 80 },
+    { "monsterModel": 2013, "monsterName": "nagaWizard", "monsterHp": 1000, "killExp": 200, "atk": 100 },
+    { "monsterModel": 2014, "monsterName": "cactus", "monsterHp": 1000, "killExp": 200, "atk": 80 },
     { "monsterModel": 2015, "monsterName": "orc", "monsterHp": 100, "killExp": 10, "atk": 24 },
     { "monsterModel": 2016, "monsterName": "evilMage", "monsterHp": 100, "killExp": 10, "atk": 25 },
     { "monsterModel": 2017, "monsterName": "dragon", "monsterHp": 100, "killExp": 10, "atk": 26 },
@@ -29,7 +29,7 @@
     { "monsterModel": 2025, "monsterName": "bishopKnight", "monsterHp": 100, "killExp": 10, "atk": 34 },
     { "monsterModel": 2026, "monsterName": "golem", "monsterHp": 100, "killExp": 10, "atk": 35 },
     { "monsterModel": 2027, "monsterName": "wormMonster", "monsterHp": 100, "killExp": 10, "atk": 36 },
-    { "monsterModel": 2028, "monsterName": "blackKnight", "monsterHp": 5000, "killExp": 500, "atk": 110 },
+    { "monsterModel": 2028, "monsterName": "blackKnight", "monsterHp": 1000, "killExp": 500, "atk": 110 },
     { "monsterModel": 2029, "monsterName": "demonKing", "monsterHp": 100, "killExp": 10, "atk": 38 }
   ]
 }
