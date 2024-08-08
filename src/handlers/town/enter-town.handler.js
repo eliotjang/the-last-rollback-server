@@ -92,18 +92,13 @@ const enterTownHandler = async ({ socket, accountId, packet, playerInfo }) => {
       userData.userLevel,
       true,
     );
-    const { nickname: nn, playerId, ...rest } = playerInfo; // needs type casting number -> string
     townSession.addUser(user);
 
     console.log(userData.userLevel);
     console.log(typeof userData.userLevel);
     // console.log('플레이어 인포', playerInfo);
     socket.sendResponse(SuccessCode.Success, message, payloadTypes.S_ENTER, {
-      player: {
-        nickname: JSON.stringify(nn),
-        playerId: JSON.stringify(playerId),
-        ...rest,
-      },
+      player: playerInfo,
     });
     // const othersPlayer = await townRedis.getOthersPlayerInfo(accountId);
     // if (!lodash.isEmpty(othersPlayer)) {
