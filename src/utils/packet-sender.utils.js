@@ -1,4 +1,6 @@
-import { packetTypes, payloadTypes } from '../constants/packet.constants.js';
+import { isBlackListed } from '../constants/constants.js';
+import { packetTypes, payloadKeyNames, payloadTypes } from '../constants/packet.constants.js';
+import { handleError } from './error/errorHandler.js';
 import { writeHeader } from './packet-header.utils.js';
 import { deserializeTest, serializeEx } from './packet-serializer.utils.js';
 
@@ -17,16 +19,20 @@ export function sendPacket(payloadType, data) {
 }
 
 export async function sendPing(timestamp, dontSend = false) {
-  const packetData = {
-    timestamp,
-  };
-  const serialized = serializeEx(packetTypes.PING, 0, packetData);
-  const header = writeHeader(serialized.length, packetTypes.PING);
-  const packet = Buffer.concat([header, serialized]);
-  if (dontSend) {
-    return packet;
+  try {
+    const packetData = {
+      timestamp,
+    };
+    const serialized = serializeEx(packetTypes.PING, 0, packetData);
+    const header = writeHeader(serialized.length, packetTypes.PING);
+    const packet = Buffer.concat([header, serialized]);
+    if (dontSend) {
+      return packet;
+    }
+    this.write(packet);
+  } catch (err) {
+    handleError(this, err);
   }
-  this.write(packet);
 }
 
 /**
@@ -46,8 +52,12 @@ export const sendResponse = async function (code, message, payloadType, payload,
       payloadType,
       payload,
     };
+    if (!isBlackListed(payloadType)) {
+      console.log(`SERIALIZING: ${payloadType} ${payloadKeyNames[payloadType]}`);
+    }
+
     const serializedPacket = serializeEx(packetTypes.RESPONSE, payloadType, packetData);
-    deserializeTest(packetTypes.RESPONSE, serializedPacket);
+    // deserializeTest(packetTypes.RESPONSE, serializedPacket);
     const header = writeHeader(serializedPacket.length, packetTypes.RESPONSE);
     const packet = Buffer.concat([header, serializedPacket]);
 
@@ -57,7 +67,7 @@ export const sendResponse = async function (code, message, payloadType, payload,
 
     this.write(packet);
   } catch (err) {
-    console.log('RESPONSE ERROR');
+    handleError(this, err);
   }
 };
 
@@ -75,14 +85,18 @@ export const sendNotification = async function (payloadType, payload) {
       payloadType,
       payload,
     };
-    const serializedPacket = serializeEx(packetTypes.NOTIFICATION, payloadType, packetData);
-    if (payloadType !== payloadTypes.S_MOVE && payloadType !== payloadTypes.S_MONSTER_MOVE) {
-      deserializeTest(packetTypes.NOTIFICATION, serializedPacket);
+    if (!isBlackListed(payloadType)) {
+      console.log(`SERIALIZING: ${payloadType} ${payloadKeyNames[payloadType]}`);
     }
+
+    const serializedPacket = serializeEx(packetTypes.NOTIFICATION, payloadType, packetData);
+    // if (payloadType !== payloadTypes.S_MOVE && payloadType !== payloadTypes.S_MONSTER_MOVE) {
+    // deserializeTest(packetTypes.NOTIFICATION, serializedPacket);
+    // }
     const header = writeHeader(serializedPacket.length, packetTypes.NOTIFICATION);
     const packet = Buffer.concat([header, serializedPacket]);
     this.write(packet);
   } catch (err) {
-    console.log('NOTIFICATION ERROR');
+    handleError(this, err);
   }
 };
