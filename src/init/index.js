@@ -13,7 +13,7 @@ const initServer = async () => {
     await loadProtoFiles();
     await testUserDBQueries();
     await testGameCharDBQueries();
-    await testAllRedisConnections();
+    // await testAllRedisConnections();
     // await testAllSessionConnections();
   } catch (e) {
     console.error(e);

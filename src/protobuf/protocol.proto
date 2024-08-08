@@ -379,6 +379,7 @@ message PlayerInfo {
   int32 itemBox = 6;
   repeated int32 killed = 7;
   bool isDead = 8;
+  int32 accountLevel = 9;
 }
 
 // C_Enter 를 통해 입장했을때는 서버에서 랜덤으로 위치값 생성 / 기본값은 하단 밸류 참조

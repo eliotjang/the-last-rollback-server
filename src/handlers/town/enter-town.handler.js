@@ -9,11 +9,15 @@ import { getUserById } from '../../session/user.session.js';
 import { gameCharDB } from '../../db/game-char/game-char.db.js';
 import lodash from 'lodash';
 import { getDungeonSessionByUserId } from '../../session/dungeon.session.js';
+import { userDB } from '../../db/user/user.db.js';
 
 const enterTownHandler = async ({ socket, accountId, packet, playerInfo }) => {
   try {
     const { nickname, charClass } = packet;
     let message;
+
+    const userData = await userDB.getUser(accountId);
+    console.log('유저 디비 : ', userDB);
 
     const dungeonSession = getDungeonSessionByUserId(accountId);
     if (dungeonSession) {
@@ -34,6 +38,7 @@ const enterTownHandler = async ({ socket, accountId, packet, playerInfo }) => {
         nickname,
         charClass,
         transform,
+        userData.userLevel,
         true,
       );
 
@@ -79,10 +84,20 @@ const enterTownHandler = async ({ socket, accountId, packet, playerInfo }) => {
     }
 
     const transform = new TransformInfo().getTransform();
-    playerInfo = await townRedis.addPlayer(accountId, nickname, charClass, transform, true);
+    playerInfo = await townRedis.addPlayer(
+      accountId,
+      nickname,
+      charClass,
+      transform,
+      userData.userLevel,
+      true,
+    );
 
     townSession.addUser(user);
 
+    console.log(userData.userLevel);
+    console.log(typeof userData.userLevel);
+    console.log('플레이어 인포', playerInfo);
     socket.sendResponse(SuccessCode.Success, message, payloadTypes.S_ENTER, {
       player: playerInfo,
     });
