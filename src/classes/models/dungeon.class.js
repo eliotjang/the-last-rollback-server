@@ -813,13 +813,15 @@ class Dungeon extends Game {
       this.updatePlayerLevel(user.accountId);
 
       playerStatus = this.playerStatus.get(user.accountId);
+
+      targetData = charStatInfo[playerInfo.charClass].find(
+        (data) => data.level === playerStatus.playerLevel,
+      );
+
       if (playerStatus.playerLevel >= lastData.level) {
         console.log(`${playerInfo.nickname}님 최대 레벨 도달`);
         break;
       }
-      targetData = charStatInfo[playerInfo.charClass].find(
-        (data) => data.level === playerStatus.playerLevel,
-      );
     }
     // TODO: 상자깡?
     // const items = 상자깡();
