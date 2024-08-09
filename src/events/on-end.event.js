@@ -8,7 +8,7 @@ import { townRedis } from '../utils/redis/town.redis.js';
 
 const onEnd = (socket) => async () => {
   try {
-    // await removeUser(socket);
+    await removeUser(socket);
     // const player = await townRedis.removePlayer(socket.accountId, true);
     // await gameCharDB.updateTransform(socket.accountId, player.transform, true);
     // await socketRedis.removeTownSocket(socket.accountId);
