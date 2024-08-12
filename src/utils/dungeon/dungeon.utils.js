@@ -1,4 +1,4 @@
-import Dungeon from '../../classes/models/dungeon.class.js';
+import Dungeon from '../../classes/sessions/dungeon.class.js';
 import { gameAssetConstants } from '../../constants/asset.constants.js';
 import dc from '../../constants/game.constants.js';
 import { payloadTypes } from '../../constants/packet.constants.js';
