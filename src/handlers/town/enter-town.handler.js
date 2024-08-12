@@ -9,14 +9,20 @@ import { getUserById } from '../../session/user.session.js';
 import { gameCharDB } from '../../db/game-char/game-char.db.js';
 import lodash from 'lodash';
 import { getDungeonSessionByUserId } from '../../session/dungeon.session.js';
+import { userDB } from '../../db/user/user.db.js';
 
 const enterTownHandler = async ({ socket, accountId, packet, playerInfo }) => {
   try {
     const { nickname, charClass } = packet;
     let message;
 
+    const userData = await userDB.getUser(accountId);
+    console.log('유저 디비 : ', userDB);
+
     const dungeonSession = getDungeonSessionByUserId(accountId);
     if (dungeonSession) {
+      const user = getUserById(accountId);
+
       const townSessions = getAllTownSessions();
       let townSession = townSessions.find((townSession) => !townSession.isFull());
       if (!townSession) {
@@ -24,13 +30,20 @@ const enterTownHandler = async ({ socket, accountId, packet, playerInfo }) => {
       }
 
       dungeonSession.removeUser(accountId);
-      const user = getUserById(accountId);
       townSession.addUser(user);
+
       const transform = new TransformInfo().getTransform();
-      playerInfo = await townRedis.addPlayer(accountId, nickname, charClass, transform, true);
+      const playerEnterInfo = await townRedis.addPlayer(
+        accountId,
+        nickname,
+        charClass,
+        transform,
+        userData.userLevel,
+        true,
+      );
 
       socket.sendResponse(SuccessCode.Success, '타운으로 돌아갑니다.', payloadTypes.S_ENTER, {
-        player: playerInfo,
+        player: playerEnterInfo,
       });
       return;
     }
@@ -71,10 +84,19 @@ const enterTownHandler = async ({ socket, accountId, packet, playerInfo }) => {
     }
 
     const transform = new TransformInfo().getTransform();
-    playerInfo = await townRedis.addPlayer(accountId, nickname, charClass, transform, true);
-
+    playerInfo = await townRedis.addPlayer(
+      accountId,
+      nickname,
+      charClass,
+      transform,
+      userData.userLevel,
+      true,
+    );
     townSession.addUser(user);
 
+    console.log(userData.userLevel);
+    console.log(typeof userData.userLevel);
+    // console.log('플레이어 인포', playerInfo);
     socket.sendResponse(SuccessCode.Success, message, payloadTypes.S_ENTER, {
       player: playerInfo,
     });

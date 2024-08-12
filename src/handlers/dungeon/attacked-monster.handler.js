@@ -1,3 +1,4 @@
+import { enqueueMonsterHitJob } from '../../bull/monster/monster-kill.js';
 import { attackTypes } from '../../constants/game.constants.js';
 import { payloadTypes } from '../../constants/packet.constants.js';
 import { sessionTypes } from '../../constants/session.constants.js';
@@ -40,19 +41,27 @@ const attackedMonsterHandler = ({ socket, accountId, packet }) => {
     // monsterHp -= damage;
     // const monsterHp = 25;
 
-    const monster = dungeonSession.updatePlayerAttackMonster(accountId, monsterIdx, damage, true);
+    const jobData = {
+      accountId,
+      monsterIdx,
+      damage,
+    };
 
-    dungeonSession.attackedMonster(accountId, monsterIdx, monster.monsterHp);
+    enqueueMonsterHitJob(jobData);
 
-    socket.sendResponse(
-      SuccessCode.Success,
-      `몬스터(${monsterIdx})가 플레이어(${accountId})에 의해 피격, 몬스터 남은 체력: ${monster.monsterHp}`,
-      payloadTypes.S_MONSTER_ATTACKED,
-      {
-        monsterIdx,
-        monsterHp: monster.monsterHp,
-      },
-    );
+    // const monster = dungeonSession.updatePlayerAttackMonster(accountId, monsterIdx, damage, true);
+
+    // dungeonSession.attackedMonster(accountId, monsterIdx, monster.monsterHp);
+
+    // socket.sendResponse(
+    //   SuccessCode.Success,
+    //   `몬스터(${monsterIdx})가 플레이어(${accountId})에 의해 피격, 몬스터 남은 체력: ${monster.monsterHp}`,
+    //   payloadTypes.S_MONSTER_ATTACKED,
+    //   {
+    //     monsterIdx,
+    //     monsterHp: monster.monsterHp,
+    //   },
+    // );
   } catch (e) {
     handleError(e);
   }

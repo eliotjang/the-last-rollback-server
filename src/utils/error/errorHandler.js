@@ -1,16 +1,30 @@
 import { ErrorCodes } from './errorCodes.js';
 
 export const handleError = (socket, error) => {
-  let responseCode;
-  let message;
-  console.log(error);
-  if (error.code) {
-    responseCode = error.code;
-    message = error.message;
-    console.error(`에러 코드: ${error.code}, 메시지: ${error.message}`);
-  } else {
-    responseCode = ErrorCodes.SOCKET_ERROR;
-    message = error.message;
-    console.error(`일반 에러: ${error.message}`);
+  try {
+    let responseCode;
+    let message;
+    if (error.code) {
+      responseCode = error.code;
+      message = error.message;
+      const err = `
+        ${error.name}
+        Code: ${error.code}
+        Message: ${error.message}
+        ${error.stack}
+      `;
+      console.error(err);
+    } else {
+      responseCode = ErrorCodes.SOCKET_ERROR;
+      message = error.message;
+      const err = `
+        ${error.name}
+        Message: ${error.message}
+        ${error.stack}
+      `;
+      console.error(err);
+    }
+  } catch (err) {
+    console.error('Error in errorHandler:', err);
   }
 };

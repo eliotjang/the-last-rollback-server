@@ -10,6 +10,7 @@ export const FIELD = {
   NICKNAME: 'nickname',
   CHAR_CLASS: 'charClass',
   TRANSFORM: 'transform',
+  ACCOUNT_LEVEL: 'accountLevel',
 };
 
 export const townRedis = {
@@ -19,16 +20,18 @@ export const townRedis = {
    * @param {string} nickname 캐릭터 닉네임
    * @param {string} charClass 캐릭터 클래스
    * @param {object} transform 캐릭터 좌표
+   * @param {number} accountLevel 계정 레벨
    * @param {boolean} wantResult true 시, playerInfo 객체 반환
    * @returns playerInfo 객체 반환
    */
-  addPlayer: async function (accountId, nickname, charClass, transform, wantResult) {
+  addPlayer: async function (accountId, nickname, charClass, transform, accountLevel, wantResult) {
     try {
       const key = PREFIX + ':' + accountId + ':';
       await redisClient.hSet(key, FIELD.PLAYER_ID, accountId);
       await redisClient.hSet(key, FIELD.NICKNAME, nickname);
       await redisClient.hSet(key, FIELD.CHAR_CLASS, JSON.stringify(charClass));
       await redisClient.hSet(key, FIELD.TRANSFORM, JSON.stringify(transform));
+      await redisClient.hSet(key, FIELD.ACCOUNT_LEVEL, JSON.stringify(accountLevel));
 
       if (wantResult) {
         return await this.getPlayerInfo(accountId);
@@ -70,6 +73,8 @@ export const townRedis = {
       for (const info in FIELD) {
         data[FIELD[info]] = await redisClient.hGet(key, FIELD[info]);
       }
+
+      console.log(data);
 
       if (data) {
         const result = changeProperType(data);

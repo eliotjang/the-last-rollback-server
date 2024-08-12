@@ -7,7 +7,7 @@ import { handleError } from '../../utils/error/errorHandler.js';
 const animationPlayerHandler = ({ socket, accountId, packet }) => {
   try {
     const { animCode, monsterIdx } = packet;
-    console.log('animCode', animCode);
+    // console.log('animCode', animCode);
     const user = getUserById(accountId);
     const dungeonSession = user.getSession();
     if (!dungeonSession) {
@@ -15,7 +15,7 @@ const animationPlayerHandler = ({ socket, accountId, packet }) => {
     }
 
     const data = { animCode, playerId: accountId, monsterIdx };
-    console.log('data', data);
+    // console.log('data', data);
     dungeonSession.animationPlayer(data);
   } catch (e) {
     handleError(e);
