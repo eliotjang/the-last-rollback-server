@@ -40,8 +40,8 @@ const handlers = {
   [payloadTypes.C_TOWER_ATTACKED]: towerHpUpdateHandler,
   // [payloadTypes.C_DEFENSIVE_STRUCTURE]: defensiveStructureHandler,
   // [payloadTypes.C_ATTACK_DEFENSIVE_STRUCTURE]: attackDefensiveStructureHandler,
-  [payloadTypes.C_ATTACK_STRUCTURE]: structureHandler,
-  [payloadTypes.C_ATTACK_STRUCTURE_ATTACK_MONSTER]: structureAttackedMonsterHandler,
+  [payloadTypes.C_STRUCTURE]: structureHandler,
+  [payloadTypes.C_STRUCTURE_ATTACKED]: structureAttackedMonsterHandler,
   [payloadTypes.C_ANIMATION_STRUCTURE]: animationStructureHandler,
 };
 

@@ -1,5 +1,3 @@
-import attackDefensiveStructureHandler from '../handlers/dungeon/attack-defensive-structure.handler';
-
 export const gameAssetConstants = {
   charStatInfo: {
     NAME: 'charStatInfo',
