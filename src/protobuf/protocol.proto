@@ -74,10 +74,12 @@ enum MsgId {
     S_TOWER_ATTACKED = 131;
     S_GAME_END = 132;
 
-    C_DEFENSIVE_STRUCTURE = 133;
-    S_DEFENSIVE_STRUCTURE = 134;
-    C_ATTACK_DEFENSIVE_STRUCTURE = 135;
-    S_ATTACK_DEFENSIVE_STRUCTURE = 136;
+    C_STRUCTURE = 133;
+    S_STRUCTURE = 134;
+    C_STRUCTURE_ATTACKED = 135;
+    S_STRUCTURE_ATTACKED = 136;
+    C_ANIMATION_STRUCTURE = 137;
+    S_ANIMATION_STRUCTURE = 138;
 
     S_SOME_NOTIFICATION = 300;
 }
@@ -372,33 +374,53 @@ message S_PickUpItemBox {
   uint32 updateBox = 2;
 }
 
-message C_DefensiveStructure {
-  uint32 defenseModel = 1;
+// 구조물 설치
+message C_Structure {
+  uint32 structureModel = 1;
+  TransformInfo transform = 2;
 }
 
-message S_DefensiveStructure {
-  uint32 defenseModel = 1;
-  uint32 defenseIdx = 2;
-  uint32 gold = 3;
+message S_Structure {
+  StructureStatus structureStatus = 1;
+  TransformInfo transform = 2;
+  int32 gold = 3;
 }
 
-// 몬스터가 방어 구조물을 공격할 경우(호스트만 전송)
-message C_AttackDefensiveStructure{
-  int32 monsterIdx = 1; // 공격 하는 몬스터 Idx
-  int32 attackType = 2;
-  int32 defenseIdx = 3; // 공격받는 방어 구조물 Idx
+// 몬스터가 구조물 공격
+message C_StructureAttacked {
+  int32 monsterIdx = 1;
+  int32 structureIdx = 2;
+  optional int32 attackType = 3;
 }
 
-// All
-message S_AttackDefensiveStructure{
-  int32 monsterIdx = 1; // 공격 하는 몬스터 Idx
-  int32 attackType = 2;
-  int32 defenseIdx = 3; // 공격받는 방어 구조물 Idx
-  int32 defenseHp = 4;
+message S_StructureAttacked {
+  int32 monsterIdx = 1;
+  int32 structureIdx = 2;
+  int32 structureHp = 3;
+  optional int32 attackType = 4;
+}
+
+// 구조물이 몬스터를 공격
+message C_AnimationStructure {
+  int32 animCode = 1;
+  int32 structureIdx = 2;
+  int32 monsterIdx = 3;
+}
+
+message S_AnimationStructure {
+  int32 animCode = 1;
+  int32 structureIdx = 2;
+  int32 monsterIdx = 3;
 }
 
 // ---------------------------------
 // 정보 구조체
+
+message StructureStatus {
+  uint32 structureModel = 1;
+  uint32 structureIdx = 2;
+  int32 structureHp = 3;
+}
 
 message PlayerInfo {
   string playerId = 1;   // 입장할때 서버 내부에서 생성한 관리코드
@@ -541,8 +563,9 @@ message RequestPacket {
 
     C_TowerAttacked cTowerAttacked = 30;
 
-    C_DefensiveStructure cDefensiveStructure = 31;
-    C_AttackDefensiveStructure cAttackDefensiveStructure = 32;
+    C_Structure cStructure = 31;
+    C_StructureAttacked cStructureAttacked = 32;
+    C_AnimationStructure cAnimationStructure = 33;
   }
 }
 
@@ -612,7 +635,8 @@ message NotificationPacket {
     
     S_GameEnd sGameEnd = 16;
 
-    S_DefensiveStructure sDefensiveStructure = 17;
-    S_AttackDefensiveStructure sAttackDefensiveStructure = 18;
+    S_Structure sStructure = 17;
+    S_StructureAttacked sStructureAttacked = 18;
+    S_AnimationStructure sAnimationStructure = 19;
   }
 }

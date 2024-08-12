@@ -1,3 +1,5 @@
+import attackDefensiveStructureHandler from '../handlers/dungeon/attack-defensive-structure.handler';
+
 export const gameAssetConstants = {
   charStatInfo: {
     NAME: 'charStatInfo',
@@ -31,8 +33,8 @@ export const gameAssetConstants = {
     NAME: 'monsterSpawnLocate',
     PATH: 'monster_spawn_locate.json',
   },
-  defensiveStructure: {
-    NAME: 'defensiveStructure',
-    PATH: 'defensive_structure.json',
+  structureInfo: {
+    NAME: 'structureInfo',
+    PATH: 'structure_info.json',
   },
 };

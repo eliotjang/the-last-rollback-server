@@ -63,12 +63,13 @@ class Dungeon extends Game {
     this.timers = new Map();
     this.startTime = Date.now();
     this.playersResultArray = [];
-    this.defensiveStructure = new Map();
-    /* defensive_structure.json에 정의된 그대로 저장
-      defenseModel: 1,
-      defenseName: woodenFence,
+    this.structure = new Map();
+    /* structure_info.json에 정의된 그대로 저장
+      structureModel: 1,
+      structureName: woodenFence,
       hp: 20,
       maxHp: 20,
+      power: 0, 
       gold: 500
     */
   }
@@ -165,13 +166,13 @@ class Dungeon extends Game {
     }
   }
 
-  attackDefensiveStructure(accountId, monsterIdx, attackType, defenseIdx) {
+  monsterAttacksStructure(accountId, monsterIdx, structureIdx) {
     const monster = this.getMonster(monsterIdx);
     // console.log('monster : ', monster);
-    const data = this.getDefenseStructure(defenseIdx);
+    const data = this.getStructure(structureIdx);
 
     if (data.hp <= 0) {
-      this.systemChat(accountId, `${data.defenseName}이(가) 이미 파괴되었습니다.`);
+      this.systemChat(accountId, `${data.structureName}이(가) 이미 파괴되었습니다.`);
       return;
     }
 
@@ -179,19 +180,18 @@ class Dungeon extends Game {
       console.log('방어 구조물 파괴');
       data.hp = 0;
       data.isDestroyed = true;
-      this.defensiveStructure.set(defenseIdx, data);
-      this.systemChat(accountId, `${data.defenseName}이(가) 파괴되었습니다.`);
+      this.structure.set(structureIdx, data);
+      this.systemChat(accountId, `${data.structureName}이(가) 파괴되었습니다.`);
       // 방어 구조물 파괴
       return;
     }
 
     data.hp -= monster.atk;
-    this.defensiveStructure.set(defenseIdx, data);
-    this.notifyAll(payloadTypes.S_ATTACK_DEFENSIVE_STRUCTURE, {
+    this.structure.set(structureIdx, data);
+    this.notifyAll(payloadTypes.S_STRUCTURE_ATTACKED, {
       monsterIdx,
-      attackType,
-      defenseIdx,
-      defenseHp: data.hp,
+      structureIdx,
+      structureHp: data.hp,
     });
   }
 
@@ -363,36 +363,36 @@ class Dungeon extends Game {
     }
   }
 
-  getDefenseStructure(defenseIdx) {
-    return this.defensiveStructure.get(defenseIdx);
+  getStructure(structureIdx) {
+    return this.structure.get(structureIdx);
   }
 
-  buyDefenseStructure(accountId, data, defenseIdx, wantResult) {
-    if (this.defensiveStructure.has(defenseIdx)) {
-      console.log('동일한 defenseIdx를 가진 방어 구조물이 존재함');
+  buyStructure(accountId, data, structureStatus, transform, wantResult) {
+    if (this.structure.has(structureStatus.structureIdx)) {
+      console.log('동일한 Idx를 가진 구조물이 존재함');
       return null;
     }
 
     const playerInfo = this.playerInfos.get(accountId);
 
     if (playerInfo.gold - data.gold < 0) {
-      this.systemChat(accountId, `${data.defenseName}을(를) 구매할 골드가 부족합니다.`);
+      this.systemChat(accountId, `${data.structureName}을(를) 구매할 골드가 부족합니다.`);
       return null;
     }
 
     playerInfo.gold -= data.gold;
     this.playerInfos.set(accountId, playerInfo);
 
-    this.defensiveStructure.set(defenseIdx, data);
+    this.structure.set(structureStatus.structureIdx, data);
 
-    super.notifyAll(payloadTypes.S_DEFENSIVE_STRUCTURE, {
-      defenseModel: data.defenseModel,
-      defenseIdx,
+    super.notifyAll(payloadTypes.S_STRUCTURE, {
+      structureStatus,
+      transform,
       gold: playerInfo.gold,
     });
 
     if (wantResult) {
-      return this.getDefenseStructure(defenseIdx);
+      return this.getStructure(structureStatus.structureIdx);
     }
   }
 
@@ -534,6 +534,19 @@ class Dungeon extends Game {
     this.roundMonsters.set(monsterIndex, data);
     // 여기까지 Bull
     // 여기서부터 비동기
+    if (accountId === undefined) {
+      (async () => {
+        if (data.monsterHp <= 0) {
+          console.log(`monsterIndex ${monsterIndex}번 몬스터 처치`);
+        }
+        const monster = this.getMonster(monsterIndex);
+        this.notifyAll(payloadTypes.S_MONSTER_ATTACKED, {
+          monsterIdx: monsterIndex,
+          monsterHp: monster.monsterHp,
+        });
+      })();
+    }
+
     (async () => {
       if (data.monsterHp <= 0) {
         console.log(`monsterIndex ${monsterIndex}번 몬스터 처치`);
@@ -1000,6 +1013,10 @@ class Dungeon extends Game {
       return;
     }
     super.notifyAll(payloadTypes.S_ANIMATION_PLAYER, data);
+  }
+
+  animationStructure(data) {
+    super.notifyAll(payloadTypes.S_ANIMATION_STRUCTURE, data);
   }
 
   addPickUpList(data) {

@@ -22,6 +22,34 @@ const attackedMonsterHandler = ({ socket, accountId, packet }) => {
     // dungeonRedis에서 hp 정보 가져옴
     // let monsterHp = await dungeonRedis.get();
 
+    // 구조물이 몬스터를 공격하는 경우
+    if (attackType >= 100) {
+      const { structureInfo } = getGameAssets();
+      const data = structureInfo.data.find((element) => element.structureModel === 3);
+
+      let damage;
+      switch (attackType) {
+        case 100:
+          damage = data.power;
+          break;
+        case 101:
+          const currentIndex = structureInfo.data.indexOf(data);
+          nextData = structureInfo.data[currentIndex + 1];
+          damage = nextData.power;
+          break;
+      }
+
+      const jobData = {
+        accountId,
+        monsterIdx,
+        damage,
+        marker: true,
+      };
+
+      enqueueMonsterHitJob(jobData);
+      return;
+    }
+
     // dungeonRedis에서 플레이어 playerInfo(charStatInfo) 가져옴
     const playerInfo = dungeonSession.getPlayerInfo(accountId);
     const playerStatus = dungeonSession.getPlayerStatus(accountId);
