@@ -170,6 +170,7 @@ class Dungeon extends Game {
     console.log('몬스터가 구조물을 공격함');
     const monster = this.getMonster(monsterIdx);
     const data = this.getStructure(structureIdx);
+    console.log(this.structure);
 
     console.log('현재 구조물 인덱스', structureIdx);
     console.log('구조물 기존 hp', data.hp);
@@ -394,7 +395,8 @@ class Dungeon extends Game {
     console.log('구매 후 골드 : ', playerInfo.gold);
     this.playerInfos.set(accountId, playerInfo);
 
-    this.structure.set(structureStatus.structureIdx, data);
+    const structureCopy = JSON.parse(JSON.stringify(data)); // 깊은 복사
+    this.structure.set(structureStatus.structureIdx, structureCopy);
     console.log('구조물 내용', this.structure);
 
     super.notifyAll(payloadTypes.S_STRUCTURE, {
