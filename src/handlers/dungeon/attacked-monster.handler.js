@@ -22,23 +22,62 @@ const attackedMonsterHandler = ({ socket, accountId, packet }) => {
     // dungeonRedis에서 hp 정보 가져옴
     // let monsterHp = await dungeonRedis.get();
 
-    // 구조물이 몬스터를 공격하는 경우
-    if (attackType >= 100) {
-      const { structureInfo } = getGameAssets();
-      const data = structureInfo.data.find((element) => element.structureModel === 3);
+    // // 구조물이 몬스터를 공격하는 경우
+    // if (attackType >= 100) {
+    //   const { structureInfo } = getGameAssets();
+    //   const data = structureInfo.data.find((element) => element.structureModel === 3);
 
-      let damage;
-      switch (attackType) {
-        case 100:
-          damage = data.power;
-          break;
-        case 101:
-          const currentIndex = structureInfo.data.indexOf(data);
-          nextData = structureInfo.data[currentIndex + 1];
-          damage = nextData.power;
-          break;
-      }
+    //   let damage;
+    //   switch (attackType) {
+    //     case 100:
+    //       damage = data.power;
+    //       break;
+    //     case 101:
+    //       const currentIndex = structureInfo.data.indexOf(data);
+    //       nextData = structureInfo.data[currentIndex + 1];
+    //       damage = nextData.power;
+    //       break;
+    //   }
 
+    //   const jobData = {
+    //     accountId,
+    //     monsterIdx,
+    //     damage,
+    //     marker: true,
+    //   };
+
+    //   enqueueMonsterHitJob(jobData);
+    //   return;
+    // }
+
+    // dungeonRedis에서 플레이어 playerInfo(charStatInfo) 가져옴
+    const playerInfo = dungeonSession.getPlayerInfo(accountId);
+    const playerStatus = dungeonSession.getPlayerStatus(accountId);
+    const { charStatInfo, structureInfo } = getGameAssets();
+
+    let damage;
+    switch (attackType) {
+      case attackTypes.NORMAL:
+        damage = charStatInfo[playerInfo.charClass][playerStatus.playerLevel - 1].atk;
+        break;
+      case attackTypes.SKILL:
+        damage = charStatInfo[playerInfo.charClass][playerStatus.playerLevel - 1].magic;
+        break;
+      case attackTypes.BALLISTA:
+        const ballista = structureInfo.data.find(
+          (structure) => structure.structureName === 'ballista',
+        );
+        damage = ballista.power;
+      case attackTypes.LASER:
+        const laser = structureInfo.data.find((structure) => structure.structureName === 'laser');
+        damage = laser.power;
+      default:
+        damage = charStatInfo[playerInfo.charClass][playerStatus.playerLevel - 1].atk;
+    }
+    // monsterHp -= damage;
+    // const monsterHp = 25;
+
+    if (attackType !== attackTypes.NORMAL && attackType !== attackTypes.SKILL) {
       const jobData = {
         accountId,
         monsterIdx,
@@ -49,25 +88,6 @@ const attackedMonsterHandler = ({ socket, accountId, packet }) => {
       enqueueMonsterHitJob(jobData);
       return;
     }
-
-    // dungeonRedis에서 플레이어 playerInfo(charStatInfo) 가져옴
-    const playerInfo = dungeonSession.getPlayerInfo(accountId);
-    const playerStatus = dungeonSession.getPlayerStatus(accountId);
-    const { charStatInfo } = getGameAssets();
-
-    let damage;
-    switch (attackType) {
-      case attackTypes.NORMAL:
-        damage = charStatInfo[playerInfo.charClass][playerStatus.playerLevel - 1].atk;
-        break;
-      case attackTypes.SKILL:
-        damage = charStatInfo[playerInfo.charClass][playerStatus.playerLevel - 1].magic;
-        break;
-      default:
-        damage = charStatInfo[playerInfo.charClass][playerStatus.playerLevel - 1].atk;
-    }
-    // monsterHp -= damage;
-    // const monsterHp = 25;
 
     const jobData = {
       accountId,
