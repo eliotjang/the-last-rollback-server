@@ -68,9 +68,11 @@ const attackedMonsterHandler = ({ socket, accountId, packet }) => {
           (structure) => structure.structureName === 'ballista',
         );
         damage = ballista.power;
+        break;
       case attackTypes.LASER:
         const laser = structureInfo.data.find((structure) => structure.structureName === 'laser');
         damage = laser.power;
+        break;
       default:
         damage = charStatInfo[playerInfo.charClass][playerStatus.playerLevel - 1].atk;
     }
@@ -84,7 +86,6 @@ const attackedMonsterHandler = ({ socket, accountId, packet }) => {
         damage,
         marker: true,
       };
-
       enqueueMonsterHitJob(jobData);
       return;
     }

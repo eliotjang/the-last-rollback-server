@@ -559,6 +559,7 @@ class Dungeon extends Game {
           monsterHp: monster.monsterHp,
         });
       })();
+      return null;
     }
 
     (async () => {
