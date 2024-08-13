@@ -5,7 +5,7 @@ import { dungeonSessions } from '../../session/sessions.js';
 import { ErrorCodes } from '../../utils/error/errorCodes.js';
 
 // monsterKill시 실행
-const pickUpHandler = async (accountId) => {
+const pickUpHandler = async (accountId, round) => {
   // 아이템을 획득하였는지 검사
   //const itemId = getItem(); //Json파일에 있는 확률로 아이템을 얻는 함수(얻은 아이템이 어떤 아이템인지 return)
   const dungeonSession = getDungeonSessionByUserId(accountId);
