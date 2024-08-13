@@ -20,7 +20,7 @@ const structureHandler = ({ socket, accountId, packet }) => {
 
     const data = structureInfo.data.find((element) => element.structureModel === structureModel);
     const structureHp = data.maxHp;
-    structureIdx = structureIdx++;
+    structureIdx++;
 
     const structureStatus = {
       structureModel,
