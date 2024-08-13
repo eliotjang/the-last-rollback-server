@@ -19,6 +19,12 @@ const structureHandler = ({ socket, accountId, packet }) => {
     const { structureInfo } = getGameAssets();
 
     const data = structureInfo.data.find((element) => element.structureModel === structureModel);
+    if (!data) {
+      throw new CustomError(
+        ErrorCodes.STRUCTURE_NOT_FOUND,
+        `구조물 (${structureModel})을/를 찾을 수 없습니다.`,
+      );
+    }
     const structureHp = data.maxHp;
     structureIdx++;
 
