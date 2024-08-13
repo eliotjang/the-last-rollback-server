@@ -2,6 +2,7 @@ import { getGameAssets } from '../../init/assets.js';
 import { getProtoMessages } from '../../init/proto.init.js';
 import protobuf from 'protobufjs';
 import { Transform } from './transform.class.js';
+import { pickUpItemType } from '../../constants/dungeon.constants.js';
 
 export class Player {
   constructor(playerId, nickname, charClass, accountLevel = 1, accountExp = 0) {
@@ -37,7 +38,7 @@ export class DungeonPlayer extends Player {
     // this.playerStatus.updateExp(exp);
 
     this.playerStatus.playerExp += exp;
-    const data = getGameAssets().charStatInfo[this.charClass];
+    const data = getGameAssets().charStatInfo[this.playerInfo.charClass];
     while (this.playerStatus.playerExp >= this.playerStatus.baseStatInfo.maxExp) {
       if (this.playerStatus.playerLevel >= data[data.length - 1].level) {
         this.playerStatus.playerExp = this.playerStatus.baseStatInfo.maxExp;
@@ -48,6 +49,47 @@ export class DungeonPlayer extends Player {
       this.playerStatus.playerExp -= this.playerStatus.baseStatInfo.maxExp;
       this.playerStatus.baseStatInfo = new StatInfo(data[this.playerStatus.playerLevel - 1]);
     }
+  }
+
+  updateHp(hp) {
+    if (this.playerStatus.playerHp + hp < 0) {
+      return null;
+    }
+    this.playerStatus.playerHp += hp;
+    const data = getGameAssets().charStatInfo[this.playerInfo.charClass];
+    if (this.playerStatus.playerHp > data.maxHp) {
+      this.playerStatus.playerHp = data.maxHp;
+    }
+    return this.playerStatus.playerHp;
+  }
+
+  updateMp(mp) {
+    if (this.playerStatus.playerMp + mp < 0) {
+      return null;
+    }
+    this.playerStatus.playerMp += mp;
+    const data = getGameAssets().charStatInfo[this.playerInfo.charClass];
+    if (this.playerStatus.playerMp > data.maxMp) {
+      this.playerStatus.playerMp = data.maxMp;
+    }
+    return this.playerStatus.playerMp;
+  }
+
+  updateBox(n) {
+    if (this.playerInfo.mysteryBox + n < 0) {
+      return null;
+    }
+    this.playerInfo.mysteryBox += n;
+    const data = getGameAssets().charStatInfo[this.playerInfo.charClass];
+    if (this.playerInfo.mysteryBox > data.maxBox) {
+      this.playerInfo.mysteryBox = data.maxBox;
+    }
+    return this.playerInfo.mysteryBox;
+  }
+
+  updateTransform(transform) {
+    this.playerInfo.transform = transform;
+    return this.playerInfo.transform;
   }
 }
 
@@ -64,7 +106,7 @@ export class DungeonPlayerInfo extends PlayerInfo {
   constructor(playerInfo) {
     super(playerInfo.playerId, playerInfo.nickname, playerInfo.charClass);
     this.gold = 0;
-    this.itemBox = 0; // item count??
+    this.mysteryBox = 0;
     this.killed = []; // 죽인 몬스터
     this.isDead = false; // 플레이어 상태, (생존: false, 죽음: true)
   }

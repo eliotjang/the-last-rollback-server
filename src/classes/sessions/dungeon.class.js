@@ -14,6 +14,8 @@ import { getUserById } from '../../session/user.session.js';
 import { getAllTownSessions, addTownSession } from '../../session/town.session.js';
 import lodash from 'lodash';
 import { handleError } from '../../utils/error/errorHandler.js';
+import { Tower } from '../models/tower.class.js';
+import { DungeonPlayer } from '../models/player.class.js';
 // const dc.general.MAX_USERS = 4;
 
 class Dungeon extends Game {
@@ -48,79 +50,102 @@ class Dungeon extends Game {
         playerCurMp: charStatInfo[player1Info.charClass][0].mp,
       };
     */
-    this.towerHp = null;
-    this.itemNames = [];
-    this.itemProbability = [];
-    this.pickUpItems = [];
+    // this.towerHp = null;
+    // this.itemNames = [];
+    // this.itemProbability = [];
+    // this.pickUpItems = [];
     this.roundKillCount = 0;
     this.timers = new Map();
     this.startTime = Date.now();
     this.playersResultArray = [];
+
+    this.towers = new Map();
+    this.players = new Map();
   }
 
-  addTowerHp(towerHp) {
-    this.towerHp = towerHp;
+  addTower(towerIdx) {
+    this.towers.set(towerIdx, new Tower(this.dungeonCode));
   }
 
-  updateTowerHp(monsterIdx) {
+  updateTowerHp(towerIdx, monsterIdx) {
     const monsterInfo = this.roundMonsters.get(monsterIdx);
-    this.towerHp -= monsterInfo.atk;
-    if (this.towerHp <= 0) {
-      this.towerHp = 0;
-      this.updateGameOver();
-      // for (const [accountId, value] of this.playerStatus.entries()) {
-      //   console.log('accountId, value : ', accountId, value);
-      //   const user = this.getUser(accountId);
-      //   user.socket.sendResponse(SuccessCode.Success, '게임 패배', payloadTypes.S_GAME_END, {
-      //     result: 3, // 0 패배, 1 승리
-      //     playerId: accountId,
-      //     accountLevel: 3, //value.playerLevel,
-      //     accountExp: 3, //value.playerExp,
-      //   });
-      // }
+    const tower = this.towers.get(towerIdx);
+    tower.updateTowerHp(monsterInfo.atk);
+    super.notifyAll(payloadTypes.S_TOWER_ATTACKED, { towerHp: tower.hp });
+  }
+
+  addPlayer(accountId, player) {
+    this.players.set(accountId, new DungeonPlayer(player));
+  }
+
+  getPlayer(accountId) {
+    return this.player.get(accountId);
+  }
+
+  useSkill(accountId, mp) {
+    const playerMp = this.getPlayer(accountId).updateMp(mp);
+    // 추후 스킬 사용 시 패킷 전달 필요
+  }
+
+  movePlayer(accountId, transform) {
+    const playerTransform = this.getPlayer(accountId).updateTransform(transform);
+    super.notifyAll(payloadTypes.S_MOVE, { playerId: accountId, transform: playerTransform });
+  }
+
+  addHpPotion(accountId, hp) {
+    const playerHp = this.getPlayer(accountId).updateHp(hp);
+    this.systemChat(accountId, 'HP 물약 획득');
+    super.notifyAll(payloadTypes.S_PICK_UP_ITEM_HP, { playerId: accountId, playerHp });
+  }
+
+  addMpPotion(accountId, mp) {
+    const playerMp = this.getPlayer(accountId).updateMp(mp);
+    this.systemChat(accountId, 'MP 물약 획득');
+    super.notifyAll(payloadTypes.S_PICK_UP_ITEM_MP, { playerId: accountId, playerMp });
+  }
+
+  addMysteryBox(accountId, n) {
+    const mysteryBox = this.getPlayer(accountId).updateBox(n);
+    this.systemChat(accountId, '미스테리 박스 획득');
+    super.notifyAll(payloadTypes.S_PICK_UP_ITEM_BOX, {
+      playerId: accountId,
+      updateBox: mysteryBox,
+    });
+  }
+
+  mysteryBoxOpen(accountId, itemBox) {
+    if (!(this.playerInfos.has(accountId) && this.playerStatus.has(accountId))) {
+      console.log('해당 플레이어가 존재하지 않음');
+      return null;
     }
-    console.log('타워 공격', this.towerHp);
-    super.notifyAll(payloadTypes.S_TOWER_ATTACKED, { towerHp: this.towerHp });
 
-    return this.towerHp;
-  }
+    const { mysteryBoxInfo } = getGameAssets();
+    const golds = mysteryBoxInfo.data.map((data) => data.gold);
+    const goldProbability = mysteryBoxInfo.data.map((data) => data.probability);
+    const totalProbability = goldProbability.reduce((sum, cur) => sum + cur, 0);
 
-  /**
-   *
-   * @param {map} playerInfos 플레이어 정보
-   * @param {map} playerStatus 플레이어 상태
-   * @param {boolean} wantResult 반환 여부
-   * @returns 플레이어 정보 및 플레이어 상태 배열
-   */
-  addPlayers(playerInfos, playerStatus, wantResult) {
-    this.playerInfos = new Map(playerInfos);
-    this.playerStatus = new Map(playerStatus);
-
-    if (wantResult) {
-      return [this.playerInfos, this.playerStatus];
+    if (totalProbability != 100) {
+      throw new CustomError(ErrorCodes.PROBABILITY_ERROR, '확률의 합이 100이 아닙니다.');
     }
-  }
 
-  /**
-   *
-   * @param {string} accountId 계정 아이디
-   * @returns 플레이어 정보
-   */
-  getPlayerInfo(accountId) {
-    return this.playerInfos.get(accountId);
-  }
+    let boxGold = [];
 
-  getPlayersInfo() {
-    return this.playerInfos;
-  }
+    for (let i = 0; i < itemBox; i++) {
+      const randomNumber = Math.floor(Math.random() * 100 + 1);
+      let result = 0;
+      let accumulationNumber = 0;
 
-  /**
-   *
-   * @param {string} accountId 계정 아이디
-   * @returns 플레이어 상태
-   */
-  getPlayerStatus(accountId) {
-    return this.playerStatus.get(accountId);
+      for (let i = 0; i < golds.length; i++) {
+        accumulationNumber += goldProbability[i];
+        if (accumulationNumber >= randomNumber) {
+          result = golds[i];
+          break;
+        }
+      }
+
+      boxGold.push(result);
+    }
+    return boxGold;
   }
 
   /**
@@ -173,32 +198,6 @@ class Dungeon extends Game {
     }
     if (isAllDead) {
       this.updateGameOver();
-    }
-  }
-
-  /**
-   *
-   * @param {string} accountId 계정 아이디
-   * @param {number} skillMp 스킬 마나 사용
-   * @param {boolean} wantResult 반환 여부
-   * @returns 플레이어 상태
-   */
-  updatePlayerUseSkill(accountId, skillMp, wantResult) {
-    if (!(this.playerInfos.has(accountId) && this.playerStatus.has(accountId))) {
-      console.log('해당 플레이어가 존재하지 않음');
-      return null;
-    }
-    const data = this.playerStatus.get(accountId);
-    if (data.playerMp - skillMp < 0) {
-      console.log(`스킬 사용 마나 부족`);
-      return null;
-    }
-
-    data.playerMp -= skillMp;
-    this.playerStatus.set(accountId, data);
-
-    if (wantResult) {
-      return this.getPlayerStatus(accountId);
     }
   }
 
@@ -272,132 +271,6 @@ class Dungeon extends Game {
 
     data.playerLevel++;
     this.playerStatus.set(accountId, data);
-  }
-
-  /**
-   *
-   * @param {string} accountId 계정 아이디
-   * @param {object} transform 플레이어 이동 좌표
-   * @param {boolean} wantResult 반환 여부
-   * @returns 플레이어 정보
-   */
-  updatePlayerTransform(accountId, transform, wantResult) {
-    if (!(this.playerInfos.has(accountId) && this.playerStatus.has(accountId))) {
-      console.log('해당 플레이어가 존재하지 않음');
-      return null;
-    }
-
-    const data = this.playerInfos.get(accountId);
-    data.transform = transform;
-    this.playerInfos.set(accountId, data);
-
-    if (wantResult) {
-      return this.getPlayerInfo(accountId);
-    }
-  }
-
-  /**
-   *
-   * @param {string} accountId 계정 아이디
-   * @param {number} gold 획득 골드
-   * @param {boolean} wantResult 반환 여부
-   * @returns 플레이어 상태
-   */
-  addPlayerGold(accountId, gold, wantResult) {
-    if (!(this.playerInfos.has(accountId) && this.playerStatus.has(accountId))) {
-      console.log('해당 플레이어가 존재하지 않음');
-      return null;
-    }
-
-    const data = this.playerInfos.get(accountId);
-    data.gold += gold;
-    this.playerInfos.set(accountId, data);
-
-    if (wantResult) {
-      return this.getPlayerInfo(accountId);
-    }
-  }
-
-  /**
-   *
-   * @param {string} accountId 계정 아이디
-   * @param {number} gold 사용 골드
-   * @param {boolean} wantResult 반환 여부
-   * @returns 플레이어 상태
-   */
-  removePlayerGold(accountId, gold, wantResult) {
-    if (!(this.playerInfos.has(accountId) && this.playerStatus.has(accountId))) {
-      console.log('해당 플레이어가 존재하지 않음');
-      return null;
-    }
-
-    const data = this.playerInfos.get(accountId);
-
-    if (data.gold - gold < 0) {
-      console.log('골드가 부족합니다.');
-      return null;
-    }
-
-    data.gold -= gold;
-    this.playerInfos.set(accountId, data);
-
-    if (wantResult) {
-      return this.getPlayerInfo(accountId);
-    }
-  }
-
-  /**
-   *
-   * @param {string} accountId 계정 아이디
-   * @param {boolean} wantResult 반환 여부
-   * @returns 플레이어 정보
-   */
-  addItemBox(accountId, wantResult) {
-    if (!(this.playerInfos.has(accountId) && this.playerStatus.has(accountId))) {
-      console.log('해당 플레이어가 존재하지 않음');
-      return null;
-    }
-
-    const data = this.playerInfos.get(accountId);
-    console.log('get 상자 : ', data.itemBox);
-    data.itemBox++;
-    this.playerInfos.set(accountId, data);
-    console.log('상자 획득!!!!!!!!!', data.itemBox);
-    this.systemChat(accountId, '상자를 획득하였습니다.');
-    super.notifyAll(payloadTypes.S_PICK_UP_ITEM_BOX, {
-      playerId: accountId,
-      updateBox: data.itemBox,
-    });
-    if (wantResult) {
-      return data.itemBox;
-    }
-  }
-
-  /**
-   *
-   * @param {string} accountId 계정 아이디
-   * @param {boolean} wantResult 반환 여부
-   * @returns 플레이어 정보
-   */
-  removeItemBox(accountId, wantResult) {
-    if (!(this.playerInfos.has(accountId) && this.playerStatus.has(accountId))) {
-      console.log('해당 플레이어가 존재하지 않음');
-      return null;
-    }
-
-    const data = this.playerInfos.get(accountId);
-
-    if (data.itemBox === 0) {
-      console.log('제거할 아이템 박스가 없습니다.');
-      return null;
-    }
-
-    data.itemBox--;
-    this.playerInfos.set(accountId, data);
-
-    if (wantResult) {
-      return this.getPlayerInfo(accountId);
-    }
   }
 
   /**
@@ -696,12 +569,6 @@ class Dungeon extends Game {
     super.removeUser(accountId);
   }
 
-  async movePlayer(accountId, transform) {
-    // await dungeonRedis.updatePlayerTransform(transform, accountId);
-
-    super.notifyAll(payloadTypes.S_MOVE, { playerId: accountId, transform });
-  }
-
   moveMonster(accountId, payloadType, payload) {
     super.notifyOthers(accountId, payloadType, payload);
   }
@@ -952,99 +819,6 @@ class Dungeon extends Game {
     super.notifyAll(payloadTypes.S_ANIMATION_PLAYER, data);
   }
 
-  addPickUpList(data) {
-    const itemNames = data.map((item) => item.itemName);
-    const itemProbability = data.map((item) => item.probability);
-    const totalProbability = itemProbability.reduce((sum, cur) => sum + cur, 0);
-    const lastProbability = 100 - totalProbability;
-
-    if (totalProbability > 100) {
-      throw new CustomError(ErrorCodes.PROBABILITY_ERROR, '확률의 합이 100이 넘습니다.');
-    }
-
-    itemProbability.push(lastProbability);
-
-    this.itemNames = itemNames;
-    this.itemProbability = itemProbability;
-    this.pickUpItems = data;
-  }
-
-  getItemNames() {
-    return this.itemNames;
-  }
-
-  getItemProbability() {
-    return this.itemProbability;
-  }
-
-  getPickUpItems() {
-    return this.pickUpItems;
-  }
-
-  recoveredHp(accountId, itemHp, wantResult) {
-    if (!(this.playerInfos.has(accountId) && this.playerStatus.has(accountId))) {
-      console.log('해당 플레이어가 존재하지 않음');
-      return null;
-    }
-    const { charStatInfo } = getGameAssets();
-
-    const infoData = this.playerInfos.get(accountId);
-    let statData = this.playerStatus.get(accountId);
-
-    const targetData = charStatInfo[infoData.charClass].find(
-      (data) => data.level === statData.playerLevel,
-    );
-
-    const maxHp = targetData.maxHp;
-
-    statData.playerHp += itemHp;
-    if (statData.playerHp > maxHp) {
-      statData.playerHp = maxHp;
-    }
-    console.log('체력 획득!!!!!!!!!', statData.playerHp);
-    this.systemChat(accountId, '체력 포션 획득');
-    super.notifyAll(payloadTypes.S_PICK_UP_ITEM_HP, {
-      playerId: accountId,
-      playerHp: statData.playerHp,
-    });
-
-    if (wantResult) {
-      return statData.playerHp;
-    }
-  }
-
-  recoveredMp(accountId, itemMp, wantResult) {
-    if (!(this.playerInfos.has(accountId) && this.playerStatus.has(accountId))) {
-      console.log('해당 플레이어가 존재하지 않음');
-      return null;
-    }
-    const { charStatInfo } = getGameAssets();
-
-    const infoData = this.playerInfos.get(accountId);
-    let statData = this.playerStatus.get(accountId);
-
-    const targetData = charStatInfo[infoData.charClass].find(
-      (data) => data.level === statData.playerLevel,
-    );
-
-    const maxMp = targetData.maxMp;
-
-    statData.playerMp += itemMp;
-    if (statData.playerMp > maxMp) {
-      statData.playerMp = maxMp;
-    }
-    console.log('마나 획득!!!!!!!!!', statData.playerMp);
-    this.systemChat(accountId, '마나 포션 획득');
-    super.notifyAll(payloadTypes.S_PICK_UP_ITEM_MP, {
-      playerId: accountId,
-      playerMp: statData.playerMp,
-    });
-
-    if (wantResult) {
-      return statData.playerMp;
-    }
-  }
-
   chatPlayer(accountId, chatMsg) {
     super.notifyAll(payloadTypes.S_CHAT, { playerId: accountId, chatMsg });
   }
@@ -1067,41 +841,6 @@ class Dungeon extends Game {
       chatMsg,
       system: true,
     });
-  }
-
-  mysteryBoxOpen(accountId, itemBox) {
-    if (!(this.playerInfos.has(accountId) && this.playerStatus.has(accountId))) {
-      console.log('해당 플레이어가 존재하지 않음');
-      return null;
-    }
-
-    const { mysteryBoxInfo } = getGameAssets();
-    const golds = mysteryBoxInfo.data.map((data) => data.gold);
-    const goldProbability = mysteryBoxInfo.data.map((data) => data.probability);
-    const totalProbability = goldProbability.reduce((sum, cur) => sum + cur, 0);
-
-    if (totalProbability != 100) {
-      throw new CustomError(ErrorCodes.PROBABILITY_ERROR, '확률의 합이 100이 아닙니다.');
-    }
-
-    let boxGold = [];
-
-    for (let i = 0; i < itemBox; i++) {
-      const randomNumber = Math.floor(Math.random() * 100 + 1);
-      let result = 0;
-      let accumulationNumber = 0;
-
-      for (let i = 0; i < golds.length; i++) {
-        accumulationNumber += goldProbability[i];
-        if (accumulationNumber >= randomNumber) {
-          result = golds[i];
-          break;
-        }
-      }
-
-      boxGold.push(result);
-    }
-    return boxGold;
   }
 
   roundGold(accountId, round) {
