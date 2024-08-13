@@ -1,7 +1,7 @@
 const dungeonConstants = {
   general: {
-    MAX_USERS: 4,
-    DAY_DURATION: 12000,
+    MAX_USERS: 1,
+    DAY_DURATION: 16000,
   },
   phases: {
     STANDBY: 3,
@@ -16,6 +16,8 @@ const dungeonConstants = {
 export const attackTypes = {
   NORMAL: 0,
   SKILL: 1,
+  BALLISTA: 2,
+  LASER: 3,
 };
 
 export default dungeonConstants;
