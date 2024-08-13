@@ -167,10 +167,12 @@ class Dungeon extends Game {
   }
 
   monsterAttacksStructure(accountId, monsterIdx, structureIdx) {
+    console.log('몬스터가 구조물을 공격함');
     const monster = this.getMonster(monsterIdx);
-    // console.log('monster : ', monster);
     const data = this.getStructure(structureIdx);
 
+    console.log('현재 구조물 인덱스', structureIdx);
+    console.log('구조물 기존 hp', data.hp);
     if (data.hp <= 0) {
       this.systemChat(accountId, `${data.structureName}이(가) 이미 파괴되었습니다.`);
       return;
@@ -183,16 +185,23 @@ class Dungeon extends Game {
       this.structure.set(structureIdx, data);
       this.systemChat(accountId, `${data.structureName}이(가) 파괴되었습니다.`);
       // 방어 구조물 파괴
+      this.notifyAll(payloadTypes.S_STRUCTURE_ATTACKED, {
+        monsterIdx,
+        structureIdx,
+        structureHp: data.hp,
+      });
       return;
     }
 
     data.hp -= monster.atk;
+    console.log('구조물 남은 hp', data.hp);
     this.structure.set(structureIdx, data);
     this.notifyAll(payloadTypes.S_STRUCTURE_ATTACKED, {
       monsterIdx,
       structureIdx,
       structureHp: data.hp,
     });
+    console.log();
   }
 
   /**
@@ -368,6 +377,7 @@ class Dungeon extends Game {
   }
 
   buyStructure(accountId, data, structureStatus, transform, wantResult) {
+    console.log('구조물 ID : ', structureStatus.structureIdx);
     if (this.structure.has(structureStatus.structureIdx)) {
       console.log('동일한 Idx를 가진 구조물이 존재함');
       return null;
@@ -381,9 +391,11 @@ class Dungeon extends Game {
     }
 
     playerInfo.gold -= data.gold;
+    console.log('구매 후 골드 : ', playerInfo.gold);
     this.playerInfos.set(accountId, playerInfo);
 
     this.structure.set(structureStatus.structureIdx, data);
+    console.log('구조물 내용', this.structure);
 
     super.notifyAll(payloadTypes.S_STRUCTURE, {
       structureStatus,
