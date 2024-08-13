@@ -79,17 +79,6 @@ const attackedMonsterHandler = ({ socket, accountId, packet }) => {
     // monsterHp -= damage;
     // const monsterHp = 25;
 
-    if (attackType !== attackTypes.NORMAL && attackType !== attackTypes.SKILL) {
-      const jobData = {
-        accountId,
-        monsterIdx,
-        damage,
-        marker: true,
-      };
-      enqueueMonsterHitJob(jobData);
-      return;
-    }
-
     const jobData = {
       accountId,
       monsterIdx,

@@ -548,20 +548,6 @@ class Dungeon extends Game {
     this.roundMonsters.set(monsterIndex, data);
     // 여기까지 Bull
     // 여기서부터 비동기
-    if (accountId === undefined) {
-      (async () => {
-        if (data.monsterHp <= 0) {
-          console.log(`monsterIndex ${monsterIndex}번 몬스터 처치`);
-        }
-        const monster = this.getMonster(monsterIndex);
-        this.notifyAll(payloadTypes.S_MONSTER_ATTACKED, {
-          monsterIdx: monsterIndex,
-          monsterHp: monster.monsterHp,
-        });
-      })();
-      return null;
-    }
-
     (async () => {
       if (data.monsterHp <= 0) {
         console.log(`monsterIndex ${monsterIndex}번 몬스터 처치`);
