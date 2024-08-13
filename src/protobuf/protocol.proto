@@ -376,7 +376,7 @@ message PlayerInfo {
   int32 charClass = 3;      // C_EnterGame 에서 지정한 직업 정보, 이 정보를 통해 캐릭터가 결정
   TransformInfo transform = 4;
   int32 gold = 5;
-  int32 itemBox = 6;
+  int32 mysteryBox = 6;
   repeated int32 killed = 7;
   bool isDead = 8;
   int32 accountLevel = 9;

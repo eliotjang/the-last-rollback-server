@@ -14,7 +14,7 @@ import { getUserById } from '../../session/user.session.js';
 import { getAllTownSessions, addTownSession } from '../../session/town.session.js';
 import lodash from 'lodash';
 import { handleError } from '../../utils/error/errorHandler.js';
-import { Tower } from '../models/tower.class.js';
+import { Tower } from '../models/structure.class.js';
 import { DungeonPlayer } from '../models/player.class.js';
 // const dc.general.MAX_USERS = 4;
 
@@ -59,19 +59,20 @@ class Dungeon extends Game {
     this.startTime = Date.now();
     this.playersResultArray = [];
 
-    this.towers = new Map();
+    this.structureIdx = 0;
+    this.structures = new Map();
     this.players = new Map();
   }
 
-  addTower(towerIdx) {
-    this.towers.set(towerIdx, new Tower(this.dungeonCode));
+  addStructure(structure) {
+    this.structures.set(structureIdx++, structure);
   }
 
-  updateTowerHp(towerIdx, monsterIdx) {
+  updateStructureHp(structureIdx, monsterIdx) {
     const monsterInfo = this.roundMonsters.get(monsterIdx);
-    const tower = this.towers.get(towerIdx);
-    tower.updateTowerHp(monsterInfo.atk);
-    super.notifyAll(payloadTypes.S_TOWER_ATTACKED, { towerHp: tower.hp });
+    const structure = this.structures.get(structureIdx);
+    structure.updateStructureHp(monsterInfo.atk);
+    super.notifyAll(payloadTypes.S_TOWER_ATTACKED, { towerHp: structure.hp });
   }
 
   addPlayer(accountId, player) {
