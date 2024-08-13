@@ -1,4 +1,4 @@
-import dc from '../../constants/game.constants.js';
+import dc, { gameResults } from '../../constants/game.constants.js';
 import { payloadKeyNames, payloadTypes } from '../../constants/packet.constants.js';
 import { sessionTypes } from '../../constants/session.constants.js';
 import pickUpHandler from '../../handlers/dungeon/pick-up.handler.js';
@@ -56,6 +56,8 @@ class Dungeon extends Game {
     this.timers = new Map();
     this.startTime = Date.now();
     this.playersResultArray = [];
+
+    this.players = new Map();
   }
 
   addTowerHp(towerHp) {
@@ -130,6 +132,7 @@ class Dungeon extends Game {
    * @param {boolean} wantResult 반환 여부
    * @returns 플레이어 상태
    */
+  /*
   updateMonsterAttackPlayer(accountId, monsterIdx, wantResult) {
     if (!(this.playerInfos.has(accountId) && this.playerStatus.has(accountId))) {
       console.log('해당 플레이어가 존재하지 않음');
@@ -149,6 +152,44 @@ class Dungeon extends Game {
       return this.getPlayerStatus(accountId);
     }
   }
+    */
+  updateMonsterAttackPlayer(accountId, monsterIdx, attackType) {
+    const player = this.getPlayer(accountId);
+    if (!player) {
+      console.log('해당 플레이어가 존재하지 않음');
+      return null;
+    }
+
+    const monster = this.getMonster(monsterIdx);
+    if (!monster) {
+      console.log('해당 몬스터가 존재하지 않음');
+      return null;
+    }
+
+    switch (attackType) {
+      case attackTypes.NORMAL:
+        monster.attack(player);
+        break;
+      case attackTypes.SKILL:
+        monster.skillAttack(player);
+        break;
+      default:
+        monster.attack(player);
+        break;
+    }
+    monster.attack(player);
+
+    if (player.playerInfo.isDead) {
+      console.log(`${accountId} 플레이어 사망`);
+      this.killPlayer(accountId);
+    }
+    super.notifyAll(payloadTypes.S_PLAYER_ATTACKED, {
+      monsterIdx,
+      attackType,
+      playerId: accountId,
+      playerHp: player.playerStatus.playerHp,
+    });
+  }
 
   /**
    *
@@ -158,7 +199,7 @@ class Dungeon extends Game {
     // this.playerInfos.delete(accountId);
     // console.log('플레이어 사망 확인-------------', this.playerInfos);
     // this.playerStatus.delete(accountId);
-
+    /*
     const playerInfo = this.playerInfos.get(accountId);
     playerInfo.isDead = true;
     this.playerInfos.set(accountId, playerInfo);
@@ -167,6 +208,18 @@ class Dungeon extends Game {
     let isAllDead = true;
     for (const playerInfo of this.playerInfos.values()) {
       if (!playerInfo.isDead) {
+        isAllDead = false;
+        break;
+      }
+    }
+    if (isAllDead) {
+      this.updateGameOver();
+    }
+    */
+
+    let isAllDead = true;
+    for (const player of this.players.values()) {
+      if (!player.playerInfo.isDead) {
         isAllDead = false;
         break;
       }
@@ -211,42 +264,32 @@ class Dungeon extends Game {
    */
   updatePlayerExp(accountId, killExp, wantResult) {
     // updatePlayerAttackMonster 내부에서 사용
-    const { charStatInfo } = getGameAssets();
-    if (!(this.playerInfos.has(accountId) && this.playerStatus.has(accountId))) {
+    // const { charStatInfo } = getGameAssets();
+    // if (!(this.playerInfos.has(accountId) && this.playerStatus.has(accountId))) {
+    //   console.log('해당 플레이어가 존재하지 않음');
+    //   return null;
+    // }
+    // const infoData = this.playerInfos.get(accountId);
+    // let statData = this.playerStatus.get(accountId);
+    // const lastData = charStatInfo[infoData.charClass][charStatInfo[infoData.charClass].length - 1];
+    // if (statData.playerLevel >= lastData.level && statData.playerExp >= lastData.maxExp) {
+    //   console.log('최대 레벨 및 최대 경험치 도달');
+    //   return null;
+    // }
+    // statData.playerExp += killExp;
+
+    // if (wantResult) {
+    //   return this.getPlayerStatus(accountId);
+    // }
+
+    const player = this.users.get(accountId).player;
+    if (!player) {
       console.log('해당 플레이어가 존재하지 않음');
       return null;
     }
-    const infoData = this.playerInfos.get(accountId);
-    let statData = this.playerStatus.get(accountId);
-    const lastData = charStatInfo[infoData.charClass][charStatInfo[infoData.charClass].length - 1];
-    if (statData.playerLevel >= lastData.level && statData.playerExp >= lastData.maxExp) {
-      console.log('최대 레벨 및 최대 경험치 도달');
-      return null;
-    }
+    player.updateExp(killExp);
 
-    // let targetData = charStatInfo[infoData.charClass].find(
-    //   (data) => data.level === statData.playerLevel,
-    // );
-
-    // while (killExp >= targetData.maxExp) {
-    //   killExp -= targetData.maxExp;
-
-    //   this.updatePlayerLevel(accountId);
-
-    //   statData = this.playerStatus.get(accountId);
-    //   if (statData.playerLevel >= lastData.level) {
-    //     console.log('최대 레벨 도달');
-    //     return;
-    //   }
-    //   targetData = charStatInfo[infoData.charClass].find(
-    //     (data) => data.level === statData.playerLevel,
-    //   );
-    // }
-    statData.playerExp += killExp;
-
-    if (wantResult) {
-      return this.getPlayerStatus(accountId);
-    }
+    return player;
   }
 
   /**
@@ -470,6 +513,7 @@ class Dungeon extends Game {
    * @returns 해당 몬스터 정보
    */
   updatePlayerAttackMonster(accountId, monsterIndex, damage, wantResult) {
+    /*
     const data = this.roundMonsters.get(monsterIndex);
     if (!data) {
       console.log('해당 몬스터가 존재하지 않음');
@@ -512,6 +556,30 @@ class Dungeon extends Game {
       //   return this.getMonster(monsterIndex);
       // }
     })();
+    */
+
+    const monster = this.getMonster(monsterIndex);
+    if (!monster) {
+      console.log('해당 몬스터가 존재하지 않음');
+      return null;
+    }
+    console.log(`[${monsterIndex}] monster hit, damage: -${damage}, current state: `, monster);
+    monster.hit(damage);
+    // 여기까지 Bull
+    // 여기서부터 비동기
+    (async () => {
+      if (monster.monsterHp <= 0) {
+        console.log(`monsterIndex ${monsterIndex}번 몬스터 처치`);
+        this.updatePlayerExp(accountId, monster.killExp);
+        this.killMonster(monsterIndex, accountId);
+        pickUpHandler(accountId);
+      }
+
+      this.notifyAll(payloadTypes.S_MONSTER_ATTACKED, {
+        monsterIdx: monsterIndex,
+        monsterHp: monster.monsterHp,
+      });
+    })();
   }
 
   /**
@@ -521,6 +589,7 @@ class Dungeon extends Game {
    * @description updatePlayerAttackMonster 내부에서 사용
    */
   killMonster(monsterIndex, accountId) {
+    /*
     const monsterName = this.roundMonsters.get(monsterIndex).monsterName;
     this.systemChat(accountId, `${monsterName}를 처치`);
     this.roundKillCount++;
@@ -535,6 +604,20 @@ class Dungeon extends Game {
       setTimeout(this.endNightRound.bind(this, accountId), 6000);
       //this.endNightRound(accountId);
     }
+    */
+
+    const monster = this.getMonster(monsterIndex);
+    this.systemChat(accountId, `${monster.monsterName}를 처치`);
+    this.roundKillCount++;
+    const player = this.players.get(accountId);
+    player.playerInfo.killed.push(monsterIndex);
+    console.log('------------KILL MONSTER----------', this.roundKillCount, this.roundMonsters.size);
+    if (this.roundMonsters.size === this.roundKillCount) {
+      // 밤 round 종료
+      console.log('------------END NIGHT ROUND----------');
+      this.roundKillCount = 0;
+      setTimeout(this.endNightRound.bind(this, accountId), 6000);
+    }
   }
 
   /**
@@ -545,6 +628,7 @@ class Dungeon extends Game {
    * @returns 해당 몬스터 정보
    */
   updateMonsterTransform(monsterIndex, transform, wantResult) {
+    /*
     if (!this.roundMonsters.has(monsterIndex)) {
       console.log('해당 몬스터가 존재하지 않음');
       return null;
@@ -556,13 +640,24 @@ class Dungeon extends Game {
     if (wantResult) {
       return this.getMonster(monsterIndex);
     }
+    */
+    const monster = this.getMonster(monsterIndex);
+    if (!monster) {
+      console.log('해당 몬스터가 존재하지 않음');
+      return null;
+    }
+    monster.updateTransform(transform);
+
+    return monster;
   }
 
   addUser(user) {
     super.addUser(user);
+    // this.addPlayer(new DungeonPlayer(user.player));
   }
 
   updateRoundResult(accountId, gameExp) {
+    /*
     // stage가 끝날 때마다 호출
     if (arguments.length === 0) {
       return Object.fromEntries(Object.entries(this.accountExpMap).map(([id, exp]) => [id, exp]));
@@ -585,6 +680,15 @@ class Dungeon extends Game {
     }
 
     this.accountExpMap[accountId] += gameExp;
+    */
+    const player = this.players.get(accountId);
+    if (!player) {
+      console.log('해당 플레이어가 존재하지 않음');
+      return;
+    }
+
+    gameExp = this.round * 10;
+    player.updateAccountExp(gameExp);
   }
 
   // 다음 레벨까지 남은 경험치
@@ -597,7 +701,30 @@ class Dungeon extends Game {
   //   return expToNextLevel;
   // }
 
+  async endGame(result, exp) {
+    Promise.all(
+      this.users.map(async (user) => {
+        const player = this.getPlayer(user.accountId);
+        player.updateAccountExp(exp);
+        await userDB.updateLevel(user.accountId, player.accountLevel);
+        const user = await userDB.updateExp(user.accountId, player.accountExp);
+        return {
+          playerId: user.accountId,
+          accountLevel: user.userLevel,
+          accountExp: user.userExperience,
+        };
+      }),
+    ).then((data) => {
+      super.notifyAll(payloadTypes.S_GAME_END, {
+        result,
+        playersResult: data,
+      });
+      console.log('playersResultArray : ', data);
+    });
+  }
+
   async updateGameOver() {
+    /*
     const townSessions = getAllTownSessions();
     let townSession = townSessions.find((townSession) => !townSession.isFull());
     if (!townSession) {
@@ -629,9 +756,13 @@ class Dungeon extends Game {
       // const user = getUserById(accountId);
       // townSession.addUser(user);
     });
+    */
+
+    this.endGame(gameResults.codes.GAMEOVER, gameResults.bonusExp.GAMEOVER);
   }
 
   async updateGameWin() {
+    /*
     const townSessions = getAllTownSessions();
     let townSession = townSessions.find((townSession) => !townSession.isFull());
     if (!townSession) {
@@ -660,6 +791,9 @@ class Dungeon extends Game {
       // const user = getUserById(accountId);
       // townSession.addUser(user);
     });
+  */
+
+    this.endGame(gameResults.codes.GAMEWIN, gameResults.bonusExp.GAMEWIN);
   }
 
   attackMonster(accountId, attackType, monsterIdx) {
@@ -674,9 +808,9 @@ class Dungeon extends Game {
   //   super.notifyAll(payloadTypes.S_MONSTER_ATTACKED, { monsterIdx, monsterHp });
   // }
 
-  attackedMonster(accountId, monsterIdx, monsterHp) {
-    super.notifyOthers(accountId, payloadTypes.S_MONSTER_ATTACKED, { monsterIdx, monsterHp });
-  }
+  // attackedMonster(accountId, monsterIdx, monsterHp) {
+  //   super.notifyOthers(accountId, payloadTypes.S_MONSTER_ATTACKED, { monsterIdx, monsterHp });
+  // }
 
   attackPlayer(monsterIdx, attackType, accountId, playerHp) {
     if (playerHp <= 0) {

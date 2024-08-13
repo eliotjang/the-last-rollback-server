@@ -18,4 +18,15 @@ export const attackTypes = {
   SKILL: 1,
 };
 
+export const gameResults = {
+  codes: {
+    GAMEOVER: 1,
+    GAMEWIN: 2,
+  },
+  bonusExp: {
+    GAMEOVER: 10,
+    GAMEWIN: 100,
+  },
+};
+
 export default dungeonConstants;

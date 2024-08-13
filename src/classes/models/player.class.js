@@ -9,6 +9,19 @@ export class Player {
     this.accountLevel = accountLevel;
     this.accountExp = accountExp;
   }
+
+  updateAccountExp(exp) {
+    this.accountExp += exp;
+    const data = getGameAssets().data;
+    while (this.accountExp >= data[this.accountLevel - 1].maxExp) {
+      if (this.accountLevel >= data[data.length - 1].level) {
+        this.accountExp = data[this.accountLevel - 1].maxExp;
+        break;
+      }
+      this.accountLevel++;
+      this.accountExp -= data[this.accountLevel - 1].maxExp;
+    }
+  }
 }
 
 export class DungeonPlayer extends Player {
@@ -24,7 +37,21 @@ export class DungeonPlayer extends Player {
     this.playerStatus = new DungeonPlayerStatus(this.playerInfo.charClass);
   }
 
+  attack(targetMonster) {
+    targetMonster.hit(this.playerStatus.getStatInfo().atk);
+    // const monsterHp = targetMonster.hit(this.playerStatus.getStatInfo().atk);
+    // if(monsterHp <= 0 ){
+    //   this.playerInfo.killed.push(targetMonster);
+    //   return true;
+    // }
+    // return false;
+  }
+
   hit(damage) {
+    if (this.playerInfo.isDead) {
+      console.log(`플레이어(${this.playerInfo.playerId})가 이미 사망함`);
+      return null;
+    }
     this.playerStatus.playerHp -= damage;
     if (this.playerStatus.playerHp <= 0) {
       this.playerStatus.playerHp = 0;
@@ -132,30 +159,30 @@ export class StatInfo {
   }
 }
 
-// class Dungeon extends Game {
-//   constructor(id, dungeonCode) {
-//     super(id, dc.general.MAX_USERS);
-//     this.type = sessionTypes.DUNGEON;
-//     this.players = new Map(Player(accountExp, playerInfos, playerStatus)); // key: accountId, value: DungeonPlayer
-//     this.dungeonCode = dungeonCode;
-//     this.phase = dc.phases.STANDBY;
-//     this.readyStates = [];
+class Dungeon extends Game {
+  constructor(id, dungeonCode) {
+    super(id, dc.general.MAX_USERS);
+    this.type = sessionTypes.DUNGEON;
+    this.players = new Map(Player(accountExp, playerInfos, playerStatus)); // key: accountId, value: DungeonPlayer
+    this.dungeonCode = dungeonCode;
+    this.phase = dc.phases.STANDBY;
+    this.readyStates = [];
 
-//     this.dungeonInfo = null;
+    this.dungeonInfo = null;
 
-//     this.round = null;
-//     this.roundMonsters = [Monster()]; // Monster
-//     this.towers = [Tower(towerHp)];
-//     this.pickUpItems = [Item(itemName, probability)];
-//     this.roundKillCount = 0;
-//     this.timers = new Map();
-//     this.startTime = Date.now();
-//   }
+    this.round = null;
+    this.roundMonsters = [Monster()]; // Monster
+    this.towers = [Tower(towerHp)];
+    this.pickUpItems = [Item(itemName, probability)];
+    this.roundKillCount = 0;
+    this.timers = new Map();
+    this.startTime = Date.now();
+  }
 
-//   add(playerId) {
-//     this.players.set(playerId, Player);
-//   }
-// }
+  add(playerId) {
+    this.players.set(playerId, Player);
+  }
+}
 
 // testCode
 // const tr = new Transform(1, 1, 1, 1);

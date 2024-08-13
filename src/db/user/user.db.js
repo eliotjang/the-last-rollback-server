@@ -40,9 +40,21 @@ export const userDB = {
   /**
    *
    * @param {string} accountId 계정 아이디
+   * @param {number} level 설정 레벨
+   * @returns 계정 객체 반환
+   */
+  updateLevel: async function (accountId, level) {
+    await pools.USER_DB.query(USER_QUERIES.UPDATE_LEVEL, [level, accountId]);
+
+    return await this.getUser(accountId);
+  },
+  /**
+   *
+   * @param {string} accountId 계정 아이디
    * @param {boolean} wantResult true 시, 계정 객체 반환
    * @returns 계정 객체 반환
    */
+  /*
   updateLevel: async function (accountId, wantResult) {
     const { userInfo } = getGameAssets();
     const user = await this.getUser(accountId);
@@ -58,6 +70,7 @@ export const userDB = {
       return await this.getUser(accountId);
     }
   },
+  */
 
   /**
    *
@@ -67,6 +80,7 @@ export const userDB = {
    * @returns 계정 객체 반환
    */
   updateExp: async function (accountId, experience, wantResult) {
+    /*
     const { userInfo } = getGameAssets();
     let user = await this.getUser(accountId);
 
@@ -97,6 +111,11 @@ export const userDB = {
     if (wantResult) {
       return await this.getUser(accountId);
     }
+    */
+
+    await pools.USER_DB.query(USER_QUERIES.UPDATE_EXP, [experience, accountId]);
+
+    return await this.getUser(accountId);
   },
 
   /**

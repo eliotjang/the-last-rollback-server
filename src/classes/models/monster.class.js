@@ -22,9 +22,16 @@ class Monster {
   }
 
   attack(targetDungeonPlayer) {
-    if (targetDungeonPlayer.playerInfo.isDead) {
-      return;
-    }
     targetDungeonPlayer.hit(this.atk);
+  }
+
+  hit(damage) {
+    if (this.monsterHp <= 0) {
+      console.log(`몬스터(${this.monsterName})가 이미 사망함`);
+      return null;
+    }
+    this.monsterHp -= damage;
+
+    return this.monsterHp;
   }
 }
