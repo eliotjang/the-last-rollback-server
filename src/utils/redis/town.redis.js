@@ -24,6 +24,23 @@ export const townRedis = {
    * @param {boolean} wantResult true 시, playerInfo 객체 반환
    * @returns playerInfo 객체 반환
    */
+  addPlayer: async function (player) {
+    try {
+      const { playerId: accountId, nickname, charClass, transform } = player.playerInfo;
+      const { accountLevel } = player;
+      const key = PREFIX + ':' + accountId + ':';
+      await redisClient.hSet(key, FIELD.PLAYER_ID, accountId);
+      await redisClient.hSet(key, FIELD.NICKNAME, nickname);
+      await redisClient.hSet(key, FIELD.CHAR_CLASS, JSON.stringify(charClass));
+      await redisClient.hSet(key, FIELD.TRANSFORM, JSON.stringify(transform));
+      await redisClient.hSet(key, FIELD.ACCOUNT_LEVEL, JSON.stringify(accountLevel));
+
+      return await this.getPlayerInfo(accountId);
+    } catch (error) {
+      console.error('Error in addPlayer : ', error);
+    }
+  },
+  /*
   addPlayer: async function (accountId, nickname, charClass, transform, accountLevel, wantResult) {
     try {
       const key = PREFIX + ':' + accountId + ':';
@@ -40,7 +57,7 @@ export const townRedis = {
       console.error('Error in addPlayer : ', error);
     }
   },
-
+  */
   /**
    *
    * @param {string} accountId 계정 아이디

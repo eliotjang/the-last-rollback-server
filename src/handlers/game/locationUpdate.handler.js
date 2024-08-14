@@ -19,9 +19,9 @@ const locationUpdateHandler = async ({ socket, accountId, packet }) => {
       throw new CustomError(ErrorCodes.GAME_NOT_FOUND, '세션을 찾을 수 없습니다.');
     }
 
-    if (gameSession.type === sessionTypes.TOWN) {
-      await townRedis.updatePlayerTransform(transform, accountId);
-    }
+    // if (gameSession.type === sessionTypes.TOWN) {
+    //   await townRedis.updatePlayerTransform(transform, accountId);
+    // }
 
     // 현재 추측항법 적용 X
     gameSession.movePlayer(accountId, transform);

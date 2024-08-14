@@ -79,7 +79,7 @@ export const userDB = {
    * @param {boolean} wantResult true 시, 계정 객체 반환
    * @returns 계정 객체 반환
    */
-  updateExp: async function (accountId, experience, wantResult) {
+  updateExp: async function (accountId, experience) {
     /*
     const { userInfo } = getGameAssets();
     let user = await this.getUser(accountId);

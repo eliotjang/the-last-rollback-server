@@ -12,6 +12,7 @@ class User {
     this.accountId = accountId;
     this.socket = socket;
     this.sequence = 0;
+    this.player = null;
 
     // 유저가 포함된 게임 세션 정보
     this.sessionInfo = {

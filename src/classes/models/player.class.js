@@ -201,30 +201,30 @@ export class StatInfo {
   }
 }
 
-class Dungeon extends Game {
-  constructor(id, dungeonCode) {
-    super(id, dc.general.MAX_USERS);
-    this.type = sessionTypes.DUNGEON;
-    this.players = new Map(Player(accountExp, playerInfos, playerStatus)); // key: accountId, value: DungeonPlayer
-    this.dungeonCode = dungeonCode;
-    this.phase = dc.phases.STANDBY;
-    this.readyStates = [];
+// class Dungeon extends Game {
+//   constructor(id, dungeonCode) {
+//     super(id, dc.general.MAX_USERS);
+//     this.type = sessionTypes.DUNGEON;
+//     this.players = new Map(Player(accountExp, playerInfos, playerStatus)); // key: accountId, value: DungeonPlayer
+//     this.dungeonCode = dungeonCode;
+//     this.phase = dc.phases.STANDBY;
+//     this.readyStates = [];
 
-    this.dungeonInfo = null;
+//     this.dungeonInfo = null;
 
-    this.round = null;
-    this.roundMonsters = [Monster()]; // Monster
-    this.towers = [Tower(towerHp)];
-    this.pickUpItems = [Item(itemName, probability)];
-    this.roundKillCount = 0;
-    this.timers = new Map();
-    this.startTime = Date.now();
-  }
+//     this.round = null;
+//     this.roundMonsters = [Monster()]; // Monster
+//     this.towers = [Tower(towerHp)];
+//     this.pickUpItems = [Item(itemName, probability)];
+//     this.roundKillCount = 0;
+//     this.timers = new Map();
+//     this.startTime = Date.now();
+//   }
 
-  add(playerId) {
-    this.players.set(playerId, Player);
-  }
-}
+//   add(playerId) {
+//     this.players.set(playerId, Player);
+//   }
+// }
 
 // testCode
 // const tr = new Transform(1, 1, 1, 1);
@@ -243,3 +243,11 @@ class Dungeon extends Game {
 // console.log(b);
 
 // console.log(new StatInfo({ atk: 1 }));
+
+// const aa = new Player('aa', 'aaa', 1001);
+// console.log({ ...aa });
+// console.log({ ...aa.playerInfo, accountLevel: aa.accountLevel });
+
+// const c = new DungeonPlayer(new Player('c','c',1001));
+// console.log(c);
+// console.log(c as Player)

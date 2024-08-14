@@ -12,12 +12,12 @@ const chattingHandler = async ({ socket, accountId, packet }) => {
       throw new CustomError(ErrorCodes.USER_NOT_FOUND, '유저를 찾을 수 없습니다.');
     }
 
-    const curSession = user.getSession();
-    if (!curSession) {
+    const gameSession = user.getSession();
+    if (!gameSession) {
       throw new CustomError(ErrorCodes.GAME_NOT_FOUND, '세션을 찾을 수 없습니다.');
     }
 
-    curSession.chatPlayer(accountId, chatMsg);
+    gameSession.chatPlayer(accountId, chatMsg);
   } catch (error) {
     handleError(socket, error);
   }

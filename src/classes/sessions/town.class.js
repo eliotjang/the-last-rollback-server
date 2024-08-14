@@ -3,6 +3,7 @@ import Game from './game.class.js';
 import { sessionTypes } from '../../constants/session.constants.js';
 import { getTownSession } from '../../session/town.session.js';
 import { handleError } from '../../utils/error/errorHandler.js';
+import { townRedis } from '../../utils/redis/town.redis.js';
 
 const MAX_USERS = 20;
 
@@ -22,17 +23,12 @@ class Town extends Game {
           // console.log('기존 유저 : ', user.accountId, playerInfos);
           super.notifyUser(user.accountId, payloadTypes.S_SPAWN, { players: playerInfos });
           // console.log('현재 들어온 유저에게 다른 모든 유저 정보를 전송:', playerInfos);
-
-          user.getPlayerInfo().then((userInfo) => {
-            super.notifyOthers(user.accountId, payloadTypes.S_SPAWN, { players: [userInfo] });
-            // console.log('기존 유저에게 새로 들어온 유저 정보를 전송:', userInfo);
-            this.systemChatAll(user.accountId, `${userInfo.nickname}님이 입장하였습니다.`);
-          });
-        } else {
-          user.getPlayerInfo().then((userInfo) => {
-            this.systemChat(user.accountId, `${userInfo.nickname}님이 입장하였습니다.`);
-          });
         }
+        user.getPlayerInfo().then((userInfo) => {
+          super.notifyOthers(user.accountId, payloadTypes.S_SPAWN, { players: [userInfo] });
+          // console.log('기존 유저에게 새로 들어온 유저 정보를 전송:', userInfo);
+          this.systemChatAll(user.accountId, `${userInfo.nickname}님이 입장하였습니다.`);
+        });
       })
       .catch((err) => {
         handleError(user?.socket, err);
@@ -47,9 +43,9 @@ class Town extends Game {
 
   //
   movePlayer(accountId, transform) {
-    // await townRedis.updatePlayerTransform(transform, accountId);
-
-    super.notifyAll(payloadTypes.S_MOVE, { playerId: accountId, transform });
+    townRedis.updatePlayerTransform(transform, accountId).then(() => {
+      super.notifyAll(payloadTypes.S_MOVE, { playerId: accountId, transform });
+    });
   }
 
   actionPlayer(accountId, animCode) {

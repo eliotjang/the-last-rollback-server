@@ -7,14 +7,8 @@ import dungeonUtils from '../../utils/dungeon/dungeon.utils.js';
 import CustomError from '../../utils/error/customError.js';
 import { ErrorCodes } from '../../utils/error/errorCodes.js';
 import Game from './game.class.js';
-import User from './user.class.js';
 import { userDB } from '../../db/user/user.db.js';
-import { SuccessCode } from '../../utils/error/errorCodes.js';
-import { getUserById } from '../../session/user.session.js';
-import { getAllTownSessions, addTownSession } from '../../session/town.session.js';
-import lodash from 'lodash';
 import { handleError } from '../../utils/error/errorHandler.js';
-import { Tower } from '../models/structure.class.js';
 import { DungeonPlayer } from '../models/player.class.js';
 import { Monster } from '../models/monster.class.js';
 // const dc.general.MAX_USERS = 4;
@@ -44,7 +38,7 @@ class Dungeon extends Game {
 
   // #region 구조물
   addStructure(structure) {
-    this.structures.set(structureIdx++, structure);
+    this.structures.set(this.structureIdx++, structure);
   }
 
   updateStructureHp(structureIdx, monsterIdx) {
@@ -384,13 +378,13 @@ class Dungeon extends Game {
   //   return expToNextLevel;
   // }
 
-  async endGame(result, exp) {
+  endGame(result, exp) {
     Promise.all(
       this.users.map(async (user) => {
         const player = this.getPlayer(user.accountId);
         player.updateAccountExp(exp);
         await userDB.updateLevel(user.accountId, player.accountLevel);
-        const user = await userDB.updateExp(user.accountId, player.accountExp);
+        user = await userDB.updateExp(user.accountId, player.accountExp);
         return {
           playerId: user.accountId,
           accountLevel: user.userLevel,
@@ -403,6 +397,9 @@ class Dungeon extends Game {
         playersResult: data,
       });
       console.log('playersResultArray : ', data);
+      this.users.forEach((user) => {
+        super.removeUser(user.accountId);
+      });
     });
   }
 
@@ -493,6 +490,20 @@ class Dungeon extends Game {
 
   // attackedMonster(accountId, monsterIdx, monsterHp) {
   //   super.notifyOthers(accountId, payloadTypes.S_MONSTER_ATTACKED, { monsterIdx, monsterHp });
+  // }
+
+  // attackPlayer(monsterIdx, attackType, accountId, playerHp) {
+  //   if (playerHp <= 0) {
+  //     playerHp = 0;
+  //     console.log(`${accountId} 플레이어 사망`);
+  //     this.killPlayer(accountId);
+  //   }
+  //   super.notifyAll(payloadTypes.S_PLAYER_ATTACKED, {
+  //     monsterIdx,
+  //     attackType,
+  //     playerId: accountId,
+  //     playerHp,
+  //   });
   // }
 
   removeUser(accountId) {
