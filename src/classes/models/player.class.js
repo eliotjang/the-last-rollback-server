@@ -28,11 +28,11 @@ export class Player {
 export class DungeonPlayer extends Player {
   constructor(player) {
     super(
-      player.playerId,
-      player.nickname,
-      player.charClass,
-      player.accountLevel,
-      player.accountExp,
+      player.playerInfo.playerId,
+      player.playerInfo.nickname,
+      player.playerInfo.charClass,
+      player.playerInfo.accountLevel,
+      player.playerInfo.accountExp,
     );
     this.playerInfo = new DungeonPlayerInfo(this.playerInfo);
     this.playerStatus = new DungeonPlayerStatus(this.playerInfo.charClass);
@@ -115,8 +115,8 @@ export class DungeonPlayer extends Player {
   }
 
   updateTransform(transform) {
-    this.playerInfo.transform = transform;
-    return this.playerInfo.transform;
+    this.playerInfo.transform.updateTransform(transform);
+    return this.playerInfo.transform.getTransform();
   }
 }
 

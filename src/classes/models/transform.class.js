@@ -19,6 +19,12 @@ export class Transform {
     this.posY = transform.posY;
     this.posZ = transform.posZ;
     this.rot = transform.rot;
+    return {
+      posX: this.posX,
+      posY: this.posY,
+      posZ: this.posZ,
+      rot: this.rot,
+    };
   }
 
   setTownSpawn() {

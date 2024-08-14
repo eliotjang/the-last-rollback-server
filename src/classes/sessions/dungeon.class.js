@@ -36,6 +36,12 @@ class Dungeon extends Game {
     this.roundMonsters = null;
   }
 
+  // #region 유저
+  addUser(user) {
+    super.addUser(user);
+  }
+  // #endregion
+
   // #region 구조물
   addStructure(structure) {
     this.structures.set(this.structureIdx++, structure);
@@ -53,6 +59,9 @@ class Dungeon extends Game {
   // #region 몬스터
   setMonsters(dungeonCode, monsters) {
     this.roundMonsters = new Map();
+    // monsters.forEach((data) => {
+    //   console.log(data);
+    // });
     monsters.forEach((data) => {
       const { monsterIdx } = data;
       const monster = new Monster(data.monsterModel);
@@ -60,6 +69,14 @@ class Dungeon extends Game {
       this.roundMonsters.set(monsterIdx, monster);
     });
     return monsters;
+  }
+
+  getMonsters() {
+    return this.roundMonsters;
+  }
+
+  getMonster(monsterIndex) {
+    return this.roundMonsters.get(monsterIndex);
   }
 
   updateMonsterAttackPlayer(accountId, monsterIdx, attackType) {
@@ -75,17 +92,7 @@ class Dungeon extends Game {
       return null;
     }
 
-    // switch (attackType) {
-    //   case attackTypes.NORMAL:
-    //     monster.attack(player);
-    //     break;
-    //   case attackTypes.SKILL:
-    //     monster.skillAttack(player);
-    //     break;
-    //   default:
-    //     monster.attack(player);
-    //     break;
-    // }
+    // 이후 몬스터 공격 타입 추가시 switch문으로 구분 필요
     monster.attack(player);
 
     if (player.playerInfo.isDead) {
@@ -109,7 +116,7 @@ class Dungeon extends Game {
   }
 
   getPlayer(accountId) {
-    return this.player.get(accountId);
+    return this.players.get(accountId);
   }
 
   useSkill(accountId, mp) {
@@ -118,7 +125,8 @@ class Dungeon extends Game {
   }
 
   movePlayer(accountId, transform) {
-    const playerTransform = this.getPlayer(accountId).updateTransform(transform);
+    const player = this.getPlayer(accountId);
+    const playerTransform = player.playerInfo.transform.updateTransform(transform);
     super.notifyAll(payloadTypes.S_MOVE, { playerId: accountId, transform: playerTransform });
   }
 
@@ -166,75 +174,7 @@ class Dungeon extends Game {
     return player;
   }
 
-  // #endregion
-
-  getRoundMonsters() {
-    return this.roundMonsters;
-  }
-
-  /**
-   *
-   * @param {number} monsterIndex 몬스터 인덱스
-   * @returns 몬스터 정보
-   */
-  getMonster(monsterIndex) {
-    return this.roundMonsters.get(monsterIndex);
-  }
-
-  /**
-   *
-   * @param {string} accountId 계정 아이디
-   * @param {number} monsterIndex 몬스터 인덱스
-   * @param {number} damage 플레이어가 가한 데미지
-   * @param {boolean} wantResult 반환 여부
-   * @returns 해당 몬스터 정보
-   */
-  updatePlayerAttackMonster(accountId, monsterIndex, damage, wantResult) {
-    /*
-    const data = this.roundMonsters.get(monsterIndex);
-    if (!data) {
-      console.log('해당 몬스터가 존재하지 않음');
-      return null;
-    }
-    console.log(`[${monsterIndex}] monster hit, damage: -${damage}, current state: `, data);
-    if (data.monsterHp <= 0) {
-      return null;
-    }
-
-    data.monsterHp -= damage;
-    this.roundMonsters.set(monsterIndex, data);
-    // 여기까지 Bull
-    // 여기서부터 비동기
-    (async () => {
-      if (data.monsterHp <= 0) {
-        console.log(`monsterIndex ${monsterIndex}번 몬스터 처치`);
-        this.updatePlayerExp(accountId, data.killExp);
-        this.killMonster(monsterIndex, accountId);
-        pickUpHandler(accountId);
-      }
-      const monster = this.getMonster(monsterIndex);
-      // this.getUser(accountId).socket.sendResponse(
-      //   SuccessCode.Success,
-      //   `몬스터(${monsterIndex})가 플레이어(${accountId})에 의해 피격, 몬스터 남은 체력: ${
-      //     monster.monsterHp
-      //   }`,
-      //   payloadTypes.S_MONSTER_ATTACKED,
-      //   {
-      //     monsterIndex,
-      //     monsterHp: monster.monsterHp,
-      //   },
-      // );
-      this.notifyAll(payloadTypes.S_MONSTER_ATTACKED, {
-        monsterIdx: monsterIndex,
-        monsterHp: monster.monsterHp,
-      });
-      // this.attackedMonster(accountId, monsterIndex, monster.monsterHp);
-      // if (wantResult) {
-      //   return this.getMonster(monsterIndex);
-      // }
-    })();
-    */
-
+  updatePlayerAttackMonster(accountId, monsterIndex, damage) {
     const monster = this.getMonster(monsterIndex);
     if (!monster) {
       console.log('해당 몬스터가 존재하지 않음');
@@ -242,8 +182,6 @@ class Dungeon extends Game {
     }
     console.log(`[${monsterIndex}] monster hit, damage: -${damage}, current state: `, monster);
     monster.hit(damage);
-    // 여기까지 Bull
-    // 여기서부터 비동기
     (async () => {
       if (monster.monsterHp <= 0) {
         console.log(`monsterIndex ${monsterIndex}번 몬스터 처치`);
@@ -259,30 +197,7 @@ class Dungeon extends Game {
     })();
   }
 
-  /**
-   * 몬스터 사망 판정을 위한 호출
-   * @param {number} monsterIndex 몬스터 인덱스
-   * @param {string} accountId
-   * @description updatePlayerAttackMonster 내부에서 사용
-   */
   killMonster(monsterIndex, accountId) {
-    /*
-    const monsterName = this.roundMonsters.get(monsterIndex).monsterName;
-    this.systemChat(accountId, `${monsterName}를 처치`);
-    this.roundKillCount++;
-    const playerInfo = this.playerInfos.get(accountId);
-    playerInfo.killed.push(monsterIndex);
-    this.playerInfos.set(accountId, playerInfo);
-    console.log('------------KILL MONSTER----------', this.roundKillCount, this.roundMonsters.size);
-    if (this.roundMonsters.size === this.roundKillCount) {
-      // 밤 round 종료
-      console.log('------------END NIGHT ROUND----------');
-      this.roundKillCount = 0;
-      setTimeout(this.endNightRound.bind(this, accountId), 6000);
-      //this.endNightRound(accountId);
-    }
-    */
-
     const monster = this.getMonster(monsterIndex);
     this.systemChat(accountId, `${monster.monsterName}를 처치`);
     this.roundKillCount++;
@@ -297,40 +212,16 @@ class Dungeon extends Game {
     }
   }
 
-  /**
-   *
-   * @param {number} monsterIndex 몬스터 인덱스
-   * @param {object} transform 몬스터 이동 좌표
-   * @param {boolean} wantResult 반환 여부
-   * @returns 해당 몬스터 정보
-   */
-  updateMonsterTransform(monsterIndex, transform, wantResult) {
-    /*
-    if (!this.roundMonsters.has(monsterIndex)) {
-      console.log('해당 몬스터가 존재하지 않음');
-      return null;
-    }
-    const data = this.roundMonsters.get(monsterIndex);
-    data.monsterTransform = transform;
-    this.roundMonsters.set(monsterIndex, data);
+  // #endregion
 
-    if (wantResult) {
-      return this.getMonster(monsterIndex);
-    }
-    */
+  updateMonsterTransform(monsterIndex, transform) {
     const monster = this.getMonster(monsterIndex);
     if (!monster) {
       console.log('해당 몬스터가 존재하지 않음');
       return null;
     }
-    monster.updateTransform(transform);
-
+    monster.transform.updateTransform(transform);
     return monster;
-  }
-
-  addUser(user) {
-    super.addUser(user);
-    // this.addPlayer(new DungeonPlayer(user.player));
   }
 
   updateRoundResult(accountId, gameExp) {

@@ -13,7 +13,7 @@ export const enterDungeonSession = async (dungeonSession, dungeonCode) => {
   dungeonSession.addStructure(base);
 
   const dungeonInfo = dungeonUtils.fetchDungeonInfo(dungeonCode, DUNGEON_CODE);
-  dungeonSession.setMonsters(dungeonInfo.monsters);
+  dungeonSession.setMonsters(DUNGEON_CODE, dungeonInfo.monsters);
 
   const playerInfos = [];
   const playerStatus = [];

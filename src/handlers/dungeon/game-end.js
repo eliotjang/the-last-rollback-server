@@ -16,6 +16,6 @@ if (dungeonSession.getPlayerInfo(accountId).isEmpty()) {
 }
 
 // 마지막 웨이브에서 몬스터 모두 사망 시 Win
-if (stage === '3' && dungeonSession.getRoundMonsters().isEmpty()) {
+if (stage === '3' && dungeonSession.getMonsters().isEmpty()) {
   await dungeonSession.updateGameWin(townSession);
 }
