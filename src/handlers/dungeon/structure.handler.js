@@ -15,7 +15,7 @@ const structureHandler = ({ socket, accountId, packet }) => {
     // TransformInfo transform = 2;
     // int32 gold = 3;
 
-    const { structureModel, transform } = packet;
+    const { structureModel, transform, playerId } = packet;
     const { structureInfo } = getGameAssets();
 
     const data = structureInfo.data.find((element) => element.structureModel === structureModel);
@@ -39,7 +39,7 @@ const structureHandler = ({ socket, accountId, packet }) => {
       throw new CustomError(ErrorCodes.GAME_NOT_FOUND, 'Dungeon Session을 찾을 수 없습니다.');
     }
 
-    dungeonSession.buyStructure(accountId, data, structureStatus, transform);
+    dungeonSession.buyStructure(accountId, data, structureStatus, transform, playerId);
   } catch (error) {
     handleError(error);
   }

@@ -377,7 +377,7 @@ class Dungeon extends Game {
     return this.structure.get(structureIdx);
   }
 
-  buyStructure(accountId, data, structureStatus, transform, wantResult) {
+  buyStructure(accountId, data, structureStatus, transform, playerId, wantResult) {
     console.log('구조물 ID : ', structureStatus.structureIdx);
     if (this.structure.has(structureStatus.structureIdx)) {
       console.log('동일한 Idx를 가진 구조물이 존재함');
@@ -403,6 +403,7 @@ class Dungeon extends Game {
       structureStatus,
       transform,
       gold: playerInfo.gold,
+      playerId,
     });
 
     if (wantResult) {

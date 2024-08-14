@@ -378,12 +378,14 @@ message S_PickUpItemBox {
 message C_Structure {
   uint32 structureModel = 1;
   TransformInfo transform = 2;
+  string playerId = 3;
 }
 
 message S_Structure {
   StructureStatus structureStatus = 1;
   TransformInfo transform = 2;
   int32 gold = 3;
+  string playerId = 4;
 }
 
 // 몬스터가 구조물 공격
@@ -391,6 +393,7 @@ message C_StructureAttacked {
   int32 monsterIdx = 1;
   int32 structureIdx = 2;
   optional int32 attackType = 3;
+  string playerId = 4;
 }
 
 message S_StructureAttacked {
@@ -398,6 +401,7 @@ message S_StructureAttacked {
   int32 structureIdx = 2;
   int32 structureHp = 3;
   optional int32 attackType = 4;
+  string playerId = 5;
 }
 
 // 구조물이 몬스터를 공격
