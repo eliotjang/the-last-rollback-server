@@ -571,6 +571,7 @@ class Dungeon extends Game {
       this.notifyAll(payloadTypes.S_MONSTER_ATTACKED, {
         monsterIdx: monsterIndex,
         monsterHp: monster.monsterHp,
+        playerId: accountId,
       });
       // this.attackedMonster(accountId, monsterIndex, monster.monsterHp);
       // if (wantResult) {
