@@ -14,9 +14,7 @@ const animationPlayerHandler = ({ socket, accountId, packet }) => {
       throw new CustomError(ErrorCodes.GAME_NOT_FOUND, 'Dungeon Session을 찾을 수 없습니다.');
     }
 
-    const data = { animCode, playerId: accountId, monsterIdx };
-    // console.log('data', data);
-    dungeonSession.animationPlayer(data);
+    dungeonSession.animationPlayer(animCode, accountId, monsterIdx);
   } catch (e) {
     handleError(e);
   }

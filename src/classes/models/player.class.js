@@ -31,8 +31,8 @@ export class DungeonPlayer extends Player {
       player.playerInfo.playerId,
       player.playerInfo.nickname,
       player.playerInfo.charClass,
-      player.playerInfo.accountLevel,
-      player.playerInfo.accountExp,
+      player.accountLevel,
+      player.accountExp,
     );
     this.playerInfo = new DungeonPlayerInfo(this.playerInfo);
     this.playerStatus = new DungeonPlayerStatus(this.playerInfo.charClass);

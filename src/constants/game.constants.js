@@ -1,6 +1,6 @@
 const dungeonConstants = {
   general: {
-    MAX_USERS: 2,
+    MAX_USERS: 1,
     DAY_DURATION: 12000,
   },
   phases: {

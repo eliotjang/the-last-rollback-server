@@ -37,18 +37,18 @@ const initMonsterData = async () => {
 const initStageData = async () => {
   try {
     getGameAssets()[gameAssetConstants.stage.NAME].data.forEach((data) => {
-      if (!stageData[data.stage]) {
-        stageData[data.stage] = {};
+      if (!stageData[data.dungeonCode]) {
+        stageData[data.dungeonCode] = {};
       }
-      if (!stageData[data.stage][data.round]) {
-        stageData[data.stage][data.round] = {};
+      if (!stageData[data.dungeonCode][data.round]) {
+        stageData[data.dungeonCode][data.round] = {};
       }
-      stageData[data.stage][data.round].monsterUnlock = data.monsterUnlock;
-      stageData[data.stage][data.round].spawnCount = data.spawnCount;
-      stageData[data.stage][data.round].itemUnlock = data.itemUnlock;
+      stageData[data.dungeonCode][data.round].monsterUnlock = data.monsterUnlock;
+      stageData[data.dungeonCode][data.round].spawnCount = data.spawnCount;
+      stageData[data.dungeonCode][data.round].itemUnlock = data.itemUnlock;
 
       getGameAssets()[gameAssetConstants.pickUpItemInfo.NAME].data.forEach((data1) => {
-        stageData[data.stage][data.round].totalWeight += data1.weight;
+        stageData[data.dungeonCode][data.round].totalWeight += data1.weight;
       });
     });
     Object.freeze(stageData);

@@ -6,14 +6,12 @@ import { SuccessCode } from '../../utils/error/errorCodes.js';
 import dungeonUtils from '../../utils/dungeon/dungeon.utils.js';
 import { Base } from '../../classes/models/structure.class.js';
 
-const DUNGEON_CODE = 1;
-
 export const enterDungeonSession = async (dungeonSession, dungeonCode) => {
   const base = new Base(DUNGEON_CODE);
   dungeonSession.addStructure(base);
 
-  const dungeonInfo = dungeonUtils.fetchDungeonInfo(dungeonCode, DUNGEON_CODE);
-  dungeonSession.setMonsters(DUNGEON_CODE, dungeonInfo.monsters);
+  const dungeonInfo = dungeonUtils.fetchDungeonInfo(dungeonCode, 1);
+  dungeonSession.setMonsters(dungeonCode, dungeonInfo.monsters);
 
   const playerInfos = [];
   const playerStatus = [];
