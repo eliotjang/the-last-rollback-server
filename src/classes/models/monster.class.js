@@ -1,7 +1,7 @@
 import { getGameAssets } from '../../init/assets.js';
 import { Transform } from './transform.class.js';
 
-class Monster {
+export class Monster {
   constructor(monsterModel) {
     const { monsterInfo } = getGameAssets();
     const data = monsterInfo.monsterModels[monsterModel];

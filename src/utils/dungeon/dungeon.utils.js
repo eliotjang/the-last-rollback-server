@@ -10,11 +10,14 @@ import { ErrorCodes } from '../error/errorCodes.js';
 const monsterData = {};
 const stageData = {};
 const itemData = {};
+const mysteryBoxData = {};
 
 export const initDungeonUtil = async () => {
-  Promise.all([initMonsterData(), initStageData(), initItemData()]).then(() => {
-    console.log('Finished initializing dungeonUtils.');
-  }); // DO NOT CATCH, let the init index file handle it.
+  Promise.all([initMonsterData(), initStageData(), initItemData(), initMysteryBoxData()]).then(
+    () => {
+      console.log('Finished initializing dungeonUtils.');
+    },
+  ); // DO NOT CATCH, let the init index file handle it.
 };
 
 const initMonsterData = async () => {
@@ -44,8 +47,8 @@ const initStageData = async () => {
       stageData[data.stage][data.round].spawnCount = data.spawnCount;
       stageData[data.stage][data.round].itemUnlock = data.itemUnlock;
 
-      getGameAssets()[gameAssetConstants.pickUpItemInfo.NAME].data.forEach((data) => {
-        stageData[data.stage][data.round].totalWeight += data.weight;
+      getGameAssets()[gameAssetConstants.pickUpItemInfo.NAME].data.forEach((data1) => {
+        stageData[data.stage][data.round].totalWeight += data1.weight;
       });
     });
     Object.freeze(stageData);
@@ -62,6 +65,18 @@ const initItemData = async () => {
       };
     });
     Object.freeze(itemData);
+  } catch (err) {
+    throw new CustomError(ErrorCodes.GAME_ASSETS_LOAD_ERROR, `Failed to load stage data: ${err}`);
+  }
+};
+
+const initMysteryBoxData = async () => {
+  try {
+    getGameAssets()[gameAssetConstants.mysteryBoxInfo.NAME].data.forEach((data) => {
+      mysteryBoxData[data.id] = {
+        ...data,
+      };
+    });
   } catch (err) {
     throw new CustomError(ErrorCodes.GAME_ASSETS_LOAD_ERROR, `Failed to load stage data: ${err}`);
   }
@@ -115,6 +130,24 @@ const dungeonUtils = {
       if (sum >= random) {
         result = itemData[roundData.itemUnlock[i]];
         break;
+      }
+    }
+    return result;
+  },
+
+  openMysteryBox: (boxCount) => {
+    let result = [];
+    let totalWeight = mysteryBoxData.reduce((acc, cur) => acc + cur.weight, 0);
+    let sum = 0;
+    for (let i = 0; i < boxCount; i++) {
+      for (const key in mysteryBoxData) {
+        const random = Math.random();
+        const percentage = mysteryBoxData[key].weight / totalWeight;
+        sum += percentage;
+        if (sum >= random) {
+          result.push(mysteryBoxData[key].gold);
+          break;
+        }
       }
     }
     return result;
