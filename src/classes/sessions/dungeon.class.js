@@ -167,15 +167,15 @@ class Dungeon extends Game {
     }
   }
 
-  updatePlayerExp(accountId, killExp) {
-    const player = this.getPlayer(accountId);
-    if (!player) {
-      console.log('해당 플레이어가 존재하지 않음');
-      return null;
-    }
-    player.updateExp(killExp);
-    return player;
-  }
+  // updatePlayerExp(accountId, killExp) {
+  //   const player = this.getPlayer(accountId);
+  //   if (!player) {
+  //     console.log('해당 플레이어가 존재하지 않음');
+  //     return null;
+  //   }
+  //   player.updateExp(killExp);
+  //   return player;
+  // }
 
   // #endregion
 
@@ -258,7 +258,6 @@ class Dungeon extends Game {
     (async () => {
       if (monster.monsterHp <= 0) {
         console.log(`monsterIndex ${monsterIndex}번 몬스터 처치`);
-        this.updatePlayerExp(accountId, monster.killExp);
         this.killMonster(monsterIndex, accountId);
         pickUpHandler(accountId);
       }
@@ -299,12 +298,13 @@ class Dungeon extends Game {
     this.roundKillCount++;
     const player = this.players.get(accountId);
     player.playerInfo.killed.push(monsterIndex);
+    player.updateExp(monster.killExp);
     console.log('------------KILL MONSTER----------', this.roundKillCount, this.roundMonsters.size);
     if (this.roundMonsters.size === this.roundKillCount) {
       // 밤 round 종료
       console.log('------------END NIGHT ROUND----------');
       this.roundKillCount = 0;
-      setTimeout(this.endNightRound.bind(this, accountId), 6000);
+      setTimeout(this.endNightRound.bind(this), 6000);
     }
   }
 
@@ -350,9 +350,6 @@ class Dungeon extends Game {
       console.log('해당 플레이어가 존재하지 않음');
       return;
     }
-
-    gameExp = this.round * 10;
-    player.updateAccountExp(gameExp);
   }
 
   // 다음 레벨까지 남은 경험치
@@ -579,45 +576,7 @@ class Dungeon extends Game {
         
       }
     */
-
-    /*
-    const player1Info = {
-      nickname: 'eliot1Nick',
-      charClass: 1003,
-      transform: playerTransform.getTransform(),
-      gold: 0,
-      itemBox: 0,
-      killed: [],
-      score: 0,
-    };
-    */
-    const { charStatInfo } = getGameAssets();
-
-    const playerInfo = this.playerInfos.get(user.accountId);
-    let playerStatus = this.playerStatus.get(user.accountId);
-    const lastData =
-      charStatInfo[playerInfo.charClass][charStatInfo[playerInfo.charClass].length - 1];
-
-    let targetData = charStatInfo[playerInfo.charClass].find(
-      (data) => data.level === playerStatus.playerLevel,
-    );
-
-    while (playerStatus.playerExp >= targetData.maxExp) {
-      playerStatus.playerExp -= targetData.maxExp;
-
-      // this.updatePlayerLevel(user.accountId);
-
-      playerStatus = this.playerStatus.get(user.accountId);
-
-      targetData = charStatInfo[playerInfo.charClass].find(
-        (data) => data.level === playerStatus.playerLevel,
-      );
-
-      if (playerStatus.playerLevel >= lastData.level) {
-        console.log(`${playerInfo.nickname}님 최대 레벨 도달`);
-        break;
-      }
-    }
+    const player = this.getPlayer(user.accountId);
     // TODO: 상자깡?
     // const items = 상자깡();
 
@@ -625,25 +584,23 @@ class Dungeon extends Game {
     const roundGold = +this.roundGold(this.round);
 
     const totalBoxGold = boxGold.reduce((sum, cur) => sum + cur, 0);
-    playerInfo.itemBox = 0;
-    playerInfo.gold += totalBoxGold;
-    playerInfo.gold += roundGold;
-
-    this.playerInfos.set(user.accountId, playerInfo);
+    player.playerInfo.itemBox = 0;
+    player.playerInfo.gold += totalBoxGold;
+    player.playerInfo.gold += roundGold;
 
     return {
-      playerInfo: playerInfo,
+      playerInfo: player.playerInfo,
       playerStatus: {
-        playerLevel: playerStatus.playerLevel,
-        playerExp: playerStatus.playerExp,
-        playerCurHp: playerStatus.playerHp,
-        playerCurMp: playerStatus.playerMp,
-        playerName: playerInfo.nickname,
-        playerFullHp: targetData.maxHp,
-        playerFullMp: targetData.maxMp,
-        atk: targetData.atk,
-        def: targetData.def,
-        specialAtk: targetData.specialAtk,
+        playerLevel: player.playerStatus.playerLevel,
+        playerExp: player.playerStatus.playerExp,
+        playerCurHp: player.playerStatus.playerHp,
+        playerCurMp: player.playerStatus.playerMp,
+        playerName: player.playerInfo.nickname,
+        playerFullHp: player.playerStatus.getStatInfo().maxHp,
+        playerFullMp: player.playerStatus.getStatInfo().maxMp,
+        atk: player.playerStatus.getStatInfo().atk,
+        def: player.playerStatus.getStatInfo().def,
+        specialAtk: player.playerStatus.getStatInfo().specialAtk,
       },
       boxGold: boxGold,
       roundGold: roundGold,
@@ -653,7 +610,8 @@ class Dungeon extends Game {
   /**
    * 밤 라운드를 종료시킵니다. 해당 라운드가 마지막 밤 라운드인 경우 S_GameEnd 패킷을 전송합니다.
    */
-  endNightRound(accountId) {
+  endNightRound() {
+    /*
     if (this.phase !== dc.phases.NIGHT) return;
     this.phase = dc.phases.RESULT; // dc.phases.RESULT
     Promise.all([
@@ -671,6 +629,57 @@ class Dungeon extends Game {
           const playerStatus = this.getPlayerStatus(accountId);
           const gameExp = playerStatus.playerExp;
           this.updateRoundResult(accountId, gameExp);
+          return roundResult;
+        }),
+      ),
+    ])
+      .then(([dungeonInfo, roundResults]) => {
+        this.phase = dc.phases.DAY;
+        this.round++;
+
+        if (!dungeonInfo) {
+          // 마지막 라운드가 종료됨 (gameEnd 전송)
+          this.updateGameWin();
+        } else {
+          // 아직 라운드가 남음
+          // console.log(roundResults);
+          const data = {
+            dungeonInfo,
+            roundResults,
+          };
+          // console.log('########', JSON.stringify(data));
+          this.notifyAll(payloadTypes.S_NIGHT_ROUND_END, data);
+          setTimeout(this.startDayRoundTimer.bind(this), 10000); // temp
+          // this.startDayRoundTimer();
+        }
+      })
+      .catch((err) => {
+        handleError(null, err);
+      });
+      */
+
+    if (this.phase !== dc.phases.NIGHT) return;
+    this.phase = dc.phases.RESULT; // dc.phases.RESULT
+
+    this.users.forEach((user) => {
+      const player = this.getPlayer(user.accountId);
+      const gameExp = player.playerStatus.playerExp + this.round * 10;
+      player.updateLevel();
+      player.updateAccountExp(gameExp);
+    });
+
+    Promise.all([
+      (async () => {
+        const dungeonInfo = dungeonUtils.fetchDungeonInfo(this.dungeonCode, this.round + 1); // 다음 라운드 몬스터 목록 받아오기
+        if (dungeonInfo === null) {
+          return null;
+        }
+        this.setMonsters(this.dungeonCode, dungeonInfo.monsters);
+        return dungeonInfo;
+      })(),
+      Promise.all(
+        this.users.map(async (user) => {
+          const roundResult = this.fetchRoundStatsByUser(user);
           return roundResult;
         }),
       ),

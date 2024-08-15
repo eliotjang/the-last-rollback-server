@@ -7,7 +7,7 @@ import dungeonUtils from '../../utils/dungeon/dungeon.utils.js';
 import { Base } from '../../classes/models/structure.class.js';
 
 export const enterDungeonSession = async (dungeonSession, dungeonCode) => {
-  const base = new Base(DUNGEON_CODE);
+  const base = new Base(dungeonCode);
   dungeonSession.addStructure(base);
 
   const dungeonInfo = dungeonUtils.fetchDungeonInfo(dungeonCode, 1);

@@ -61,10 +61,7 @@ export class DungeonPlayer extends Player {
     return this.playerStatus.playerHp;
   }
 
-  updateExp(exp) {
-    // this.playerStatus.updateExp(exp);
-
-    this.playerStatus.playerExp += exp;
+  updateLevel() {
     const data = getGameAssets().charStatInfo[this.playerInfo.charClass];
     while (this.playerStatus.playerExp >= this.playerStatus.baseStatInfo.maxExp) {
       if (this.playerStatus.playerLevel >= data[data.length - 1].level) {
@@ -76,6 +73,12 @@ export class DungeonPlayer extends Player {
       this.playerStatus.playerExp -= this.playerStatus.baseStatInfo.maxExp;
       this.playerStatus.baseStatInfo = new StatInfo(data[this.playerStatus.playerLevel - 1]);
     }
+  }
+
+  updateExp(exp) {
+    // this.playerStatus.updateExp(exp);
+
+    this.playerStatus.playerExp += exp;
   }
 
   updateHp(hp) {
@@ -140,7 +143,7 @@ export class DungeonPlayerInfo extends PlayerInfo {
 }
 
 export class DungeonPlayerStatus {
-  constructor(charClass, playerLevel = 1, playerExp = 0, addStatInfo = {}) {
+  constructor(charClass, playerLevel = 1, playerExp = 0, addStatInfo = new StatInfo({})) {
     // this.charClass = charClass;
     this.playerLevel = playerLevel;
     this.playerExp = playerExp;
@@ -168,7 +171,9 @@ export class DungeonPlayerStatus {
   // }
 
   getStatInfo() {
-    return new StatInfo(this.baseStatInfo).addStat(this.addStatInfo);
+    const statInfo = new StatInfo(this.baseStatInfo);
+    statInfo.addStat(this.addStatInfo);
+    return statInfo;
   }
 }
 

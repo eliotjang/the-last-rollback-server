@@ -23,21 +23,28 @@ const attackedMonsterHandler = ({ socket, accountId, packet }) => {
     // let monsterHp = await dungeonRedis.get();
 
     // dungeonRedis에서 플레이어 playerInfo(charStatInfo) 가져옴
-    const playerInfo = dungeonSession.getPlayerInfo(accountId);
-    const playerStatus = dungeonSession.getPlayerStatus(accountId);
-    const { charStatInfo } = getGameAssets();
+    // const playerInfo = dungeonSession.getPlayerInfo(accountId);
+    // const playerStatus = dungeonSession.getPlayerStatus(accountId);
+    // const { charStatInfo } = getGameAssets();
 
+    const player = dungeonSession.getPlayer(accountId);
+    console.log('1111111111111', player);
+    console.log('222222222222222222', player.playerStatus.getStatInfo());
     let damage;
     switch (attackType) {
       case attackTypes.NORMAL:
-        damage = charStatInfo[playerInfo.charClass][playerStatus.playerLevel - 1].atk;
+        // damage = charStatInfo[playerInfo.charClass][playerStatus.playerLevel - 1].atk;
+        damage = player.playerStatus.getStatInfo().atk;
         break;
       case attackTypes.SKILL:
-        damage = charStatInfo[playerInfo.charClass][playerStatus.playerLevel - 1].magic;
+        // damage = charStatInfo[playerInfo.charClass][playerStatus.playerLevel - 1].magic;
+        damage = player.playerStatus.getStatInfo().specialAtk;
         break;
       default:
-        damage = charStatInfo[playerInfo.charClass][playerStatus.playerLevel - 1].atk;
+        // damage = charStatInfo[playerInfo.charClass][playerStatus.playerLevel - 1].atk;
+        damage = player.playerStatus.getStatInfo().atk;
     }
+
     // monsterHp -= damage;
     // const monsterHp = 25;
 
@@ -46,7 +53,6 @@ const attackedMonsterHandler = ({ socket, accountId, packet }) => {
       monsterIdx,
       damage,
     };
-
     enqueueMonsterHitJob(jobData);
 
     // const monster = dungeonSession.updatePlayerAttackMonster(accountId, monsterIdx, damage, true);
