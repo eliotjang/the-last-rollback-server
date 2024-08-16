@@ -51,6 +51,7 @@ const enterTownHandler = async ({ socket, accountId, packet }) => {
       townSession = addTownSession();
     }
 
+    user.player.playerInfo.transform.setTownSpawn();
     await townRedis.addPlayer(user.player);
     townSession.addUser(user);
 

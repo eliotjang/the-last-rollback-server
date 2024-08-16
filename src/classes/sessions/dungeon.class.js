@@ -190,16 +190,6 @@ class Dungeon extends Game {
     }
   }
 
-  updatePlayerExp(accountId, killExp) {
-    const player = this.getPlayer(accountId);
-    if (!player) {
-      console.log('해당 플레이어가 존재하지 않음');
-      return null;
-    }
-    player.updateExp(killExp);
-    return player;
-  }
-
   updatePlayerAttackMonster(accountId, monsterIdx, damage) {
     const monster = this.getMonster(monsterIdx);
     if (!monster) {
@@ -210,9 +200,7 @@ class Dungeon extends Game {
     monster.hit(damage);
     (async () => {
       if (monster.monsterHp <= 0) {
-        this.updatePlayerExp(accountId, monster.killExp);
         this.killMonster(monsterIdx, accountId);
-        pickUpHandler(accountId, this.dungeonCode, this.round);
       }
 
       this.notifyAll(payloadTypes.S_MONSTER_ATTACKED, {
@@ -228,6 +216,9 @@ class Dungeon extends Game {
     this.roundKillCount++;
     const player = this.players.get(accountId);
     player.playerInfo.killed.push(monsterIdx);
+    player.updateExp(monster.killExp);
+    pickUpHandler(accountId, this.dungeonCode, this.round);
+    console.log('------------KILL MONSTER----------', this.roundKillCount, this.roundMonsters.size);
     // 모든 몬스터 처치 시 밤 라운드 종료
     if (this.roundMonsters.size === this.roundKillCount) {
       this.roundKillCount = 0;
@@ -285,19 +276,17 @@ class Dungeon extends Game {
       }, dc.general.DAY_DURATION);
     })();
     const now = Date.now();
-    this.users.forEach(async (user) => {
-      const data = {
-        startTime: now,
-        milliseconds: dc.general.DAY_DURATION,
-      };
-      user.socket.sendNotification(payloadTypes.S_DAY_ROUND_TIMER, data);
-    });
+    const data = {
+      startTime: now,
+      milliseconds: dc.general.DAY_DURATION,
+    };
+    this.notifyAll(payloadTypes.S_DAY_ROUND_TIMER, data);
   }
 
   /**
    * 밤 라운드를 종료시킵니다. 해당 라운드가 마지막 밤 라운드인 경우 S_GameEnd 패킷을 전송합니다.
    */
-  endNightRound(accountId) {
+  endNightRound() {
     if (this.phase !== dc.phases.NIGHT) return;
     this.phase = dc.phases.RESULT; // dc.phases.RESULT
     Promise.all([

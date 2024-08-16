@@ -89,7 +89,8 @@ export class DungeonPlayer extends Player {
       return null;
     }
     this.playerStatus.playerMp += mp;
-    const data = getGameAssets().charStatInfo.data[this.playerInfo.charClass];
+    const data =
+      getGameAssets().charStatInfo[this.playerInfo.charClass][this.playerStatus.playerLevel - 1];
     if (this.playerStatus.playerMp > data.maxMp) {
       this.playerStatus.playerMp = data.maxMp;
     }
