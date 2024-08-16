@@ -1,6 +1,3 @@
-import { getGameAssets } from '../../init/assets.js';
-import { getDungeonSessionByUserId } from '../../session/dungeon.session.js';
-import { gameCharDB } from '../../db/game-char/game-char.db.js';
 import { payloadTypes } from '../../constants/packet.constants.js';
 import { SuccessCode } from '../../utils/error/errorCodes.js';
 import dungeonUtils from '../../utils/dungeon/dungeon.utils.js';
@@ -39,7 +36,6 @@ export const enterDungeonSession = async (dungeonSession, dungeonCode) => {
   }
 
   const data = { dungeonInfo, playerInfo: playerInfos, players: playerStatus };
-  console.log(data);
 
   for (const user of dungeonSession.users) {
     user.socket.sendResponse(

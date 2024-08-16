@@ -24,7 +24,6 @@ const onData = (socket) => async (data) => {
 
       switch (packetType) {
         case packetTypes.PING: {
-          // console.log('PING RECEIVED');
           const user = getUserBySocket(socket);
           if (!user) {
             throw new CustomError(ErrorCodes.USER_NOT_FOUND, 'Ping을 수신할 유저가 없습니다.');
@@ -33,7 +32,6 @@ const onData = (socket) => async (data) => {
           break;
         }
         case packetTypes.REQUEST: {
-          // console.log('REQUEST RECEIVED');
           const { clientVersion, sequence, payloadType, payload } = deserializeByPacketType(
             packetType,
             packet,
@@ -48,10 +46,7 @@ const onData = (socket) => async (data) => {
           verifyClientVersion(clientVersion);
           verifySequence(sequence);
           const handler = getHandlerByPayloadType(payloadType || 0);
-          const result = await handler({ socket, accountId: socket.accountId, packet: payload });
-          if (result) {
-            // result가 있다면 추가 작업
-          }
+          await handler({ socket, accountId: socket.accountId, packet: payload });
           break;
         }
       }

@@ -2,9 +2,9 @@
   "name": "stage_unlock",
   "version": "1.0.0",
   "data": [
-    { "dungeonCode": 1, "baseHp": 500 },
-    { "dungeonCode": 2, "baseHp": 600 },
-    { "dungeonCode": 3, "baseHp": 700 },
-    { "dungeonCode": 4, "baseHp": 800 }
+    { "dungeonCode": 1, "baseHp": 500, "posX": -5.04, "posY": 0.55, "posZ": 135.68 },
+    { "dungeonCode": 2, "baseHp": 600, "posX": -5.04, "posY": 0.55, "posZ": 135.68 },
+    { "dungeonCode": 3, "baseHp": 700, "posX": -5.04, "posY": 0.55, "posZ": 135.68 },
+    { "dungeonCode": 4, "baseHp": 800, "posX": -5.04, "posY": 0.55, "posZ": 135.68 }
   ]
 }

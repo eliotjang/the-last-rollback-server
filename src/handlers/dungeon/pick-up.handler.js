@@ -2,9 +2,9 @@ import { pickUpItemType } from '../../constants/dungeon.constants.js';
 import { getDungeonSessionByUserId } from '../../session/dungeon.session.js';
 import dungeonUtils from '../../utils/dungeon/dungeon.utils.js';
 
-const pickUpHandler = async (accountId, round) => {
+const pickUpHandler = async (accountId, dungeonCode, round) => {
   const dungeonSession = getDungeonSessionByUserId(accountId);
-  const item = dungeonUtils.fetchRandomItem(dungeonSession.dungeonCode, round);
+  const item = dungeonUtils.fetchRandomItem(dungeonCode, round);
 
   switch (item.itemModel) {
     case pickUpItemType.HP_POTION:
@@ -17,7 +17,6 @@ const pickUpHandler = async (accountId, round) => {
       dungeonSession.addMysteryBox(accountId, 1);
       break;
     default:
-      console.log('아이템 미획득');
   }
 };
 

@@ -5,8 +5,10 @@ import { ErrorCodes } from '../../utils/error/errorCodes.js';
 import { handleError } from '../../utils/error/errorHandler.js';
 
 const animationMonsterHandler = ({ socket, accountId, packet }) => {
+  // C_ANIMATION_MONSTER
   try {
     const { animCode, monsterIdx, playerId } = packet;
+    console.log('몬스터 애니메이션 정보 : ', animCode, monsterIdx, playerId);
 
     const user = getUserById(accountId);
     const dungeonSession = user.getSession();

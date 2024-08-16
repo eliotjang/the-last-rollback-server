@@ -1,13 +1,12 @@
-import { sessionTypes } from '../../constants/session.constants.js';
 import { getUserById } from '../../session/user.session.js';
 import CustomError from '../../utils/error/customError.js';
 import { ErrorCodes } from '../../utils/error/errorCodes.js';
 import { handleError } from '../../utils/error/errorHandler.js';
 
 const animationPlayerHandler = ({ socket, accountId, packet }) => {
+  // C_ANIMATION_PLAYER
   try {
     const { animCode, monsterIdx } = packet;
-    // console.log('animCode', animCode);
     const user = getUserById(accountId);
     const dungeonSession = user.getSession();
     if (!dungeonSession) {

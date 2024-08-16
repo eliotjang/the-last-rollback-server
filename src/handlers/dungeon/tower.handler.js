@@ -1,19 +1,13 @@
 import { getDungeonSessionByUserId } from '../../session/dungeon.session.js';
-import { getAllTownSessions, addTownSession } from '../../session/town.session.js';
 import { handleError } from '../../utils/error/errorHandler.js';
-import { getGameAssets } from '../../init/assets.js';
 
 const towerHpUpdateHandler = async ({ socket, accountId, packet }) => {
+  // C_TOWER_ATTACKED
   try {
-    // const { monsterInfo } = getGameAssets();
     const { monsterIdx } = packet;
-
-    // const amount = monsterInfo.data[monsterIdx].atk;
-
     const dungeonSession = getDungeonSessionByUserId(accountId);
-    dungeonSession.get;
 
-    dungeonSession.updateTowerHp(monsterIdx);
+    dungeonSession.updateStructureHp(0, monsterIdx);
   } catch (error) {
     handleError(socket, error);
   }

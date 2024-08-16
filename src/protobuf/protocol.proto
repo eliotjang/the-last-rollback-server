@@ -194,52 +194,12 @@ message C_Chat{
   string chatMsg = 3;
 }
 
-message C_PlayerResponse{
-  int32 responseCode = 1;
-}
-
-
 message C_TowerAttacked {
   int32 monsterIdx = 1;
 }
 
 message S_TowerAttacked {
   int32 towerHp = 1;
-}
-
-message S_GameEnd {
-  int32 result = 1;
-  repeated PlayersResult playersResult = 2;
-}
-
-
-// Me
-message S_ScreenText{
-  ScreenText screenText = 1;
-}
-
-// Me
-message S_ScreenDone { }
-
-// Me
-message S_BattleLog {
-  BattleLog battleLog = 1;
-}
-
-// Me
-message S_SetPlayerHp {
-  float hp = 1;
-}
-
-// Me
-message S_SetPlayerMp {
-  float mp = 1;
-}
-
-// Me
-message S_SetMonsterHp {
-  int32 monsterIdx = 1;
-  float hp = 2;
 }
 
 // Me
@@ -252,19 +212,6 @@ message S_PlayerAction {
 message S_MonsterAction {
   int32 actionMonsterIdx = 1;
   ActionSet actionSet = 2;
-}
-
-// My 플레이어의 공격만 서버에 전송
-message C_PlayerAttack{
-	int32 attackType = 2; // 공격 종류
-  int32 monsterIdx = 3; // 공격 받는 몬스터 Idx
-}
-
-// All
-message S_PlayerAttack{
-  string playerId = 1; // 공격하는 유저 accountId
-	int32 attackType = 2; // 공격 종류
-  int32 monsterIdx = 3; // 공격 받는 몬스터 Idx
 }
 
 // My 플레이어의 공격 판정에 당한 경우만 서버에 전송
@@ -286,7 +233,6 @@ message C_MonsterAttack{
   string playerId = 3; // 공격받는 유저 accountId
 }
 
-// All
 message S_PlayerAttacked{
   int32 monsterIdx = 1; // 공격 하는 몬스터 Idx
   int32 attackType = 2;
@@ -316,23 +262,8 @@ message S_EnterDungeon{
   // optional BattleLog battleLog = 4;
 }
 
-// 105 던전 퇴장 패킷 (타운 씬 로딩)
-message S_LeaveDungeon { }
-
 // 106 최초 입장 씬 로딩 완료 패킷
-message C_DungeonSceneReady {
-  // 내용 없음
-}
-
-// 107 낮 라운드 개인 준비 완료 패킷
-message C_DayRoundReady {
-  // 내용 없음
-}
-
-// 108 준비 완료 서버 응답
-message S_DayRoundReady {
-  bool isReady = 1; // 서버 기준 준비 상태 알림, 1이 준비 완료
-}
+message C_DungeonSceneReady {}
 
 // 109 낮 라운드 타이머 패킷
 message S_DayRoundTimer {
@@ -341,15 +272,18 @@ message S_DayRoundTimer {
 }
 
 // 110 마지막 유저 준비 완료 시 전체 통지 패킷
-message S_NightRoundStart {
-  // uint32 stageId = 1;
-}
+message S_NightRoundStart {}
 
 // 111 라운드의 마지막 몬스터가 처치됐을 시 전체 통지 패킷
 message S_NightRoundEnd {
   DungeonInfo dungeonInfo = 1; // 다음 라운드 몬스터 목록
   // 밤 라운드 정산에 필요한 정보 전송
   repeated RoundResult roundResults = 2;
+}
+
+message S_GameEnd {
+  int32 result = 1;
+  repeated PlayersResult playersResult = 2;
 }
 
 message S_PickUpItemHp {
@@ -365,6 +299,71 @@ message S_PickUpItemMp {
 message S_PickUpItemBox {
   string playerId = 1;
   uint32 updateBox = 2;
+}
+
+// 레거시 코드
+message C_PlayerResponse{
+  int32 responseCode = 1;
+}
+
+// 레거시 코드
+message S_ScreenText{
+  ScreenText screenText = 1;
+}
+
+// 레거시 코드
+message S_ScreenDone { }
+
+// 레거시 코드
+message S_BattleLog {
+  BattleLog battleLog = 1;
+}
+
+// 레거시 코드
+message S_SetPlayerHp {
+  float hp = 1;
+}
+
+// 레거시 코드
+message S_SetPlayerMp {
+  float mp = 1;
+}
+
+// 레거시 코드
+message S_SetMonsterHp {
+  int32 monsterIdx = 1;
+  float hp = 2;
+}
+
+// 레거시 코드
+// My 플레이어의 공격만 서버에 전송
+message C_PlayerAttack{
+	int32 attackType = 2; // 공격 종류
+  int32 monsterIdx = 3; // 공격 받는 몬스터 Idx
+}
+
+// 레거시 코드
+// All
+message S_PlayerAttack{
+  string playerId = 1; // 공격하는 유저 accountId
+	int32 attackType = 2; // 공격 종류
+  int32 monsterIdx = 3; // 공격 받는 몬스터 Idx
+}
+
+// 레거시 코드
+// 105 던전 퇴장 패킷 (타운 씬 로딩)
+message S_LeaveDungeon { }
+
+// 레거시 코드
+// 107 낮 라운드 개인 준비 완료 패킷
+message C_DayRoundReady {
+  // 내용 없음
+}
+
+// 레거시 코드
+// 108 준비 완료 서버 응답
+message S_DayRoundReady {
+  bool isReady = 1; // 서버 기준 준비 상태 알림, 1이 준비 완료
 }
 
 // ---------------------------------
@@ -399,24 +398,6 @@ message StatInfo {
   float maxMp = 5;
 }
 
-message ScreenText{
-  string msg = 1;
-  bool typingAnimation = 2;
-  optional ScreenTextAlignment alignment = 3;
-  optional Color textColor = 4;
-  optional Color screenColor = 5;
-}
-
-message ScreenTextAlignment {
-  int32 x = 1;
-  int32 y = 2;
-}
-
-message Color {
-  int32 r = 1;
-  int32 g = 2;
-  int32 b = 3;
-}
 
 message DungeonInfo {
   int32 dungeonCode = 1;
@@ -431,10 +412,7 @@ message MonsterStatus {
   TransformInfo monsterTransform = 5;
 }
 
-message ActionSet {
-  int32 animCode = 1;
-  int32 effectCode = 2;
-}
+
 
 message PlayerStatus {
   // int32 playerClass = 1;
@@ -453,29 +431,60 @@ message PlayerStatus {
   float coolTime = 14;
 }
 
-message BattleLog {
-  string msg = 1;
-  bool typingAnimation = 2;
-  repeated BtnInfo btns = 3;
-}
 
-message BtnInfo {
-  string msg = 1;
-  bool enable = 2;
-}
 
 message RoundResult {
   PlayerInfo playerInfo = 1;
   PlayerStatus playerStatus = 2;
   repeated int32 boxGold = 3;
   int32 roundGold = 4;
-  // 밤 라운드 정산 정보 있으면 여기에 추가?
 }
 
 message PlayersResult {
   string playerId = 1;
   int32 accountLevel = 2;
   int32 accountExp = 3;
+}
+
+// 레거시 코드
+message BattleLog {
+  string msg = 1;
+  bool typingAnimation = 2;
+  repeated BtnInfo btns = 3;
+}
+
+// 레거시 코드
+message BtnInfo {
+  string msg = 1;
+  bool enable = 2;
+}
+
+// 레거시 코드
+message ScreenText{
+  string msg = 1;
+  bool typingAnimation = 2;
+  optional ScreenTextAlignment alignment = 3;
+  optional Color textColor = 4;
+  optional Color screenColor = 5;
+}
+
+// 레거시 코드
+message ScreenTextAlignment {
+  int32 x = 1;
+  int32 y = 2;
+}
+
+// 레거시 코드
+message Color {
+  int32 r = 1;
+  int32 g = 2;
+  int32 b = 3;
+}
+
+// 레거시 코드
+message ActionSet {
+  int32 animCode = 1;
+  int32 effectCode = 2;
 }
 
 // 패킷

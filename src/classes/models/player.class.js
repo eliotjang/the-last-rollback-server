@@ -1,8 +1,5 @@
 import { getGameAssets } from '../../init/assets.js';
-import { getProtoMessages } from '../../init/proto.init.js';
-import protobuf from 'protobufjs';
 import { Transform } from './transform.class.js';
-import { pickUpItemType } from '../../constants/dungeon.constants.js';
 
 export class Player {
   constructor(playerId, nickname, charClass, accountLevel = 1, accountExp = 0) {
@@ -13,7 +10,7 @@ export class Player {
 
   updateAccountExp(exp) {
     this.accountExp += exp;
-    const data = getGameAssets().data;
+    const data = getGameAssets().userInfo.data;
     while (this.accountExp >= data[this.accountLevel - 1].maxExp) {
       if (this.accountLevel >= data[data.length - 1].level) {
         this.accountExp = data[this.accountLevel - 1].maxExp;
@@ -61,7 +58,12 @@ export class DungeonPlayer extends Player {
     return this.playerStatus.playerHp;
   }
 
+  updateExp(exp) {
+    this.playerStatus.playerExp += exp;
+  }
+
   updateLevel() {
+    console.log('레벨업');
     const data = getGameAssets().charStatInfo[this.playerInfo.charClass];
     while (this.playerStatus.playerExp >= this.playerStatus.baseStatInfo.maxExp) {
       if (this.playerStatus.playerLevel >= data[data.length - 1].level) {
@@ -117,6 +119,23 @@ export class DungeonPlayer extends Player {
     return this.playerInfo.mysteryBox;
   }
 
+  resetBox() {
+    this.playerInfo.mysteryBox = 0;
+  }
+
+  updateGold(gold) {
+    if (this.playerInfo.gold + gold < 0) {
+      return null;
+    }
+    this.playerInfo.gold += gold;
+  }
+
+  updateRoundGold(round) {
+    const data = getGameAssets().stage.data.find((e) => e.round === round);
+    this.playerInfo.gold += data.reward;
+    return data.reward;
+  }
+
   updateTransform(transform) {
     this.playerInfo.transform.updateTransform(transform);
     return this.playerInfo.transform.getTransform();
@@ -137,7 +156,7 @@ export class DungeonPlayerInfo extends PlayerInfo {
     super(playerInfo.playerId, playerInfo.nickname, playerInfo.charClass);
     this.gold = 0;
     this.mysteryBox = 0;
-    this.killed = []; // 죽인 몬스터
+    this.killed = []; // 처치 몬스터 index
     this.isDead = false; // 플레이어 상태, (생존: false, 죽음: true)
   }
 }

@@ -8,6 +8,7 @@ import bcrypt from 'bcrypt';
 import lodash from 'lodash';
 
 const signupAccountHandler = async ({ socket, userId, packet }) => {
+  // C_SIGN_UP
   try {
     const { accountId, accountPwd } = packet;
     const hashedPwd = await bcrypt.hash(accountPwd, config.account.saltRounds);

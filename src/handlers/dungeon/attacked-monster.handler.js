@@ -1,52 +1,37 @@
 import { enqueueMonsterHitJob } from '../../bull/monster/monster-kill.js';
 import { attackTypes } from '../../constants/game.constants.js';
-import { payloadTypes } from '../../constants/packet.constants.js';
 import { sessionTypes } from '../../constants/session.constants.js';
-import { getGameAssets } from '../../init/assets.js';
 import { getUserById } from '../../session/user.session.js';
 import CustomError from '../../utils/error/customError.js';
-import { ErrorCodes, SuccessCode } from '../../utils/error/errorCodes.js';
+import { ErrorCodes } from '../../utils/error/errorCodes.js';
 import { handleError } from '../../utils/error/errorHandler.js';
 
-// 몬스터 피격 시
+// 몬스터 피격
 const attackedMonsterHandler = ({ socket, accountId, packet }) => {
+  // C_MONSTER_ATTACKED
   try {
     const { attackType, monsterIdx } = packet;
+    console.log('몬스터 피격 정보 : ', attackType, monsterIdx);
 
     const user = getUserById(accountId);
+
     const dungeonSession = user.getSession();
     if (!dungeonSession || dungeonSession.type !== sessionTypes.DUNGEON) {
       throw new CustomError(ErrorCodes.GAME_NOT_FOUND, 'Dungeon Session을 찾을 수 없습니다.');
     }
 
-    // dungeonRedis에서 hp 정보 가져옴
-    // let monsterHp = await dungeonRedis.get();
-
-    // dungeonRedis에서 플레이어 playerInfo(charStatInfo) 가져옴
-    // const playerInfo = dungeonSession.getPlayerInfo(accountId);
-    // const playerStatus = dungeonSession.getPlayerStatus(accountId);
-    // const { charStatInfo } = getGameAssets();
-
     const player = dungeonSession.getPlayer(accountId);
-    console.log('1111111111111', player);
-    console.log('222222222222222222', player.playerStatus.getStatInfo());
     let damage;
     switch (attackType) {
       case attackTypes.NORMAL:
-        // damage = charStatInfo[playerInfo.charClass][playerStatus.playerLevel - 1].atk;
         damage = player.playerStatus.getStatInfo().atk;
         break;
       case attackTypes.SKILL:
-        // damage = charStatInfo[playerInfo.charClass][playerStatus.playerLevel - 1].magic;
         damage = player.playerStatus.getStatInfo().specialAtk;
         break;
       default:
-        // damage = charStatInfo[playerInfo.charClass][playerStatus.playerLevel - 1].atk;
         damage = player.playerStatus.getStatInfo().atk;
     }
-
-    // monsterHp -= damage;
-    // const monsterHp = 25;
 
     const jobData = {
       accountId,
@@ -54,20 +39,6 @@ const attackedMonsterHandler = ({ socket, accountId, packet }) => {
       damage,
     };
     enqueueMonsterHitJob(jobData);
-
-    // const monster = dungeonSession.updatePlayerAttackMonster(accountId, monsterIdx, damage, true);
-
-    // dungeonSession.attackedMonster(accountId, monsterIdx, monster.monsterHp);
-
-    // socket.sendResponse(
-    //   SuccessCode.Success,
-    //   `몬스터(${monsterIdx})가 플레이어(${accountId})에 의해 피격, 몬스터 남은 체력: ${monster.monsterHp}`,
-    //   payloadTypes.S_MONSTER_ATTACKED,
-    //   {
-    //     monsterIdx,
-    //     monsterHp: monster.monsterHp,
-    //   },
-    // );
   } catch (e) {
     handleError(e);
   }

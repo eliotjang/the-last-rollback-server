@@ -19,6 +19,7 @@ export class Monster {
     const data = monsterSpawnLocate.dungeonCodes[dungeonCode];
     const ranNum = Math.floor(Math.random() * data.length);
     this.transform = new Transform(data[ranNum].posX, data[ranNum].posY, data[ranNum].posZ);
+    return { ...this.transform };
   }
 
   attack(targetDungeonPlayer) {

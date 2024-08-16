@@ -1,7 +1,6 @@
 import { payloadTypes } from '../../constants/packet.constants.js';
 import Game from './game.class.js';
 import { sessionTypes } from '../../constants/session.constants.js';
-import { getTownSession } from '../../session/town.session.js';
 import { handleError } from '../../utils/error/errorHandler.js';
 import { townRedis } from '../../utils/redis/town.redis.js';
 
@@ -14,19 +13,15 @@ class Town extends Game {
   }
 
   addUser(user) {
-    console.log('In townSession', this.users);
     Promise.all(this.users.map(async (curUser) => curUser.getPlayerInfo()))
       .then((playerInfos) => {
         super.addUser(user);
 
         if (playerInfos.length) {
-          // console.log('기존 유저 : ', user.accountId, playerInfos);
           super.notifyUser(user.accountId, payloadTypes.S_SPAWN, { players: playerInfos });
-          // console.log('현재 들어온 유저에게 다른 모든 유저 정보를 전송:', playerInfos);
         }
         user.getPlayerInfo().then((userInfo) => {
           super.notifyOthers(user.accountId, payloadTypes.S_SPAWN, { players: [userInfo] });
-          // console.log('기존 유저에게 새로 들어온 유저 정보를 전송:', userInfo);
           this.systemChatAll(user.accountId, `${userInfo.nickname}님이 입장하였습니다.`);
         });
       })
@@ -41,7 +36,6 @@ class Town extends Game {
     super.notifyAll(payloadTypes.S_DESPAWN, { playerIds: [accountId] });
   }
 
-  //
   movePlayer(accountId, transform) {
     townRedis.updatePlayerTransform(transform, accountId).then(() => {
       super.notifyAll(payloadTypes.S_MOVE, { playerId: accountId, transform });

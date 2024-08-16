@@ -1,9 +1,5 @@
-import Dungeon from '../../classes/sessions/dungeon.class.js';
 import { gameAssetConstants } from '../../constants/asset.constants.js';
-import dc from '../../constants/game.constants.js';
-import { payloadTypes } from '../../constants/packet.constants.js';
 import { getGameAssets } from '../../init/assets.js';
-import MonsterTransformInfo from '../../protobuf/classes/info/monster-transform-info.proto.js';
 import CustomError from '../error/customError.js';
 import { ErrorCodes } from '../error/errorCodes.js';
 
@@ -42,13 +38,16 @@ const initStageData = async () => {
       }
       if (!stageData[data.dungeonCode][data.round]) {
         stageData[data.dungeonCode][data.round] = {};
+        stageData[data.dungeonCode][data.round].totalWeight = 0;
       }
       stageData[data.dungeonCode][data.round].monsterUnlock = data.monsterUnlock;
       stageData[data.dungeonCode][data.round].spawnCount = data.spawnCount;
       stageData[data.dungeonCode][data.round].itemUnlock = data.itemUnlock;
 
-      getGameAssets()[gameAssetConstants.pickUpItemInfo.NAME].data.forEach((data1) => {
-        stageData[data.dungeonCode][data.round].totalWeight += data1.weight;
+      getGameAssets()[gameAssetConstants.pickUpItemInfo.NAME].data.forEach((e) => {
+        if (data.itemUnlock.includes(e.itemModel)) {
+          stageData[data.dungeonCode][data.round].totalWeight += e.weight;
+        }
       });
     });
     Object.freeze(stageData);
@@ -100,11 +99,9 @@ const dungeonUtils = {
     let index = 0;
     for (let i = 0; i < roundData.monsterUnlock.length; i++) {
       for (let j = 0; j < roundData.spawnCount[i]; j++) {
-        const monsterTransform = new MonsterTransformInfo(dungeonCode);
         monsters.push({
           monsterIdx: index++,
           ...monsterData[roundData.monsterUnlock[i]],
-          monsterTransform: monsterTransform.getTransform(),
         });
       }
     }
@@ -120,7 +117,6 @@ const dungeonUtils = {
     if (roundData === null || typeof roundData === 'undefined') {
       return null;
     }
-
     const random = Math.random();
     let result = null;
     let sum = 0;
@@ -137,7 +133,10 @@ const dungeonUtils = {
 
   openMysteryBox: (boxCount) => {
     let result = [];
-    let totalWeight = mysteryBoxData.reduce((acc, cur) => acc + cur.weight, 0);
+    let totalWeight = 0;
+    for (const key in mysteryBoxData) {
+      totalWeight += mysteryBoxData[key].weight;
+    }
     let sum = 0;
     for (let i = 0; i < boxCount; i++) {
       for (const key in mysteryBoxData) {

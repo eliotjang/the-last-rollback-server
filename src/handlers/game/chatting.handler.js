@@ -4,6 +4,7 @@ import { ErrorCodes } from '../../utils/error/errorCodes.js';
 import { handleError } from '../../utils/error/errorHandler.js';
 
 const chattingHandler = async ({ socket, accountId, packet }) => {
+  // C_CHAT
   try {
     const { chatMsg } = packet;
 

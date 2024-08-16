@@ -2,21 +2,7 @@ import { isBlackListed } from '../constants/constants.js';
 import { packetTypes, payloadKeyNames, payloadTypes } from '../constants/packet.constants.js';
 import { handleError } from './error/errorHandler.js';
 import { writeHeader } from './packet-header.utils.js';
-import { deserializeTest, serializeEx } from './packet-serializer.utils.js';
-
-/**
- * 소켓 쓰기용 함수. 소켓을 bind하여 사용한다.
- * 예) socket.sendPacket = sendPacket.bind(socket);
- * socket.sendPacket(packetType, data);
- * @param {number} payloadType packetType as mapped in packetTypes
- * @param {Object} data key-value object to be serialized
- */
-export function sendPacket(payloadType, data) {
-  // const serialized = serialize(payloadType, data, true);
-  // const header = writeHeader(serialized.length, payloadType);
-  // const packet = Buffer.concat([header, serialized]);
-  // this.write(packet);
-}
+import { serializeEx } from './packet-serializer.utils.js';
 
 export async function sendPing(timestamp, dontSend = false) {
   try {
@@ -53,11 +39,10 @@ export const sendResponse = async function (code, message, payloadType, payload,
       payload,
     };
     if (!isBlackListed(payloadType)) {
-      console.log(`SERIALIZING: ${payloadType} ${payloadKeyNames[payloadType]}`);
+      console.log(`sendResponse: ${payloadKeyNames[payloadType]}`);
     }
 
     const serializedPacket = serializeEx(packetTypes.RESPONSE, payloadType, packetData);
-    // deserializeTest(packetTypes.RESPONSE, serializedPacket);
     const header = writeHeader(serializedPacket.length, packetTypes.RESPONSE);
     const packet = Buffer.concat([header, serializedPacket]);
 
@@ -86,13 +71,10 @@ export const sendNotification = async function (payloadType, payload) {
       payload,
     };
     if (!isBlackListed(payloadType)) {
-      console.log(`SERIALIZING: ${payloadType} ${payloadKeyNames[payloadType]}`);
+      console.log(`sendNotification: ${payloadKeyNames[payloadType]}`);
     }
 
     const serializedPacket = serializeEx(packetTypes.NOTIFICATION, payloadType, packetData);
-    // if (payloadType !== payloadTypes.S_MOVE && payloadType !== payloadTypes.S_MONSTER_MOVE) {
-    // deserializeTest(packetTypes.NOTIFICATION, serializedPacket);
-    // }
     const header = writeHeader(serializedPacket.length, packetTypes.NOTIFICATION);
     const packet = Buffer.concat([header, serializedPacket]);
     this.write(packet);
