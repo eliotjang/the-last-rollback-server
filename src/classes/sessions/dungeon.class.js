@@ -50,11 +50,11 @@ class Dungeon extends Game {
         structureHp: structure.hp,
       };
 
-      if (this.getPlayer(accountId).updateGold(-structure.gold) < 0) {
-        this.systemChat(accountId, `${data.structureName}을(를) 구매할 골드가 부족합니다.`);
+      const playerGold = this.getPlayer(accountId).updateGold(-structure.gold);
+      if (playerGold === null) {
+        this.systemChat(accountId, `골드가 부족합니다.`);
         return null;
       }
-      const playerGold = this.getPlayer(accountId).updateGold(-structure.gold);
 
       super.notifyAll(payloadTypes.S_STRUCTURE, {
         structureStatus,

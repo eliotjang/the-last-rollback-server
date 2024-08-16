@@ -151,7 +151,7 @@ export class PlayerInfo {
 export class DungeonPlayerInfo extends PlayerInfo {
   constructor(playerInfo) {
     super(playerInfo.playerId, playerInfo.nickname, playerInfo.charClass);
-    this.gold = 0;
+    this.gold = 3000;
     this.mysteryBox = 0;
     this.killed = []; // 처치 몬스터 index
     this.isDead = false; // 플레이어 상태, (생존: false, 죽음: true)
