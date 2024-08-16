@@ -7,6 +7,7 @@ const animationPlayerHandler = ({ socket, accountId, packet }) => {
   // C_ANIMATION_PLAYER
   try {
     const { animCode, monsterIdx } = packet;
+    console.log('플레이어 애니메이션 정보 : ', animCode, monsterIdx);
     const user = getUserById(accountId);
     const dungeonSession = user.getSession();
     if (!dungeonSession) {

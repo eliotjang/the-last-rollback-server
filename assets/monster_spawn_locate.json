@@ -4,22 +4,22 @@
   "data": [
     { "dungeonCode": 1, "posX": 43.5, "posY": 1.72, "posZ": 119.63 },
     { "dungeonCode": 1, "posX": -5.93, "posY": 1.06, "posZ": 92.43 },
-    { "dungeonCode": 1, "posX": -46.71, "posY": 0.48, "posZ": 132.75 },
+    { "dungeonCode": 1, "posX": -46.71, "posY": 0.48, "posZ": 122.7 },
     { "dungeonCode": 1, "posX": -41.66, "posY": 0.48, "posZ": 90.63 },
     { "dungeonCode": 1, "posX": 35.48, "posY": 0.48, "posZ": 88.26 },
     { "dungeonCode": 2, "posX": 43.5, "posY": 1.72, "posZ": 119.63 },
     { "dungeonCode": 2, "posX": -5.93, "posY": 1.06, "posZ": 92.43 },
-    { "dungeonCode": 2, "posX": -46.71, "posY": 0.48, "posZ": 132.75 },
+    { "dungeonCode": 2, "posX": -46.71, "posY": 0.48, "posZ": 122.7 },
     { "dungeonCode": 2, "posX": -41.66, "posY": 0.48, "posZ": 90.63 },
     { "dungeonCode": 2, "posX": 35.48, "posY": 0.48, "posZ": 88.26 },
     { "dungeonCode": 3, "posX": 43.5, "posY": 1.72, "posZ": 119.63 },
     { "dungeonCode": 3, "posX": -5.93, "posY": 1.06, "posZ": 92.43 },
-    { "dungeonCode": 3, "posX": -46.71, "posY": 0.48, "posZ": 132.75 },
+    { "dungeonCode": 3, "posX": -46.71, "posY": 0.48, "posZ": 122.7 },
     { "dungeonCode": 3, "posX": -41.66, "posY": 0.48, "posZ": 90.63 },
     { "dungeonCode": 3, "posX": 35.48, "posY": 0.48, "posZ": 88.26 },
     { "dungeonCode": 4, "posX": 43.5, "posY": 1.72, "posZ": 119.63 },
     { "dungeonCode": 4, "posX": -5.93, "posY": 1.06, "posZ": 92.43 },
-    { "dungeonCode": 4, "posX": -46.71, "posY": 0.48, "posZ": 132.75 },
+    { "dungeonCode": 4, "posX": -46.71, "posY": 0.48, "posZ": 122.7 },
     { "dungeonCode": 4, "posX": -41.66, "posY": 0.48, "posZ": 90.63 },
     { "dungeonCode": 4, "posX": 35.48, "posY": 0.48, "posZ": 88.26 }
   ],
@@ -27,28 +27,28 @@
     "1": [
       { "posX": 43.5, "posY": 1.72, "posZ": 119.63 },
       { "posX": -5.93, "posY": 1.06, "posZ": 92.43 },
-      { "posX": -46.71, "posY": 0.48, "posZ": 132.75 },
+      { "posX": -46.71, "posY": 1.5, "posZ": 122.7 },
       { "posX": -41.66, "posY": 0.48, "posZ": 90.63 },
       { "posX": 35.48, "posY": 0.48, "posZ": 88.26 }
     ],
     "2": [
       { "posX": 43.5, "posY": 1.72, "posZ": 119.63 },
       { "posX": -5.93, "posY": 1.06, "posZ": 92.43 },
-      { "posX": -46.71, "posY": 0.48, "posZ": 132.75 },
+      { "posX": -46.71, "posY": 0.48, "posZ": 122.7 },
       { "posX": -41.66, "posY": 0.48, "posZ": 90.63 },
       { "posX": 35.48, "posY": 0.48, "posZ": 88.26 }
     ],
     "3": [
       { "posX": 43.5, "posY": 1.72, "posZ": 119.63 },
       { "posX": -5.93, "posY": 1.06, "posZ": 92.43 },
-      { "posX": -46.71, "posY": 0.48, "posZ": 132.75 },
+      { "posX": -46.71, "posY": 0.48, "posZ": 122.7 },
       { "posX": -41.66, "posY": 0.48, "posZ": 90.63 },
       { "posX": 35.48, "posY": 0.48, "posZ": 88.26 }
     ],
     "4": [
       { "posX": 43.5, "posY": 1.72, "posZ": 119.63 },
       { "posX": -5.93, "posY": 1.06, "posZ": 92.43 },
-      { "posX": -46.71, "posY": 0.48, "posZ": 132.75 },
+      { "posX": -46.71, "posY": 0.48, "posZ": 122.7 },
       { "posX": -41.66, "posY": 0.48, "posZ": 90.63 },
       { "posX": 35.48, "posY": 0.48, "posZ": 88.26 }
     ]

@@ -36,6 +36,9 @@ export const enterDungeonSession = async (dungeonSession, dungeonCode) => {
   }
 
   const data = { dungeonInfo, playerInfo: playerInfos, players: playerStatus };
+  for (let i = 0; i < dungeonInfo.monsters.length; i++) {
+    console.log('monster : ', dungeonInfo.monsters[i]);
+  }
 
   for (const user of dungeonSession.users) {
     user.socket.sendResponse(
