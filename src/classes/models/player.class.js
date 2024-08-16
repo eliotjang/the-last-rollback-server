@@ -17,8 +17,8 @@ export class Player {
         this.accountExp = data[this.accountLevel - 1].maxExp;
         break;
       }
-      this.accountLevel++;
       this.accountExp -= data[this.accountLevel - 1].maxExp;
+      this.accountLevel++;
     }
   }
 }
@@ -69,6 +69,8 @@ export class DungeonPlayer extends Player {
       this.playerStatus.playerExp -= this.playerStatus.baseStatInfo.maxExp;
       this.playerStatus.baseStatInfo = new StatInfo(data[this.playerStatus.playerLevel - 1]);
     }
+    this.updateHp(this.playerStatus.getStatInfo().maxHp);
+    this.updateMp(this.playerStatus.getStatInfo().maxMp);
   }
 
   updateHp(hp) {
@@ -111,6 +113,10 @@ export class DungeonPlayer extends Player {
 
   resetBox() {
     this.playerInfo.mysteryBox = 0;
+  }
+
+  resetKilled() {
+    this.playerInfo.killed = [];
   }
 
   updateGold(gold) {

@@ -70,8 +70,8 @@ class Town extends Game {
     });
   }
 
-  animationPlayer(data) {
-    super.notifyAll(payloadTypes.S_ANIMATION_PLAYER, data);
+  animationPlayer(animCode, playerId, monsterIdx) {
+    super.notifyAll(payloadTypes.S_ANIMATION_PLAYER, { animCode, playerId, monsterIdx });
   }
 }
 

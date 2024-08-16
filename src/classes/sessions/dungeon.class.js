@@ -216,7 +216,6 @@ class Dungeon extends Game {
     this.roundKillCount++;
     const player = this.players.get(accountId);
     player.playerInfo.killed.push(monsterIdx);
-    player.updateExp(monster.killExp);
     pickUpHandler(accountId, this.dungeonCode, this.round);
     console.log('------------KILL MONSTER----------', this.roundKillCount, this.roundMonsters.size);
     // 모든 몬스터 처치 시 밤 라운드 종료
@@ -295,7 +294,6 @@ class Dungeon extends Game {
         if (dungeonInfo === null) {
           return null;
         }
-        this.setMonsters(this.dungeonCode, dungeonInfo.monsters);
         return dungeonInfo;
       })(),
       Promise.all(
@@ -303,10 +301,14 @@ class Dungeon extends Game {
           const player = this.players.get(user.accountId);
           const boxGold = dungeonUtils.openMysteryBox(player.playerInfo.mysteryBox);
           const totalBoxGold = boxGold.reduce((acc, cur) => acc + cur, 0);
-          player.updateAccountExp(player.playerStatus.playerExp);
+          const roundExp = player.playerInfo.killed.reduce(
+            (acc, cur) => acc + this.getMonster(cur).killExp,
+            0,
+          );
+          player.updateAccountExp(roundExp + this.round * 10);
+          player.updateExp(roundExp);
           player.updateLevel();
           player.updateGold(totalBoxGold);
-          player.resetBox();
           const roundGold = player.updateRoundGold(this.round);
 
           const roundResult = {
@@ -343,6 +345,13 @@ class Dungeon extends Game {
         if (!dungeonInfo) {
           this.endGame(gameResults.codes.GAME_WIN, gameResults.bonusExp.GAME_WIN);
         } else {
+          this.setMonsters(this.dungeonCode, dungeonInfo.monsters);
+          this.users.forEach((user) => {
+            const player = this.getPlayer(user.accountId);
+            player.resetKilled();
+            player.resetBox();
+          });
+
           const data = {
             dungeonInfo,
             roundResults,
