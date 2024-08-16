@@ -16,6 +16,8 @@ const dungeonConstants = {
 export const attackTypes = {
   NORMAL: 0,
   SKILL: 1,
+  BALLISTA: 2,
+  LASER: 3,
 };
 
 export const gameResults = {

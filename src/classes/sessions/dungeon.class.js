@@ -40,11 +40,31 @@ class Dungeon extends Game {
   // #endregion
 
   // #region 구조물
-  addStructure(structure, transform) {
-    this.structures.set(this.structureIdx++, structure);
+  addStructure(structure, transform, accountId) {
     if (transform) {
-      structure.setLocate(transform);
+      const currentIdx = this.structureIdx++;
+      this.structures.set(currentIdx, structure);
+      const structureStatus = {
+        structureModel: structure.structureModel,
+        structureIdx: currentIdx,
+        structureHp: structure.hp,
+      };
+
+      const playerGold = this.getPlayer(accountId).updateGold(-structure.gold);
+      if (playerGold === null) {
+        this.systemChat(accountId, `골드가 부족합니다.`);
+        return null;
+      }
+
+      super.notifyAll(payloadTypes.S_STRUCTURE, {
+        structureStatus,
+        transform,
+        gold: playerGold,
+        playerId: accountId,
+      });
+      return;
     }
+    this.structures.set(this.structureIdx++, structure);
   }
 
   getStructure(structureIdx) {
@@ -55,16 +75,28 @@ class Dungeon extends Game {
     const monsterInfo = this.roundMonsters.get(monsterIdx);
     const structure = this.getStructure(structureIdx);
     structure.updateStructureHp(monsterInfo.atk);
+    if (structureIdx > 0) {
+      this.notifyAll(payloadTypes.S_STRUCTURE_ATTACKED, {
+        monsterIdx,
+        structureIdx,
+        structureHp: structure.hp,
+      });
+      return;
+    }
     if (structureIdx === 0) {
       this.checkBaseHp(structure);
+      super.notifyAll(payloadTypes.S_TOWER_ATTACKED, { towerHp: structure.hp });
     }
-    super.notifyAll(payloadTypes.S_TOWER_ATTACKED, { towerHp: structure.hp });
   }
 
   checkBaseHp(structure) {
     if (structure.hp <= 0) {
       this.endGame(gameResults.codes.GAME_OVER, gameResults.bonusExp.GAME_OVER);
     }
+  }
+
+  animationStructure(data) {
+    super.notifyAll(payloadTypes.S_ANIMATION_STRUCTURE, data);
   }
 
   // #endregion

@@ -32,6 +32,8 @@ export const ErrorCodes = {
   MONSTER_NOT_FOUND: 10029,
   INVALID_ARGUMENT: 11111,
   PROBABILITY_ERROR: 11112,
+  STRUCTURE_NOT_FOUND: 666666,
+  NOT_ENOUGH_GOLD: 777777,
 };
 
 export const SuccessCode = {

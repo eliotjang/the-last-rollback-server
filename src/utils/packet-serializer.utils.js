@@ -99,6 +99,6 @@ export const deserializeTest = (packetType, packet) => {
     throw new CustomError('역직렬화 문제 발생');
   }
   const decoded = MessageType.decode(packet);
-  console.log('deserialize test:', decoded);
+  // console.log('deserialize test:', decoded);
   return decoded;
 };

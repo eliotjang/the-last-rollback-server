@@ -31,4 +31,8 @@ export const gameAssetConstants = {
     NAME: 'monsterSpawnLocate',
     PATH: 'monster_spawn_locate.json',
   },
+  structureInfo: {
+    NAME: 'structureInfo',
+    PATH: 'structure_info.json',
+  },
 };

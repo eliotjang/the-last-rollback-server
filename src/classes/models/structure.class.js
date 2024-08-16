@@ -5,6 +5,8 @@ export class Structure {
   constructor() {
     this.hp = 0;
     this.transform = new Transform();
+    this.gold = 0;
+    this.structureModel = 0;
   }
 
   updateStructureHp(damage) {
@@ -12,7 +14,7 @@ export class Structure {
     if (this.hp <= 0) {
       this.hp = 0;
     }
-    return this.towerHp;
+    return this.hp;
   }
 
   setLocate(transform) {
@@ -26,5 +28,17 @@ export class Base extends Structure {
     const data = getGameAssets().stageUnlock.data.find((e) => e.dungeonCode === dungeonCode);
     this.hp = data.baseHp;
     this.transform = new Transform(data.posX, data.posY, data.posZ);
+  }
+}
+
+export class Fort extends Structure {
+  constructor(structureModel) {
+    super();
+    const data = getGameAssets().structureInfo.data.find(
+      (e) => e.structureModel === structureModel,
+    );
+    this.hp = data.maxHp;
+    this.gold = data.gold;
+    this.structureModel = structureModel;
   }
 }
