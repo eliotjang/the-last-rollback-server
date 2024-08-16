@@ -1,7 +1,7 @@
 const dungeonConstants = {
   general: {
-    MAX_USERS: 1,
-    DAY_DURATION: 16000,
+    MAX_USERS: 2,
+    DAY_DURATION: 12000,
   },
   phases: {
     STANDBY: 3,
@@ -18,6 +18,17 @@ export const attackTypes = {
   SKILL: 1,
   BALLISTA: 2,
   LASER: 3,
+};
+
+export const gameResults = {
+  codes: {
+    GAME_OVER: 1,
+    GAME_WIN: 2,
+  },
+  bonusExp: {
+    GAME_OVER: 10,
+    GAME_WIN: 100,
+  },
 };
 
 export default dungeonConstants;

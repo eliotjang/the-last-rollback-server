@@ -5,8 +5,10 @@ import CustomError from '../../utils/error/customError.js';
 import { ErrorCodes, SuccessCode } from '../../utils/error/errorCodes.js';
 import { handleError } from '../../utils/error/errorHandler.js';
 
-// 플레이어가 몬스터 공격 요청 시
+// 레거시 코드
+// 플레이어가 몬스터 공격
 const attackMonsterHandler = ({ socket, accountId, packet }) => {
+  // C_PLAYER_ATTACK
   try {
     const { attackType, monsterIdx } = packet;
 
@@ -15,10 +17,6 @@ const attackMonsterHandler = ({ socket, accountId, packet }) => {
     if (!dungeonSession || dungeonSession.type !== sessionTypes.DUNGEON) {
       throw new CustomError(ErrorCodes.GAME_NOT_FOUND, 'Dungeon Session을 찾을 수 없습니다.');
     }
-
-    // 거리 검증
-    // verifyDistance();
-    // const playerInfo = dungeonSession.getPlayerInfo(accountId);
 
     dungeonSession.attackMonster(accountId, attackType, monsterIdx);
 

@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import Dungeon from '../classes/models/dungeon.class.js';
+import Dungeon from '../classes/sessions/dungeon.class.js';
 import { dungeonSessions } from './sessions.js';
 
 export const addDungeonSession = (dungeonCode) => {

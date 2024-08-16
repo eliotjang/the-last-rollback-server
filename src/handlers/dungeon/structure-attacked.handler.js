@@ -18,7 +18,7 @@ const structureAttackedMonsterHandler = ({ socket, accountId, packet }) => {
       throw new CustomError(ErrorCodes.GAME_NOT_FOUND, 'Dungeon Session을 찾을 수 없습니다.');
     }
 
-    dungeonSession.monsterAttacksStructure(accountId, monsterIdx, structureIdx);
+    dungeonSession.updateStructureHp(structureIdx, monsterIdx);
   } catch (error) {
     handleError(error);
   }

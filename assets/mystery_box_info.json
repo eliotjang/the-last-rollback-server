@@ -2,10 +2,10 @@
   "name": "mystery_box_info",
   "version": "1.0.0",
   "data": [
-    { "gold": 100, "probability": 30 },
-    { "gold": 300, "probability": 25 },
-    { "gold": 500, "probability": 20 },
-    { "gold": 700, "probability": 15 },
-    { "gold": 900, "probability": 10 }
+    { "id": 1, "itemModel": 103, "gold": 100, "weight": 30 },
+    { "id": 2, "itemModel": 103, "gold": 300, "weight": 25 },
+    { "id": 3, "itemModel": 103, "gold": 500, "weight": 20 },
+    { "id": 4, "itemModel": 103, "gold": 700, "weight": 15 },
+    { "id": 5, "itemModel": 103, "gold": 900, "weight": 10 }
   ]
 }

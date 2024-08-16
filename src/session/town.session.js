@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
-import Town from '../classes/models/town.class.js';
 import { townSessions } from './sessions.js';
+import Town from '../classes/sessions/town.class.js';
 
 export const addTownSession = () => {
   const id = uuidv4();

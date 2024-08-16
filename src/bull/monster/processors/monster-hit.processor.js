@@ -1,9 +1,6 @@
 import { getDungeonSessionByUserId } from '../../../session/dungeon.session.js';
 
 const MonsterHitProcessor = (job, done) => {
-  //
-  console.log(job.data); // accountId, monsterIdx, damage
-  // 판정
   const { playerId, monsterIdx, damage } = job.data;
   const dungeonSession = getDungeonSessionByUserId(playerId);
   dungeonSession.updatePlayerAttackMonster(playerId, monsterIdx, damage);

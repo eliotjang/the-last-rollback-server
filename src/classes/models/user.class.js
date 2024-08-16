@@ -4,7 +4,6 @@ import IntervalManager from '../../manager/interval.manger.js';
 import { getDungeonSession } from '../../session/dungeon.session.js';
 import { getTownSession } from '../../session/town.session.js';
 import { handleError } from '../../utils/error/errorHandler.js';
-import { dungeonRedis } from '../../utils/redis/dungeon.redis.js';
 import { townRedis } from '../../utils/redis/town.redis.js';
 
 class User {
@@ -12,6 +11,7 @@ class User {
     this.accountId = accountId;
     this.socket = socket;
     this.sequence = 0;
+    this.player = null;
 
     // 유저가 포함된 게임 세션 정보
     this.sessionInfo = {
@@ -51,8 +51,6 @@ class User {
     switch (this.sessionInfo.type) {
       case sessionTypes.TOWN:
         return await townRedis.getPlayerInfo(this.accountId);
-      // case sessionTypes.DUNGEON:
-      //   return await dungeonRedis.getPlayerInfo(this.accountId);
       default:
         return null;
     }
@@ -72,8 +70,6 @@ class User {
     switch (this.sessionInfo.type) {
       case sessionTypes.TOWN:
         return await townRedis.removePlayer(this.accountId);
-      // case sessionTypes.DUNGEON:
-      // return await dungeonRedis.removePlayer(this.accountId);
       default:
         return null;
     }
@@ -96,7 +92,7 @@ class User {
     try {
       const now = Date.now();
       this.latency = (now - data.timestamp) / 2;
-      console.log(`[${this.accountId}] Latency: ${this.latency}ms`);
+      // console.log(`[${this.accountId}] Latency: ${this.latency}ms`);
     } catch (err) {
       handleError(this.socket, err);
     }
