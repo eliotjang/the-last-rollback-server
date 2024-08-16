@@ -1,8 +1,5 @@
 import { payloadTypes } from '../../constants/packet.constants.js';
-import {
-  getDungeonSessionByUserId,
-  getDungeonSessionByUserSocket,
-} from '../../session/dungeon.session.js';
+import { getDungeonSessionByUserId } from '../../session/dungeon.session.js';
 import { getUserById } from '../../session/user.session.js';
 import CustomError from '../../utils/error/customError.js';
 import { ErrorCodes, SuccessCode } from '../../utils/error/errorCodes.js';

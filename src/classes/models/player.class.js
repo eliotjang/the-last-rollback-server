@@ -1,3 +1,4 @@
+import { maxBox } from '../../constants/dungeon.constants.js';
 import { getGameAssets } from '../../init/assets.js';
 import { Transform } from './transform.class.js';
 
@@ -37,12 +38,6 @@ export class DungeonPlayer extends Player {
 
   attack(targetMonster) {
     targetMonster.hit(this.playerStatus.getStatInfo().atk);
-    // const monsterHp = targetMonster.hit(this.playerStatus.getStatInfo().atk);
-    // if(monsterHp <= 0 ){
-    //   this.playerInfo.killed.push(targetMonster);
-    //   return true;
-    // }
-    // return false;
   }
 
   hit(damage) {
@@ -63,7 +58,6 @@ export class DungeonPlayer extends Player {
   }
 
   updateLevel() {
-    console.log('레벨업');
     const data = getGameAssets().charStatInfo[this.playerInfo.charClass];
     while (this.playerStatus.playerExp >= this.playerStatus.baseStatInfo.maxExp) {
       if (this.playerStatus.playerLevel >= data[data.length - 1].level) {
@@ -77,18 +71,13 @@ export class DungeonPlayer extends Player {
     }
   }
 
-  updateExp(exp) {
-    // this.playerStatus.updateExp(exp);
-
-    this.playerStatus.playerExp += exp;
-  }
-
   updateHp(hp) {
     if (this.playerStatus.playerHp + hp < 0) {
       return null;
     }
     this.playerStatus.playerHp += hp;
-    const data = getGameAssets().charStatInfo[this.playerInfo.charClass];
+    const data =
+      getGameAssets().charStatInfo[this.playerInfo.charClass][this.playerStatus.playerLevel - 1];
     if (this.playerStatus.playerHp > data.maxHp) {
       this.playerStatus.playerHp = data.maxHp;
     }
@@ -100,7 +89,7 @@ export class DungeonPlayer extends Player {
       return null;
     }
     this.playerStatus.playerMp += mp;
-    const data = getGameAssets().charStatInfo[this.playerInfo.charClass];
+    const data = getGameAssets().charStatInfo.data[this.playerInfo.charClass];
     if (this.playerStatus.playerMp > data.maxMp) {
       this.playerStatus.playerMp = data.maxMp;
     }
@@ -112,9 +101,9 @@ export class DungeonPlayer extends Player {
       return null;
     }
     this.playerInfo.mysteryBox += n;
-    const data = getGameAssets().charStatInfo[this.playerInfo.charClass];
-    if (this.playerInfo.mysteryBox > data.maxBox) {
-      this.playerInfo.mysteryBox = data.maxBox;
+
+    if (this.playerInfo.mysteryBox > maxBox) {
+      this.playerInfo.mysteryBox = maxBox;
     }
     return this.playerInfo.mysteryBox;
   }
@@ -163,31 +152,13 @@ export class DungeonPlayerInfo extends PlayerInfo {
 
 export class DungeonPlayerStatus {
   constructor(charClass, playerLevel = 1, playerExp = 0, addStatInfo = new StatInfo({})) {
-    // this.charClass = charClass;
     this.playerLevel = playerLevel;
     this.playerExp = playerExp;
     this.baseStatInfo = new StatInfo(getGameAssets().charStatInfo[charClass][playerLevel - 1]);
     this.addStatInfo = addStatInfo;
-    // this.playerHp = baseStatInfo.maxHp + addStatInfo.maxHp;
-    // this.playerMp = baseStatInfo.maxMp + addStatInfo.maxMp;
     this.playerHp = this.baseStatInfo.maxHp;
     this.playerMp = this.baseStatInfo.maxMp;
   }
-
-  // updateExp(exp) {
-  //   this.playerExp += exp;
-  //   const data = getGameAssets().charStatInfo[this.charClass];
-  //   while (this.playerExp >= this.baseStatInfo.maxExp) {
-  //     if (this.playerLevel >= data[data.length - 1].level) {
-  //       this.playerExp = this.baseStatInfo.maxExp;
-  //       break;
-  //     }
-
-  //     this.playerLevel++;
-  //     this.playerExp -= this.baseStatInfo.maxExp;
-  //     this.baseStatInfo = new StatInfo(data[this.playerLevel - 1]);
-  //   }
-  // }
 
   getStatInfo() {
     const statInfo = new StatInfo(this.baseStatInfo);
@@ -200,9 +171,7 @@ export class StatInfo {
   constructor({ maxExp, maxHp, maxMp, atk, def, specialAtk, speed, attackRange, coolTime }) {
     this.maxExp = maxExp ??= 0;
     this.maxHp = maxHp ??= 0;
-    // this.hp = maxHp;
     this.maxMp = maxMp ??= 0;
-    // this.mp = maxMp;
     this.atk = atk ??= 0;
     this.def = def ??= 0;
     this.specialAtk = specialAtk ??= 0;
@@ -213,9 +182,7 @@ export class StatInfo {
 
   addStat(addStatInfo) {
     this.maxHp += addStatInfo.maxHp;
-    // this.hp = maxHp;
     this.maxMp += addStatInfo.maxMp;
-    // this.mp = maxMp;
     this.atk += addStatInfo.atk;
     this.def += addStatInfo.def;
     this.specialAtk += addStatInfo.specialAtk;
@@ -224,54 +191,3 @@ export class StatInfo {
     this.coolTime += addStatInfo.coolTime;
   }
 }
-
-// class Dungeon extends Game {
-//   constructor(id, dungeonCode) {
-//     super(id, dc.general.MAX_USERS);
-//     this.type = sessionTypes.DUNGEON;
-//     this.players = new Map(Player(accountExp, playerInfos, playerStatus)); // key: accountId, value: DungeonPlayer
-//     this.dungeonCode = dungeonCode;
-//     this.phase = dc.phases.STANDBY;
-//     this.readyStates = [];
-
-//     this.dungeonInfo = null;
-
-//     this.round = null;
-//     this.roundMonsters = [Monster()]; // Monster
-//     this.towers = [Tower(towerHp)];
-//     this.pickUpItems = [Item(itemName, probability)];
-//     this.roundKillCount = 0;
-//     this.timers = new Map();
-//     this.startTime = Date.now();
-//   }
-
-//   add(playerId) {
-//     this.players.set(playerId, Player);
-//   }
-// }
-
-// testCode
-// const tr = new Transform(1, 1, 1, 1);
-// const tr1 = { posX: 1, posY: 1, posZ: 1, rot: 1 };
-
-// console.log(tr, tr1);
-
-// const root = new protobuf.Root();
-// root.loadSync('./src/protobuf/protocol.proto');
-// const Msg = root.lookupType('Google.Protobuf.Protocol.TransformInfo');
-
-// const a = Msg.encode(tr).finish();
-// const b = Msg.encode(tr1).finish();
-
-// console.log(a);
-// console.log(b);
-
-// console.log(new StatInfo({ atk: 1 }));
-
-// const aa = new Player('aa', 'aaa', 1001);
-// console.log({ ...aa });
-// console.log({ ...aa.playerInfo, accountLevel: aa.accountLevel });
-
-// const c = new DungeonPlayer(new Player('c','c',1001));
-// console.log(c);
-// console.log(c as Player)

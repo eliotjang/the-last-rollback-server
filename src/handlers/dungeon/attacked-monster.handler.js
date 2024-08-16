@@ -11,7 +11,7 @@ const attackedMonsterHandler = ({ socket, accountId, packet }) => {
   // C_MONSTER_ATTACKED
   try {
     const { attackType, monsterIdx } = packet;
-    console.log('몬스터 피격 정보 : ', attackType, monsterIdx);
+    // console.log('몬스터 피격 정보 : ', attackType, monsterIdx);
 
     const user = getUserById(accountId);
 

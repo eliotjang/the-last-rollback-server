@@ -48,29 +48,6 @@ export const userDB = {
 
     return await this.getUser(accountId);
   },
-  /**
-   *
-   * @param {string} accountId 계정 아이디
-   * @param {boolean} wantResult true 시, 계정 객체 반환
-   * @returns 계정 객체 반환
-   */
-  /*
-  updateLevel: async function (accountId, wantResult) {
-    const { userInfo } = getGameAssets();
-    const user = await this.getUser(accountId);
-
-    if (user.userLevel >= userInfo.data[userInfo.data.length - 1].level) {
-      console.log('최대 레벨에 도달했습니다.');
-      return;
-    }
-
-    await pools.USER_DB.query(USER_QUERIES.UPDATE_LEVEL, [accountId]);
-
-    if (wantResult) {
-      return await this.getUser(accountId);
-    }
-  },
-  */
 
   /**
    *
@@ -80,41 +57,7 @@ export const userDB = {
    * @returns 계정 객체 반환
    */
   updateExp: async function (accountId, experience) {
-    /*
-    const { userInfo } = getGameAssets();
-    let user = await this.getUser(accountId);
-
-    if (user.userLevel >= userInfo.data[userInfo.data.length - 1].level) {
-      console.log('최대 레벨에 도달했습니다.');
-      return;
-    }
-
-    let targetData = userInfo.data.find((data) => data.level === user.userLevel);
-    let currentExperience;
-    if (user.userExperience === 0) {
-      currentExperience = experience;
-    }
-    currentExperience = user.userExperience + experience;
-
-    while (currentExperience >= targetData.maxExp) {
-      currentExperience -= targetData.maxExp;
-      user = await this.updateLevel(accountId, true);
-
-      if (user.userLevel >= userInfo.data[userInfo.data.length - 1].level) {
-        console.log('최대 레벨에 도달했습니다.');
-        return;
-      }
-      targetData = userInfo.data.find((data) => data.level === user.userLevel);
-    }
-    await pools.USER_DB.query(USER_QUERIES.UPDATE_EXP, [currentExperience, accountId]);
-
-    if (wantResult) {
-      return await this.getUser(accountId);
-    }
-    */
-
     await pools.USER_DB.query(USER_QUERIES.UPDATE_EXP, [experience, accountId]);
-
     return await this.getUser(accountId);
   },
 

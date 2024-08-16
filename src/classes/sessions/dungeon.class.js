@@ -151,8 +151,9 @@ class Dungeon extends Game {
 
   movePlayer(accountId, transform) {
     const player = this.getPlayer(accountId);
-    const playerTransform = player.playerInfo.transform.updateTransform(transform);
-    super.notifyAll(payloadTypes.S_MOVE, { playerId: accountId, transform: playerTransform });
+
+    transform = player.playerInfo.transform.updateTransform(transform);
+    super.notifyAll(payloadTypes.S_MOVE, { playerId: accountId, transform });
   }
 
   addHpPotion(accountId, hp) {
@@ -189,15 +190,15 @@ class Dungeon extends Game {
     }
   }
 
-  // updatePlayerExp(accountId, killExp) {
-  //   const player = this.getPlayer(accountId);
-  //   if (!player) {
-  //     console.log('해당 플레이어가 존재하지 않음');
-  //     return null;
-  //   }
-  //   player.updateExp(killExp);
-  //   return player;
-  // }
+  updatePlayerExp(accountId, killExp) {
+    const player = this.getPlayer(accountId);
+    if (!player) {
+      console.log('해당 플레이어가 존재하지 않음');
+      return null;
+    }
+    player.updateExp(killExp);
+    return player;
+  }
 
   updatePlayerAttackMonster(accountId, monsterIdx, damage) {
     const monster = this.getMonster(monsterIdx);
@@ -227,7 +228,6 @@ class Dungeon extends Game {
     this.roundKillCount++;
     const player = this.players.get(accountId);
     player.playerInfo.killed.push(monsterIdx);
-    console.log('------------KILL MONSTER----------', this.roundKillCount, this.roundMonsters.size);
     // 모든 몬스터 처치 시 밤 라운드 종료
     if (this.roundMonsters.size === this.roundKillCount) {
       this.roundKillCount = 0;
@@ -314,11 +314,11 @@ class Dungeon extends Game {
           const player = this.players.get(user.accountId);
           const boxGold = dungeonUtils.openMysteryBox(player.playerInfo.mysteryBox);
           const totalBoxGold = boxGold.reduce((acc, cur) => acc + cur, 0);
+          player.updateAccountExp(player.playerStatus.playerExp);
           player.updateLevel();
           player.updateGold(totalBoxGold);
           player.resetBox();
           const roundGold = player.updateRoundGold(this.round);
-          player.updateAccountExp(this.round * 10);
 
           const roundResult = {
             boxGold,
