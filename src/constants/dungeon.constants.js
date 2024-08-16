@@ -3,3 +3,5 @@ export const pickUpItemType = {
   MP_POTION: 102,
   ITEM_BOX: 103,
 };
+
+export const maxBox = 15;
