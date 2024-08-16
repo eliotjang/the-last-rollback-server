@@ -70,3 +70,7 @@ Temporary Items
 *.icloud
 
 # End of https://www.toptal.com/developers/gitignore/api/macos
+
+/.dockerignore
+/docker-compose.yml
+/Dockerfile
