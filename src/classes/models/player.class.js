@@ -124,6 +124,7 @@ export class DungeonPlayer extends Player {
       return null;
     }
     this.playerInfo.gold += gold;
+    return this.playerInfo.gold;
   }
 
   updateRoundGold(round) {
