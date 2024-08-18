@@ -7,11 +7,9 @@ const monsterMoveHandler = async ({ socket, accountId, packet }) => {
   const { monsterIdx, transform } = packet;
   const dungeonSession = getDungeonSessionByUserId(accountId);
 
-  if (!dungeonSession) {
-    throw new CustomError(ErrorCodes.GAME_NOT_FOUND, '던전 세션을 찾을 수 없습니다.');
+  if (dungeonSession) {
+    dungeonSession.moveMonster(accountId, monsterIdx, transform);
   }
-
-  dungeonSession.moveMonster(accountId, monsterIdx, transform);
 };
 
 export default monsterMoveHandler;
