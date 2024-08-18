@@ -28,7 +28,7 @@ const onData = (socket) => async (data) => {
           if (!user) {
             throw new CustomError(ErrorCodes.USER_NOT_FOUND, 'Ping을 수신할 유저가 없습니다.');
           }
-          user.pong(deserialize(packetTypes.PING, packet));
+          user.pong(deserializeByPacketType(packetTypes.PING, packet));
           break;
         }
         case packetTypes.REQUEST: {
