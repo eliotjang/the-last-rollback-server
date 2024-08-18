@@ -1,5 +1,4 @@
 import { payloadTypes } from '../../constants/packet.constants.js';
-import { addTownSession, getAllTownSessions } from '../../session/town.session.js';
 import CustomError from '../../utils/error/customError.js';
 import { handleError } from '../../utils/error/errorHandler.js';
 import { ErrorCodes, SuccessCode } from '../../utils/error/errorCodes.js';
@@ -8,6 +7,7 @@ import { getUserById } from '../../session/user.session.js';
 import { gameCharDB } from '../../db/game-char/game-char.db.js';
 import lodash from 'lodash';
 import { Player } from '../../classes/models/player.class.js';
+import { enqueueEnterTownJob } from '../../bull/player/enter-town.js';
 
 const enterTownHandler = async ({ socket, accountId, packet }) => {
   // C_ENTER
@@ -45,15 +45,10 @@ const enterTownHandler = async ({ socket, accountId, packet }) => {
       message = '기존 캐릭터 로드';
     }
 
-    const townSessions = getAllTownSessions();
-    let townSession = townSessions.find((townSession) => !townSession.isFull());
-    if (!townSession) {
-      townSession = addTownSession();
-    }
-
     user.player.playerInfo.transform.setTownSpawn();
     await townRedis.addPlayer(user.player);
-    townSession.addUser(user);
+
+    enqueueEnterTownJob({ accountId });
 
     const data = { ...user.player.playerInfo, accountLevel: user.player.accountLevel };
 
