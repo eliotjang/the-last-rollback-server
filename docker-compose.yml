@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   game-server:
-    build: .
+    image: gwa446/the-last-rollback-server:1.0
     ports:
       - '3000:3000'
     environment:
