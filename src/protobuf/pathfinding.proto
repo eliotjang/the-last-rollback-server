@@ -16,7 +16,7 @@ enum PFPacketType {
 
 // ----- IN -----
 message C_CreateSession {
-    int32 dungeonCode = 1;
+    uint32 dungeonCode = 1;
 }
 
 message C_SetPlayers {
@@ -28,13 +28,13 @@ message C_SetMonsters {
 }
 
 message C_SetPlayerDest {
-    string playerId = 1;
+    string accountId = 1;
     optional WorldPosition pos = 2;
 }
 
 message C_SetMonsterDest {
     uint32 monsterIdx = 1;
-    optional WorldPosition pos = 2;
+    optional WorldPosition target = 2;
 }
 
 // ----- OUT -----
@@ -52,4 +52,19 @@ message WorldPosition {
     float x = 1;
     float y = 2;
     float z = 3;
+}
+
+message Target {
+    oneof targetType {
+        TargetPlayer targetPlayer = 1;
+        TargetStructure TargetStructure = 2;
+    }
+}
+
+message TargetPlayer {
+    string accountId = 1;
+}
+
+message TargetStructure {
+    uint32 structureIdx = 2;
 }
