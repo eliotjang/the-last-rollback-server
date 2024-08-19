@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   game-server:
-    build: .
+    image: gwa446/the-last-rollback-server:game-server-1.0
     ports:
       - '3000:3000'
     environment:
@@ -26,7 +26,7 @@ services:
         condition: service_healthy
 
   db1:
-    image: mysql:8.0
+    image: gwa446/the-last-rollback-server:mysql-8.0
     environment:
       MYSQL_ROOT_PASSWORD: ${DB1_PASSWORD}
       MYSQL_DATABASE: ${DB1_NAME}
@@ -35,12 +35,12 @@ services:
     volumes:
       - db1-data:/var/lib/mysql
     healthcheck:
-      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']
-      interval: 10s
+      test: ['CMD', 'mysqladmin', 'ping', '-h', 'db1']
+      interval: 5s
       retries: 5
 
   db2:
-    image: mysql:8.0
+    image: gwa446/the-last-rollback-server:mysql-8.0
     environment:
       MYSQL_ROOT_PASSWORD: ${DB2_PASSWORD}
       MYSQL_DATABASE: ${DB2_NAME}
@@ -49,12 +49,12 @@ services:
     volumes:
       - db2-data:/var/lib/mysql
     healthcheck:
-      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']
-      interval: 10s
+      test: ['CMD', 'mysqladmin', 'ping', '-h', 'db2']
+      interval: 5s
       retries: 5
 
   redis:
-    image: redis:latest
+    image: gwa446/the-last-rollback-server:redis-latest
     ports:
       - '6380:6379'
     volumes:
