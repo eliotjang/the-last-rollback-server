@@ -8,16 +8,16 @@ services:
     environment:
       - PORT=3000
       - HOST=0.0.0.0
-      - DB1_HOST=${DB1_HOST}
+      - DB1_HOST=db1
       - DB1_USER=${DB1_USER}
       - DB1_PASSWORD=${DB1_PASSWORD}
       - DB1_NAME=${DB1_NAME}
-      - DB2_HOST=${DB2_HOST}
+      - DB2_HOST=db2
       - DB2_USER=${DB2_USER}
       - DB2_PASSWORD=${DB2_PASSWORD}
       - DB2_NAME=${DB2_NAME}
-    # volumes:
-    #   - game-data:/usr/src/app/data
+    volumes:
+      - game-data:/usr/src/app/data
     restart: always
     depends_on:
       db1:
@@ -32,8 +32,8 @@ services:
       MYSQL_DATABASE: ${DB1_NAME}
     ports:
       - '3307:3306'
-    # volumes:
-    #   - db1-data:/var/lib/mysql
+    volumes:
+      - db1-data:/var/lib/mysql
     healthcheck:
       test: ['CMD', 'mysqladmin', 'ping', '-h', 'db1']
       interval: 5s
@@ -46,8 +46,8 @@ services:
       MYSQL_DATABASE: ${DB2_NAME}
     ports:
       - '3308:3306'
-    # volumes:
-    #   - db2-data:/var/lib/mysql
+    volumes:
+      - db2-data:/var/lib/mysql
     healthcheck:
       test: ['CMD', 'mysqladmin', 'ping', '-h', 'db2']
       interval: 5s
@@ -57,10 +57,10 @@ services:
     image: gwa446/the-last-rollback-server:redis-latest
     ports:
       - '6380:6379'
-    # volumes:
-    #   - redis-data:/data
-# volumes:
-#   game-data:
-#   redis-data:
-#   db1-data:
-#   db2-data:
+    volumes:
+      - redis-data:/data
+volumes:
+  game-data:
+  redis-data:
+  db1-data:
+  db2-data:
