@@ -18,3 +18,7 @@ export const isBlackListed = (payloadType) => loggerBlackListSet.has(payloadType
 // ------- MONSTER KILL ---------
 export const MONSTER_HIT_QUEUE_NAME = 'monster-hit-queue';
 export const MONSTER_HIT_JOB_NAME = 'monster-hit-job';
+
+// ------- ENTER TOWN ---------
+export const ENTER_TOWN_QUEUE_NAME = 'enter-town-queue';
+export const ENTER_TOWN_JOB_NAME = 'enter-town-job';

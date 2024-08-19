@@ -13,11 +13,9 @@ const locationUpdateHandler = async ({ socket, accountId, packet }) => {
     }
 
     const gameSession = user.getSession();
-    if (!gameSession) {
-      throw new CustomError(ErrorCodes.GAME_NOT_FOUND, '세션을 찾을 수 없습니다.');
+    if (gameSession) {
+      gameSession.movePlayer(accountId, transform);
     }
-
-    gameSession.movePlayer(accountId, transform);
   } catch (error) {
     handleError(socket, error);
   }

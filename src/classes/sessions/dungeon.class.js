@@ -183,7 +183,7 @@ class Dungeon extends Game {
 
   movePlayer(accountId, transform) {
     const player = this.getPlayer(accountId);
-
+    if (!player) return;
     transform = player.playerInfo.transform.updateTransform(transform);
     super.notifyAll(payloadTypes.S_MOVE, { playerId: accountId, transform });
   }
