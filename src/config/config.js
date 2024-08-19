@@ -18,6 +18,8 @@ import {
   DB2_PORT,
   SALT_ROUNDS,
   JWT_SECRET,
+  DEDI_SERVER_HOST,
+  DEDI_SERVER_PORT,
 } from '../constants/env.constants.js';
 import { headerConstants } from '../constants/packet.constants.js';
 
@@ -58,5 +60,9 @@ export const config = {
     redisPort: REDIS_PORT,
     redisUsername: REDIS_USERNAME,
     redisPassword: REDIS_PASSWORD,
+  },
+  dediServer: {
+    host: DEDI_SERVER_HOST,
+    port: DEDI_SERVER_PORT,
   },
 };

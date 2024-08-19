@@ -25,3 +25,6 @@ export const REDIS_HOST = process.env.REDIS_HOST || 'localhost';
 export const REDIS_PORT = process.env.REDIS_PORT || 6379;
 export const REDIS_USERNAME = process.env.REDIS_USERNAME;
 export const REDIS_PASSWORD = process.env.REDIS_PASSWORD;
+
+export const DEDI_SERVER_HOST = process.env.DEDI_SERVER_HOST || '127.0.0.1';
+export const DEDI_SERVER_PORT = process.env.DEDI_SERVER_PORT || 5507;
