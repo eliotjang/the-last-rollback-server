@@ -73,5 +73,5 @@ Temporary Items
 
 # docker
 /.dockerignore
-/docker-compose.yml
-/Dockerfile
+# /docker-compose.yml
+# /Dockerfile
