@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  game-server:
+    ports:
+      - '3000:3000'
+    environment:
+      - PORT=3000
+      - HOST=0.0.0.0
+      - DB1_HOST=db1
+      - DB1_USER=${DB1_USER}
+      - DB1_PASSWORD=${DB1_PASSWORD}
+      - DB1_NAME=${DB1_NAME}
+      - DB2_HOST=db2
+      - DB2_USER=${DB2_USER}
+      - DB2_PASSWORD=${DB2_PASSWORD}
+      - DB2_NAME=${DB2_NAME}
+    volumes:
+      - game-data:/usr/src/app/data
+    restart: always
+    depends_on:
+      db1:
+        condition: service_healthy
+      db2:
+        condition: service_healthy
+
+  db1:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB1_PASSWORD}
+      MYSQL_DATABASE: ${DB1_NAME}
+    ports:
+      - '3307:3306'
+    volumes:
+      - db1-data:/var/lib/mysql
+    healthcheck:
+      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']
+      interval: 10s
+      retries: 5
+
+  db2:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB2_PASSWORD}
+      MYSQL_DATABASE: ${DB2_NAME}
+    ports:
+      - '3308:3306'
+    volumes:
+      - db2-data:/var/lib/mysql
+    healthcheck:
+      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']
+      interval: 10s
+      retries: 5
+
+  redis:
+    image: redis:latest
+    ports:
+      - '6380:6379'
+    volumes:
+      - redis-data:/data
+
+volumes:
+  game-data:
+  redis-data:
+  db1-data:
+  db2-data:
