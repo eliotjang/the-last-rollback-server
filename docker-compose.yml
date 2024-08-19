@@ -26,7 +26,7 @@ services:
         condition: service_healthy
 
   db1:
-    image: gwa446/the-last-rollback-server:mysql-8.0
+    image: mysql:8.0
     environment:
       MYSQL_ROOT_PASSWORD: ${DB1_PASSWORD}
       MYSQL_DATABASE: ${DB1_NAME}
@@ -40,7 +40,7 @@ services:
       retries: 5
 
   db2:
-    image: gwa446/the-last-rollback-server:mysql-8.0
+    image: mysql:8.0
     environment:
       MYSQL_ROOT_PASSWORD: ${DB2_PASSWORD}
       MYSQL_DATABASE: ${DB2_NAME}
@@ -54,7 +54,7 @@ services:
       retries: 5
 
   redis:
-    image: gwa446/the-last-rollback-server:redis-latest
+    image: redis-latest
     ports:
       - '6380:6379'
     volumes:
