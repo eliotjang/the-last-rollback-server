@@ -26,7 +26,7 @@ services:
         condition: service_healthy
 
   db1:
-    image: mysql:8.0
+    image: mysql:latest
     environment:
       MYSQL_ROOT_PASSWORD: ${DB1_PASSWORD}
       MYSQL_DATABASE: ${DB1_NAME}
@@ -40,7 +40,7 @@ services:
       retries: 5
 
   db2:
-    image: mysql:8.0
+    image: mysql:latest
     environment:
       MYSQL_ROOT_PASSWORD: ${DB2_PASSWORD}
       MYSQL_DATABASE: ${DB2_NAME}
