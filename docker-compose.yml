@@ -54,7 +54,7 @@ services:
       retries: 5
 
   redis:
-    image: redis-latest
+    image: redis:latest
     ports:
       - '6380:6379'
     volumes:
