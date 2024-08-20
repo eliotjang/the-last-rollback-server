@@ -1,5 +1,5 @@
 import dc, { gameResults } from '../../constants/game.constants.js';
-import { payloadTypes } from '../../constants/packet.constants.js';
+import { payloadTypes, dediPacketTypes } from '../../constants/packet.constants.js';
 import { sessionTypes } from '../../constants/session.constants.js';
 import pickUpHandler from '../../handlers/dungeon/pick-up.handler.js';
 import dungeonUtils from '../../utils/dungeon/dungeon.utils.js';
@@ -10,6 +10,7 @@ import { userDB } from '../../db/user/user.db.js';
 import { handleError } from '../../utils/error/errorHandler.js';
 import { DungeonPlayer } from '../models/player.class.js';
 import { Monster } from '../models/monster.class.js';
+import DediClient from '../../classes/sessions/dedi-client.class.js';
 
 class Dungeon extends Game {
   constructor(id, dungeonCode) {
@@ -26,6 +27,7 @@ class Dungeon extends Game {
     this.structures = new Map();
     this.players = new Map();
     this.roundMonsters = null;
+    this.dediClient = new DediClient(this);
   }
 
   // #region 유저
@@ -104,12 +106,19 @@ class Dungeon extends Game {
   // #region 몬스터
   setMonsters(dungeonCode, monsters) {
     this.roundMonsters = new Map();
-    monsters.forEach((data) => {
-      const { monsterIdx } = data;
-      const monster = new Monster(data.monsterModel);
-      data.monsterTransform = monster.setSpawnLocate(dungeonCode);
+    const data = {};
+
+    monsters.forEach((monsterData) => {
+      const { monsterIdx } = monsterData;
+      const monster = new Monster(monsterData.monsterModel);
+      monsterData.monsterTransform = monster.setSpawnLocate(dungeonCode);
       this.roundMonsters.set(monsterIdx, monster);
+
+      data[monsterIdx] = monsterData.monsterModel;
     });
+
+    this.dediClient.socket.send(dediPacketTypes.C_SET_MONSTERS, { monsters: data });
+
     return monsters;
   }
 
@@ -134,6 +143,11 @@ class Dungeon extends Game {
     });
   }
 
+  // ------------ 추가 ------------
+  monstersLocationUpdate(deserialized) {
+    super.notifyAll(dediPacketTypes.S_MONSTERS_LOCATION_UPDATE, { positions: deserialized });
+  }
+
   updateMonsterAttackPlayer(accountId, monsterIdx, attackType) {
     const player = this.getPlayer(accountId);
     if (!player) {
@@ -148,6 +162,11 @@ class Dungeon extends Game {
     }
 
     monster.attack(player);
+
+    this.dediClient.socket.send(dediPacketTypes.C_SET_MONSTER_DEST, {
+      monsterIdx,
+      target: { player },
+    });
 
     if (player.playerInfo.isDead) {
       console.log(`${accountId} 플레이어 사망`);
@@ -170,6 +189,16 @@ class Dungeon extends Game {
   // #region 플레이어
   addPlayer(accountId, player) {
     this.players.set(accountId, new DungeonPlayer(player));
+
+    if (this.players.size === 4) {
+      const data = {};
+
+      for (const [accountId, dungeonPlayer] of this.players.entries()) {
+        data[accountId] = dungeonPlayer.playerInfo.charClass;
+      }
+
+      this.dediClient.socket.send(dediPacketTypes.C_SET_PLAYERS, { players: data });
+    }
   }
 
   getPlayer(accountId) {
@@ -185,7 +214,17 @@ class Dungeon extends Game {
     const player = this.getPlayer(accountId);
     if (!player) return;
     transform = player.playerInfo.transform.updateTransform(transform);
+    const { posX, posY, posZ } = transform;
+    this.dediClient.socket.send(dediPacketTypes.C_SET_PLAYER_DEST, {
+      accountId,
+      pos: { posX, posY, posZ },
+    });
     super.notifyAll(payloadTypes.S_MOVE, { playerId: accountId, transform });
+  }
+
+  // ------------ 추가 ------------
+  playersLocationUpdate(deserialized) {
+    super.notifyAll(payloadTypes.S_PLAYERS_LOCATION_UPDATE, { positions: deserialized });
   }
 
   addHpPotion(accountId, hp) {
