@@ -83,6 +83,7 @@ export const payloadTypes = {
   S_ANIMATION_STRUCTURE: 138,
 
   S_SOME_NOTIFICATION: 300,
+  TEST: 301,
 };
 
 export const packetNames = Object.fromEntries(

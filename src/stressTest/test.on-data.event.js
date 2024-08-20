@@ -11,8 +11,10 @@ import { getUserBySocket } from '../session/user.session.js';
 
 const headerSize = headerConstants.TOTAL_LENGTH + headerConstants.PACKET_TYPE_LENGTH;
 
-const onData = (socket) => async (data) => {
+const testOnData = (socket) => async (data) => {
   try {
+    //test시 Ondata에 추가
+    /*
     const message = data.toString().trim();
     if (message === 'enter') {
       const payloadType = payloadTypes.TEST;
@@ -23,6 +25,7 @@ const onData = (socket) => async (data) => {
 
       return;
     }
+    */
 
     socket.buffer = Buffer.concat([socket.buffer, data]);
     while (socket.buffer.length >= headerSize) {
@@ -32,6 +35,9 @@ const onData = (socket) => async (data) => {
       }
       const packet = socket.buffer.subarray(headerSize, totalLength);
       socket.buffer = socket.buffer.subarray(totalLength);
+
+      const message = data.toString().trim();
+      console.log('message : ', message);
 
       switch (packetType) {
         case packetTypes.PING: {
@@ -53,7 +59,7 @@ const onData = (socket) => async (data) => {
           //   await verifyToken(socket.token);
           // }
 
-          // console.log(clientVersion, sequence, payloadType, payload);
+          //console.log(clientVersion, sequence, payloadType, payload);
           verifyClientVersion(clientVersion);
           verifySequence(sequence);
           const handler = getHandlerByPayloadType(payloadType || 0);
@@ -80,4 +86,4 @@ const verifySequence = (sequence) => {
   // TODO: sequence 검증
 };
 
-export default onData;
+export default testOnData;

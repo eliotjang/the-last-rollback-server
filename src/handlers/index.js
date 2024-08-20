@@ -19,6 +19,7 @@ import towerHpUpdateHandler from './dungeon/tower.handler.js';
 import structureHandler from './dungeon/structure.handler.js';
 import structureAttackedMonsterHandler from './dungeon/structure-attacked.handler.js';
 import animationStructureHandler from './dungeon/animation-structure.handler.js';
+import testHandler from '../stressTest/test.handler.js';
 
 const handlers = {
   [payloadTypes.C_ENTER]: enterTownHandler,
@@ -39,6 +40,7 @@ const handlers = {
   [payloadTypes.C_STRUCTURE]: structureHandler,
   [payloadTypes.C_STRUCTURE_ATTACKED]: structureAttackedMonsterHandler,
   [payloadTypes.C_ANIMATION_STRUCTURE]: animationStructureHandler,
+  [payloadTypes.TEST]: testHandler,
 };
 
 export const getHandlerByPayloadType = (payloadType) => {
