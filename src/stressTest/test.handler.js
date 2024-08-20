@@ -5,7 +5,7 @@ import { handleError } from '../utils/error/errorHandler.js';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import { config } from '../config/config.js';
-import lodash, { transform } from 'lodash';
+//import lodash, { transform } from 'lodash';
 import { gameCharDB } from '../db/game-char/game-char.db.js';
 import { userDB } from '../db/user/user.db.js';
 import enterTownHandler from '../handlers/town/enter-town.handler.js';
@@ -50,8 +50,8 @@ const testHandler = async ({ socket, userId, packet }) => {
     user.player = player;
     enterTownHandler({ socket, accountId });
 
-    const session = user.getSession();
-    session.movePlayer(accountId, transform);
+    // const session = user.getSession();
+    // session.movePlayer(accountId, transform);
     return;
     // }
 
