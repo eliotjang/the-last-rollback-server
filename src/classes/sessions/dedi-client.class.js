@@ -20,50 +20,50 @@ const PlayersLocationUpdateHandler = () => {
 };
 
 class DediClient {
-  static dediClients = new Map();
+  static #dediClients = new Map();
+  #socket = new net.Socket();
 
   constructor() {
-    this.socket = new net.Socket();
     this.init();
   }
 
   static addClient = (dungeonId, dediClient) => {
-    DediClient.dediClients.set(dungeonId, dediClient);
+    DediClient.#dediClients.set(dungeonId, dediClient);
   };
 
   static getClient = (dungeonId) => {
-    return DediClient.dediClients.get(dungeonId);
+    return DediClient.#dediClients.get(dungeonId);
   };
 
   static removeClient = (dungeonId) => {
     const client = DediClient.getClient(dungeonId);
-    client.socket.end();
-    return DediClient.dediClients.delete(dungeonId);
+    client.getSocket().end();
+    return DediClient.#dediClients.delete(dungeonId);
   };
 
   init() {
-    this.socket.connect(config.dediServer.port, config.dediServer.host, () => {
+    this.#socket.connect(config.dediServer.port, config.dediServer.host, () => {
       console.log(
-        `Connected to dedi-server on ${this.socket.remoteAddress}:${this.socket.remotePort}`,
+        `Connected to dedi-server on ${this.#socket.remoteAddress}:${this.#socket.remotePort}`,
       );
     });
-    this.socket.on('data', this.onData.bind(this));
-    this.socket.on('end', this.onEnd.bind(this));
-    this.socket.on('error', this.onError.bind(this));
-    this.socket.buffer = Buffer.alloc(0);
-    this.socket.send = sendPacketToDediServer.bind(this.socket);
+    this.#socket.on('data', this.onData.bind(this));
+    this.#socket.on('end', this.onEnd.bind(this));
+    this.#socket.on('error', this.onError.bind(this));
+    this.#socket.buffer = Buffer.alloc(0);
+    this.#socket.send = sendPacketToDediServer.bind(this.#socket);
   }
 
   onData(data) {
     try {
-      this.socket.buffer = Buffer.concat([socket.buffer, data]);
-      while (this.socket.buffer.length >= headerSize) {
-        const { totalLength, dediPacketType } = readHeader(socket.buffer);
-        if (totalLength > this.socket.buffer.length) {
+      this.#socket.buffer = Buffer.concat([this.#socket.buffer, data]);
+      while (this.#socket.buffer.length >= headerSize) {
+        const { totalLength, dediPacketType } = readHeader(this.#socket.buffer);
+        if (totalLength > this.#socket.buffer.length) {
           break;
         }
-        const packet = this.socket.buffer.subarray(headerSize, totalLength);
-        this.socket.buffer = this.socket.buffer.subarray(totalLength);
+        const packet = this.#socket.buffer.subarray(headerSize, totalLength);
+        this.#socket.buffer = this.#socket.buffer.subarray(totalLength);
         const deserialized = deserializePf(dediPacketType, packet);
         const handler = handlerMappings[dediPacketType];
         handler();
@@ -79,6 +79,10 @@ class DediClient {
 
   onError(error) {
     //
+  }
+
+  getSocket() {
+    return this.#socket;
   }
 
   /**
