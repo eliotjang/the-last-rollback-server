@@ -29,11 +29,11 @@ export const townRedis = {
       const { playerId: accountId, nickname, charClass, transform } = player.playerInfo;
       const { accountLevel } = player;
       const key = PREFIX + ':' + accountId + ':';
-      await redisClient.hSet(key, FIELD.PLAYER_ID, accountId);
-      await redisClient.hSet(key, FIELD.NICKNAME, nickname);
-      await redisClient.hSet(key, FIELD.CHAR_CLASS, JSON.stringify(charClass));
-      await redisClient.hSet(key, FIELD.TRANSFORM, JSON.stringify(transform));
-      await redisClient.hSet(key, FIELD.ACCOUNT_LEVEL, JSON.stringify(accountLevel));
+      await redisClient.hset(key, FIELD.PLAYER_ID, accountId);
+      await redisClient.hset(key, FIELD.NICKNAME, nickname);
+      await redisClient.hset(key, FIELD.CHAR_CLASS, JSON.stringify(charClass));
+      await redisClient.hset(key, FIELD.TRANSFORM, JSON.stringify(transform));
+      await redisClient.hset(key, FIELD.ACCOUNT_LEVEL, JSON.stringify(accountLevel));
 
       return await this.getPlayerInfo(accountId);
     } catch (error) {
@@ -71,7 +71,7 @@ export const townRedis = {
       const key = PREFIX + ':' + accountId + ':';
       const data = {};
       for (const info in FIELD) {
-        data[FIELD[info]] = await redisClient.hGet(key, FIELD[info]);
+        data[FIELD[info]] = await redisClient.hget(key, FIELD[info]);
       }
       if (data) {
         const result = changeProperType(data);
@@ -92,10 +92,10 @@ export const townRedis = {
   updatePlayerTransform: async function (transform, accountId, wantResult) {
     try {
       const key = PREFIX + ':' + accountId + ':';
-      await redisClient.hSet(key, FIELD.TRANSFORM, JSON.stringify(transform));
+      await redisClient.hset(key, FIELD.TRANSFORM, JSON.stringify(transform));
 
       if (wantResult) {
-        const result = await redisClient.hGet(key, FIELD.TRANSFORM);
+        const result = await redisClient.hget(key, FIELD.TRANSFORM);
         return JSON.parse(result);
       }
     } catch (error) {
@@ -113,7 +113,7 @@ export const townRedis = {
       const keys = await redisClient.keys(pattern);
       const result = [];
       for (let i = 0; i < keys.length; i++) {
-        const data = changeProperType(await redisClient.hGetAll(keys[i]));
+        const data = changeProperType(await redisClient.hgetall(keys[i]));
         result.push(data);
       }
       return result;
@@ -134,7 +134,7 @@ export const townRedis = {
       const result = [];
       for (let i = 0; i < keys.length; i++) {
         if (!keys[i].includes(accountId)) {
-          const data = changeProperType(await redisClient.hGetAll(keys[i]));
+          const data = changeProperType(await redisClient.hgetall(keys[i]));
           result.push(data);
         }
       }
@@ -155,7 +155,7 @@ export const townRedis = {
 
       const result = [];
       for (let i = 0; i < keys.length; i++) {
-        result.push(JSON.parse(await redisClient.hGet(keys[i], FIELD.TRANSFORM)));
+        result.push(JSON.parse(await redisClient.hget(keys[i], FIELD.TRANSFORM)));
       }
       return result;
     } catch (error) {
