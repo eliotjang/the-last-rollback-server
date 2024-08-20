@@ -19,7 +19,7 @@ const testHandler = async ({ socket, userId, packet }) => {
 
     const user = await addUser(socket, accountId);
 
-    const player = new Player('a' + socket.remotePort, 'a' + socket.remotePort, 1001);
+    const player = new Player(accountId, accountId, 1006, 1, 0);
     user.player = player;
 
     enterTownHandler({ socket, accountId });
