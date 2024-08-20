@@ -52,6 +52,7 @@ const enterTownHandler = async ({ socket, accountId, packet }) => {
 
     const data = { ...user.player.playerInfo, accountLevel: user.player.accountLevel };
 
+    // console.log('플레이어 데이터 : ', data);
     socket.sendResponse(SuccessCode.Success, message, payloadTypes.S_ENTER, {
       player: data,
     });

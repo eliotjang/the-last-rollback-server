@@ -39,7 +39,7 @@ export const sendResponse = async function (code, message, payloadType, payload,
       payload,
     };
     if (!isBlackListed(payloadType)) {
-      console.log(`sendResponse: ${payloadKeyNames[payloadType]}`);
+      // console.log(`sendResponse: ${payloadKeyNames[payloadType]}`);
     }
 
     const serializedPacket = serializeEx(packetTypes.RESPONSE, payloadType, packetData);
@@ -71,7 +71,7 @@ export const sendNotification = async function (payloadType, payload) {
       payload,
     };
     if (!isBlackListed(payloadType)) {
-      console.log(`sendNotification: ${payloadKeyNames[payloadType]}`);
+      // console.log(`sendNotification: ${payloadKeyNames[payloadType]}`);
     }
 
     const serializedPacket = serializeEx(packetTypes.NOTIFICATION, payloadType, packetData);
