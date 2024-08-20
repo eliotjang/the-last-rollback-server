@@ -27,12 +27,12 @@ const testHandler = async ({ socket, userId, packet }) => {
     //   throw new CustomError(ErrorCodes.USER_NOT_FOUND, '계정을 찾을 수 없습니다.');
     // }
 
-    // const jwtOptions = {
-    //   expiresIn: '10h',
-    // };
-    // const token = jwt.sign(accountId, config.account.jwtSecret);
-    // socket.token = token;
-    // socket.accountId = userInfo.accountId;
+    const jwtOptions = {
+      expiresIn: '10h',
+    };
+    const token = jwt.sign(accountId, config.account.jwtSecret);
+    socket.token = token;
+    socket.accountId = accountId;
 
     // await userDB.updateLogin(accountId);
 
@@ -40,13 +40,7 @@ const testHandler = async ({ socket, userId, packet }) => {
 
     // const playerInfo = await gameCharDB.getGameChar(accountId);
     // if (lodash.isEmpty(playerInfo)) {
-    const player = new Player(
-      'a' + socket.remotePort,
-      'a' + socket.remotePort,
-      1001,
-      // userInfo.userLevel,
-      // userInfo.userExperience,
-    );
+    const player = new Player(accountId, accountId, 1006, 1, 0);
     user.player = player;
     enterTownHandler({ socket, accountId });
 

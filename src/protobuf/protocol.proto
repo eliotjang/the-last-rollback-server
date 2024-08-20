@@ -82,6 +82,8 @@ enum MsgId {
     S_ANIMATION_STRUCTURE = 138;
 
     S_SOME_NOTIFICATION = 300;
+    
+    C_ENTER_DUNGEON = 302;
 }
 
 message C_SignUp {
@@ -252,6 +254,10 @@ message S_PlayerAttacked{
 // 개인 준비 완료 패킷
 // 100 대기열 입장 요청 패킷
 message C_DungeonMatch {
+  uint32 dungeonCode = 1;
+}
+
+message C_EnterDungeon {
   uint32 dungeonCode = 1;
 }
 
@@ -579,6 +585,8 @@ message RequestPacket {
     C_Structure cStructure = 31;
     C_StructureAttacked cStructureAttacked = 32;
     C_AnimationStructure cAnimationStructure = 33;
+
+    C_EnterDungeon cEnterDungeon = 34;
   }
 }
 
