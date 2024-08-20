@@ -46,6 +46,15 @@ message S_MonstersLocationUpdate {
     map<uint32, WorldPosition> positions = 1;
 }
 
+message S_MonsterAttack {
+    uint32 monsterIdx = 1;
+    oneof targetType {
+        TargetPlayer targetPlayer = 2;
+        TargetStructure targetStructure = 3;
+    }
+    float rotation = 4;
+}
+
 // ----- ETC -----
 
 message WorldPosition {

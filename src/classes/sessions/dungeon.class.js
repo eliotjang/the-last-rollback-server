@@ -27,7 +27,9 @@ class Dungeon extends Game {
     this.structures = new Map();
     this.players = new Map();
     this.roundMonsters = null;
-    this.dediClient = new DediClient(this);
+    // this.dediClient = new DediClient(this.id);
+    DediClient.addClient(this.id, new DediClient());
+    DediClient.getClient(this.id).createSession(this.dungeonCode);
   }
 
   // #region 유저
@@ -117,7 +119,7 @@ class Dungeon extends Game {
       data[monsterIdx] = monsterData.monsterModel;
     });
 
-    this.dediClient.socket.send(dediPacketTypes.C_SET_MONSTERS, { monsters: data });
+    DediClient.getClient(this.id).setMonsters(data);
 
     return monsters;
   }
@@ -145,7 +147,8 @@ class Dungeon extends Game {
 
   // ------------ 추가 ------------
   monstersLocationUpdate(deserialized) {
-    super.notifyAll(dediPacketTypes.S_MONSTERS_LOCATION_UPDATE, { positions: deserialized });
+    // super.notifyAll(dediPacketTypes.S_MONSTERS_LOCATION_UPDATE, { positions: deserialized });
+    this.notifyAll(payloadTypes.S_MONSTERS_LOCATION_UPDATE, { positions: deserialized });
   }
 
   updateMonsterAttackPlayer(accountId, monsterIdx, attackType) {
@@ -163,10 +166,7 @@ class Dungeon extends Game {
 
     monster.attack(player);
 
-    this.dediClient.socket.send(dediPacketTypes.C_SET_MONSTER_DEST, {
-      monsterIdx,
-      target: { player },
-    });
+    DediClient.getClient(this.id).setMonsterDest(monsterIdx, { player });
 
     if (player.playerInfo.isDead) {
       console.log(`${accountId} 플레이어 사망`);
@@ -197,7 +197,7 @@ class Dungeon extends Game {
         data[accountId] = dungeonPlayer.playerInfo.charClass;
       }
 
-      this.dediClient.socket.send(dediPacketTypes.C_SET_PLAYERS, { players: data });
+      DediClient.getClient(this.id).setPlayers(data);
     }
   }
 
@@ -214,17 +214,15 @@ class Dungeon extends Game {
     const player = this.getPlayer(accountId);
     if (!player) return;
     transform = player.playerInfo.transform.updateTransform(transform);
-    const { posX, posY, posZ } = transform;
-    this.dediClient.socket.send(dediPacketTypes.C_SET_PLAYER_DEST, {
-      accountId,
-      pos: { posX, posY, posZ },
-    });
+    const { posX: x, posY: y, posZ: z } = transform;
+    DediClient.getClient(this.id).setPlayerDest(accountId, { x, y, z });
     super.notifyAll(payloadTypes.S_MOVE, { playerId: accountId, transform });
   }
 
   // ------------ 추가 ------------
-  playersLocationUpdate(deserialized) {
-    super.notifyAll(payloadTypes.S_PLAYERS_LOCATION_UPDATE, { positions: deserialized });
+  playersLocationUpdate(positions) {
+    // super.notifyAll(payloadTypes.S_PLAYERS_LOCATION_UPDATE, { positions: deserialized });
+    this.notifyAll(payloadTypes.S_PLAYERS_LOCATION_UPDATE, positions);
   }
 
   addHpPotion(accountId, hp) {

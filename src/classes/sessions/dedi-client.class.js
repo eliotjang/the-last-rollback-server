@@ -5,21 +5,34 @@ import { deserializePf } from '../../utils/packet-serializer.utils.js';
 import { sendPacketToDediServer } from '../../utils/packet-sender.utils.js';
 import { handleError } from '../../utils/error/errorHandler.js';
 import CustomError from '../../utils/error/customError.js';
+import { getDungeonSession } from '../../session/dungeon.session.js';
 
 const headerSize = headerConstants.TOTAL_LENGTH + headerConstants.PACKET_TYPE_LENGTH;
 
 const MonstersLocationUpdateHandler = (deserialized) => {
   // monsterIdx : Vector3 (X,Y,Z)
-
-  const dungeonSession = this.dungeon;
+  const dungeonSession = getDungeonSession(this.dungeonId);
+  const { positions } = deserialized;
   dungeonSession.monstersLocationUpdate(deserialized);
 };
 
 const PlayersLocationUpdateHandler = (deserialized) => {
   // accountId : Vector3 (X,Y,Z)
+  const dungeonSession = getDungeonSession(this.dungeonId);
+  const { positions } = deserialized;
+  const map = new Map();
 
-  const dungeonSession = this.dungeon;
-  dungeonSession.playersLocationUpdate(deserialized);
+  // TODO: 이전 위치 저장 및 rotation 계산
+
+  for (const [accountId, worldPosition] of Object.entries(positions)) {
+    map.set(accountId, {
+      posX: worldPosition.x,
+      posY: worldPosition.y,
+      posZ: worldPosition.z,
+      rot: 0,
+    });
+  }
+  dungeonSession.playersLocationUpdate(map);
 };
 
 const handlerMappings = {
@@ -31,11 +44,11 @@ class DediClient {
   static #dediClients = new Map();
   #socket = new net.Socket();
 
-  constructor(dungeon) {
+  constructor(dungeonId) {
     this.init();
-    this.dungeonId = dungeon.id;
-    this.dungeon = dungeon;
-    DediClient.addClient(this.dungeonId, dungeon);
+    this.dungeonId = dungeonId;
+    // this.dungeon = dungeon;
+    // DediClient.addClient(dungeonId, this);
   }
 
   static addClient = (dungeonId, dediClient) => {
@@ -58,9 +71,9 @@ class DediClient {
         `Connected to dedi-server on ${this.#socket.remoteAddress}:${this.#socket.remotePort}`,
       );
 
-      this.#socket.send(dediPacketTypes.C_CREATE_SESSION, {
-        dungeonCode: this.dungeon.dungeonCode,
-      });
+      // this.#socket.send(dediPacketTypes.C_CREATE_SESSION, {
+      //   dungeonCode: this.dungeon.dungeonCode,
+      // });
     });
     this.#socket.on('data', this.onData.bind(this));
     this.#socket.on('end', this.onEnd.bind(this));
@@ -115,6 +128,9 @@ class DediClient {
    */
   createSession(dungeonCode) {
     // this.#socket.connect() 메서드 호출 시 실행
+    this.#socket.send(dediPacketTypes.C_CREATE_SESSION, {
+      dungeonCode,
+    });
   }
 
   /**
@@ -124,6 +140,7 @@ class DediClient {
    */
   setPlayers(players) {
     // dungeon.class - addPlayer
+    this.#socket.send(dediPacketTypes.C_SET_PLAYERS, players);
   }
 
   /**
@@ -133,6 +150,7 @@ class DediClient {
    */
   setMonsters(monsters) {
     // dungeon.class - setMonsters
+    this.#socket.send(dediPacketTypes.C_SET_MONSTERS, monsters);
   }
 
   /**
@@ -145,6 +163,7 @@ class DediClient {
     // TODO: 소켓을 통해 accountId와 pos를 담은 데이터 전송하기
     // 데이터 예시: { accountId, pos: { x, y, z } }
     // dungeon.class - movePlayer
+    this.#socket.send(dediPacketTypes.C_SET_PLAYER_DEST, { accountId, pos });
   }
 
   /**
@@ -157,6 +176,7 @@ class DediClient {
     // TODO: 소켓을 통해 monsterIdx와 target을 담은 데이터 전송하기
     // 데이터 예시: { monsterIdx, target: { targetPlayer } }
     // dungeon.class - updateMonsterAttackPlayer
+    this.#socket.send(dediPacketTypes.C_SET_MONSTER_DEST, { monsterIdx, target });
   }
 }
 

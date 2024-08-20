@@ -81,6 +81,11 @@ enum MsgId {
     C_ANIMATION_STRUCTURE = 137;
     S_ANIMATION_STRUCTURE = 138;
 
+    C_SET_PLAYER_MOVE_TARGET = 200;
+    C_SET_MONSTER_MOVE_TARGET = 201;
+    S_PLAYERS_LOCATION_UPDATE = 208;
+    S_MONSTERS_LOCATION_UPDATE = 209;
+
     S_SOME_NOTIFICATION = 300;
 }
 
@@ -148,6 +153,26 @@ message S_MonsterMove {
   int32 monsterIdx = 1;
   TransformInfo transform = 2;
 }
+
+// ----- Dedi 서버용 move -----
+
+message C_SetPlayerMoveTarget {
+  TransformInfo transformInfo = 1;
+}
+
+message C_SetMonsterMoveTarget {
+  // oneof? player / structure
+}
+
+message S_PlayersLocationUpdate {
+  map<string, TransformInfo> positions = 1;
+}
+
+message S_MonstersLocationUpdate {
+  map<uint32, TransformInfo> positions = 1;
+}
+
+// ----- -----
 
 message C_Animation {
   int32 animCode = 1;
@@ -579,6 +604,8 @@ message RequestPacket {
     C_Structure cStructure = 31;
     C_StructureAttacked cStructureAttacked = 32;
     C_AnimationStructure cAnimationStructure = 33;
+
+    C_SetPlayerMoveTarget cSetPlayerMoveTarget = 50;
   }
 }
 
@@ -651,5 +678,7 @@ message NotificationPacket {
     S_Structure sStructure = 17;
     S_StructureAttacked sStructureAttacked = 18;
     S_AnimationStructure sAnimationStructure = 19;
+
+    S_PlayersLocationUpdate sPlayersLocationUpdate = 50;
   }
 }
