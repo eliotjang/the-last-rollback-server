@@ -144,7 +144,7 @@ class DediClient {
   setPlayerDest(accountId, pos) {
     // TODO: 소켓을 통해 accountId와 pos를 담은 데이터 전송하기
     // 데이터 예시: { accountId, pos: { x, y, z } }
-    // dungeon.class & town.class - movePlayer
+    // dungeon.class - movePlayer
   }
 
   /**

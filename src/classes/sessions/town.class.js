@@ -37,11 +37,6 @@ class Town extends Game {
   }
 
   movePlayer(accountId, transform) {
-    const { posX, posY, posZ } = transform;
-    this.dediClient.socket.send(dediPacketTypes.C_SET_PLAYER_DEST, {
-      accountId,
-      pos: { posX, posY, posZ },
-    });
     townRedis.updatePlayerTransform(transform, accountId).then(() => {
       super.notifyAll(payloadTypes.S_MOVE, { playerId: accountId, transform });
     });
