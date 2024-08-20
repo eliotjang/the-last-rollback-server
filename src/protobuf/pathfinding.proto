@@ -34,7 +34,7 @@ message C_SetPlayerDest {
 
 message C_SetMonsterDest {
     uint32 monsterIdx = 1;
-    optional WorldPosition target = 2;
+    optional Target target = 2;
 }
 
 // ----- OUT -----

@@ -20,10 +20,26 @@ const PlayersLocationUpdateHandler = () => {
 };
 
 class DediClient {
+  static dediClients = new Map();
+
   constructor() {
     this.socket = new net.Socket();
     this.init();
   }
+
+  static addClient = (dungeonId, dediClient) => {
+    DediClient.dediClients.set(dungeonId, dediClient);
+  };
+
+  static getClient = (dungeonId) => {
+    return DediClient.dediClients.get(dungeonId);
+  };
+
+  static removeClient = (dungeonId) => {
+    const client = DediClient.getClient(dungeonId);
+    client.socket.end();
+    return DediClient.dediClients.delete(dungeonId);
+  };
 
   init() {
     this.socket.connect(config.dediServer.port, config.dediServer.host, () => {
@@ -63,6 +79,53 @@ class DediClient {
 
   onError(error) {
     //
+  }
+
+  /**
+   * 세션 생성
+   */
+  createSession(dungeonCode) {
+    //
+  }
+
+  /**
+   * 세션 플레이어 목록 세팅
+   *
+   * @param {Map<string, uint32>} players key: accountId, value: charClass
+   */
+  setPlayers(players) {
+    //
+  }
+
+  /**
+   * 라운드 몬스터 목록 세팅
+   *
+   * @param {Map<uint32, uint32>} monsters key: monsterIdx, value: monsterModel
+   */
+  setMonsters(monsters) {
+    //
+  }
+
+  /**
+   * 플레이어의 이동 목표 지정
+   *
+   * @param {string} accountId
+   * @param {WorldPosition} pos pathfinding.proto 내 'WorldPosition' 구조 확인
+   */
+  setPlayerDest(accountId, pos) {
+    // TODO: 소켓을 통해 accountId와 pos를 담은 데이터 전송하기
+    // 데이터 예시: { accountId, pos: { x, y, z } }
+  }
+
+  /**
+   * 몬스터의 이동 목표 지정
+   *
+   * @param {uint32} monsterIdx
+   * @param {Target} target pathfinding.proto 내 'Target' 구조 확인
+   */
+  setMonsterDest(monsterIdx, target) {
+    // TODO: 소켓을 통해 monsterIdx와 target을 담은 데이터 전송하기
+    // 데이터 예시: { monsterIdx, target: { targetPlayer } }
   }
 }
 
