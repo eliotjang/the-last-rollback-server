@@ -39,6 +39,10 @@ message C_SetMonsterDest {
     optional Target target = 2;
 }
 
+message C_NightRoundStart {
+    uint64 timestamp = 1;
+}
+
 // ----- OUT -----
 message S_PlayersLocationUpdate {
     map<string, WorldPosition> positions = 1;
