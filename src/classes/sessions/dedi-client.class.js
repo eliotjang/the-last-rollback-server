@@ -13,26 +13,46 @@ const MonstersLocationUpdateHandler = (deserialized) => {
   // monsterIdx : Vector3 (X,Y,Z)
   const dungeonSession = getDungeonSession(this.dungeonId);
   const { positions } = deserialized;
-  dungeonSession.monstersLocationUpdate(deserialized);
+  const monsterTransformInfo = [];
+
+  for (const [monsterIdx, worldPosition] of Object.entries(positions)) {
+    monsterTransformInfo.push({
+      monsterIdx,
+      transformInfo: {
+        posX: worldPosition.x,
+        posY: worldPosition.y,
+        posZ: worldPosition.z,
+        rot: 0,
+      },
+    });
+  }
+
+  dungeonSession.notifyAll(payloadTypes.S_MONSTERS_LOCATION_UPDATE, monsterTransformInfo);
+  // dungeonSession.monstersLocationUpdate(deserialized);
 };
 
 const PlayersLocationUpdateHandler = (deserialized) => {
   // accountId : Vector3 (X,Y,Z)
   const dungeonSession = getDungeonSession(this.dungeonId);
   const { positions } = deserialized;
-  const map = new Map();
+  const playerTransformInfo = [];
 
   // TODO: 이전 위치 저장 및 rotation 계산
 
   for (const [accountId, worldPosition] of Object.entries(positions)) {
-    map.set(accountId, {
-      posX: worldPosition.x,
-      posY: worldPosition.y,
-      posZ: worldPosition.z,
-      rot: 0,
+    playerTransformInfo.push({
+      accountId,
+      transformInfo: {
+        posX: worldPosition.x,
+        posY: worldPosition.y,
+        posZ: worldPosition.z,
+        rot: 0,
+      },
     });
   }
-  dungeonSession.playersLocationUpdate(map);
+
+  dungeonSession.notifyAll(payloadTypes.S_PLAYERS_TRANSFORM_UPDATE, playerTransformInfo);
+  // dungeonSession.playersLocationUpdate(map);
 };
 
 const handlerMappings = {

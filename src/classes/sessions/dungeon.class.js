@@ -145,12 +145,6 @@ class Dungeon extends Game {
     });
   }
 
-  // ------------ 추가 ------------
-  monstersLocationUpdate(deserialized) {
-    // super.notifyAll(dediPacketTypes.S_MONSTERS_LOCATION_UPDATE, { positions: deserialized });
-    this.notifyAll(payloadTypes.S_MONSTERS_LOCATION_UPDATE, { positions: deserialized });
-  }
-
   updateMonsterAttackPlayer(accountId, monsterIdx, attackType) {
     const player = this.getPlayer(accountId);
     if (!player) {
@@ -217,12 +211,6 @@ class Dungeon extends Game {
     const { posX: x, posY: y, posZ: z } = transform;
     DediClient.getClient(this.id).setPlayerDest(accountId, { x, y, z });
     super.notifyAll(payloadTypes.S_MOVE, { playerId: accountId, transform });
-  }
-
-  // ------------ 추가 ------------
-  playersLocationUpdate(positions) {
-    // super.notifyAll(payloadTypes.S_PLAYERS_LOCATION_UPDATE, { positions: deserialized });
-    this.notifyAll(payloadTypes.S_PLAYERS_LOCATION_UPDATE, positions);
   }
 
   addHpPotion(accountId, hp) {

@@ -83,8 +83,8 @@ enum MsgId {
 
     C_SET_PLAYER_MOVE_TARGET = 200;
     C_SET_MONSTER_MOVE_TARGET = 201;
-    S_PLAYERS_LOCATION_UPDATE = 208;
-    S_MONSTERS_LOCATION_UPDATE = 209;
+    S_PLAYERS_TRANSFORM_UPDATE = 208;
+    S_MONSTERS_TRANSFORM_UPDATE = 209;
 
     S_SOME_NOTIFICATION = 300;
 }
@@ -164,12 +164,35 @@ message C_SetMonsterMoveTarget {
   // oneof? player / structure
 }
 
-message S_PlayersLocationUpdate {
-  map<string, TransformInfo> positions = 1;
+// message LocationUpdate {
+//   repeated PlayerTransformInfo playerTransformInfo = 1;
+//   repeated MonsterTransformInfo monsterTransformInfo = 2;
+// }
+
+message S_PlayersTransformUpdate {
+  repeated PlayerTransformInfo transformInfo = 1;
 }
 
-message S_MonstersLocationUpdate {
-  map<uint32, TransformInfo> positions = 1;
+message S_MonstersTransformUpdate {
+  repeated MonsterTransformInfo transformInfo = 2;
+}
+
+// message S_PlayersLocationUpdate {
+//   map<string, TransformInfo> playerPositions = 1;
+// }
+
+// message S_MonstersLocationUpdate {
+//   map<uint32, TransformInfo> monsterPositions = 1;
+// }
+
+message PlayerTransformInfo {
+  string accountId = 1;
+  TransformInfo transformInfo = 2;
+}
+
+message MonsterTransformInfo {
+  int32 monsterIdx = 1;
+  TransformInfo transformInfo = 2;
 }
 
 // ----- -----
@@ -679,6 +702,7 @@ message NotificationPacket {
     S_StructureAttacked sStructureAttacked = 18;
     S_AnimationStructure sAnimationStructure = 19;
 
-    S_PlayersLocationUpdate sPlayersLocationUpdate = 50;
+    S_PlayersTransformUpdate sPlayersTransformUpdate = 50;
+    S_MonstersTransformUpdate sMonstersTransformUpdate = 51;
   }
 }
