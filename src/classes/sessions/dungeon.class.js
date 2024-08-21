@@ -108,7 +108,7 @@ class Dungeon extends Game {
   // #region 몬스터
   setMonsters(dungeonCode, monsters) {
     this.roundMonsters = new Map();
-    const data = {};
+    const data = new Map();
 
     monsters.forEach((monsterData) => {
       const { monsterIdx } = monsterData;
@@ -116,7 +116,8 @@ class Dungeon extends Game {
       monsterData.monsterTransform = monster.setSpawnLocate(dungeonCode);
       this.roundMonsters.set(monsterIdx, monster);
 
-      data[monsterIdx] = monsterData.monsterModel;
+      data.set(monsterIdx, monsterData.monsterModel);
+      // data[monsterIdx] = monsterData.monsterModel;
     });
 
     DediClient.getClient(this.id).setMonsters(data);
@@ -183,10 +184,11 @@ class Dungeon extends Game {
     this.players.set(accountId, new DungeonPlayer(player));
 
     if (this.players.size === 4) {
-      const data = {};
+      const data = new Map();
 
       for (const [accountId, dungeonPlayer] of this.players.entries()) {
-        data[accountId] = dungeonPlayer.playerInfo.charClass;
+        data.set(accountId, dungeonPlayer.playerInfo.charClass);
+        // data[accountId] = dungeonPlayer.playerInfo.charClass;
       }
 
       DediClient.getClient(this.id).setPlayers(data);
