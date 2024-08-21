@@ -7,7 +7,7 @@ export const PING_INTERVAL_TYPE = 'ping';
 // ------- LOGGER CONSTANTS (temp) -----
 export const loggerConstants = {
   VERBOSE: false,
-  LOGGING: true,
+  LOGGING: false,
 };
 
 const loggerBlackList = [

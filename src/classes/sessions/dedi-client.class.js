@@ -34,7 +34,9 @@ const MonstersLocationUpdateHandler = function (deserialized) {
 
   if (monsterTransformInfo.length === 0) return;
 
-  dungeonSession.notifyAll(payloadTypes.S_MONSTERS_LOCATION_UPDATE, {
+  console.log('데디 -> 유니티 몬스터 정보 : ', monsterTransformInfo);
+
+  dungeonSession.notifyAll(payloadTypes.S_MONSTERS_TRANSFORM_UPDATE, {
     transformInfo: monsterTransformInfo,
   });
 };
@@ -222,6 +224,10 @@ class DediClient {
 
   getPrevPosition(key) {
     return this.#prevPositions.get(key);
+  }
+
+  setNightRoundStart() {
+    this.#socket.send(dediPacketTypes.C_NIGHT_ROUND_START, { timeStamp: Date.now() });
   }
 }
 

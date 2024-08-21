@@ -121,6 +121,7 @@ class Dungeon extends Game {
       // data[monsterIdx] = monsterData.monsterModel;
     });
 
+    console.log('JS -> 데디 몬스터 정보 : ', data);
     DediClient.getClient(this.id).setMonsters(data);
 
     return monsters;
@@ -328,6 +329,7 @@ class Dungeon extends Game {
       setTimeout(() => {
         this.phase = dc.phases.NIGHT;
         this.notifyAll(payloadTypes.S_NIGHT_ROUND_START, {});
+        DediClient.getClient(this.id).setNightRoundStart();
       }, dc.general.DAY_DURATION);
     })();
     const now = Date.now();
