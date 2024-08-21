@@ -72,5 +72,7 @@ export const deserializeTest = (packetType, packet) => {
 
 export const deserializePf = (dediPacketType, packet) => {
   const MessageType = getProtoMessages().pathfinding[dediPacketType];
-  return deserialize(MessageType, packet);
+  const deserialized = deserialize(MessageType, packet);
+  console.log('===== ', deserialized);
+  return deserialized;
 };

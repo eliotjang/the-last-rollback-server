@@ -101,7 +101,7 @@ export const sendNotification = async function (payloadType, payload) {
 export const sendPacketToDediServer = async function (dediPacketType, data) {
   try {
     const serializedPacket = serializePf(dediPacketType, data);
-    console.log('===== ', deserializePf(dediPacketType, serializedPacket));
+    deserializePf(dediPacketType, serializedPacket);
     const header = writeHeader(serializedPacket.length, dediPacketType);
     const packet = Buffer.concat([header, serializedPacket]);
     this.write(packet);
