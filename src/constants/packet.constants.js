@@ -91,6 +91,8 @@ export const payloadTypes = {
 };
 
 export const dediPacketTypes = {
+  C_NIGHT_ROUND_START: 5,
+
   C_CREATE_SESSION: 10,
 
   C_SET_PLAYERS: 11,

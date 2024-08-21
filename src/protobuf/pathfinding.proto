@@ -2,6 +2,8 @@ syntax = "proto3";
 
 enum PFPacketType {
     NONE = 0;
+
+    C_NIGHT_ROUND_START = 5;
     
     C_CREATE_SESSION = 10;
 
@@ -9,6 +11,7 @@ enum PFPacketType {
     C_SET_MONSTERS = 12;
     C_SET_PLAYER_DEST = 13;
     C_SET_MONSTER_DEST = 14;
+    
 
     S_PLAYER_LOCATION_UPDATE = 31;
     S_MONSTER_LOCATION_UPDATE = 32;
