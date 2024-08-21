@@ -168,6 +168,7 @@ message C_SetMonsterMoveTarget {
     string accountId = 2;
     int32 structureIdx = 3;
   }
+  TransformInfo transformInfo = 4;
 }
 
 // message LocationUpdate {
