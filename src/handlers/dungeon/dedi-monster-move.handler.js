@@ -8,7 +8,7 @@ const dediMonsterMoveHandler = ({ socket, accountId, packet }) => {
   let target;
 
   if (structureIdx) {
-    target = { TargetStructure: { structureIdx } };
+    target = { targetStructure: { structureIdx } };
   } else if (player) {
     target = { targetPlayer: { accountId: player } };
   }
