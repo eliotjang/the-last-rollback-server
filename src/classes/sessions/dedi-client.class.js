@@ -1,6 +1,10 @@
 import net from 'net';
 import { config } from '../../config/config.js';
-import { dediPacketTypes, headerConstants } from '../../constants/packet.constants.js';
+import {
+  dediPacketTypes,
+  headerConstants,
+  payloadTypes,
+} from '../../constants/packet.constants.js';
 import { deserializePf } from '../../utils/packet-serializer.utils.js';
 import { sendPacketToDediServer } from '../../utils/packet-sender.utils.js';
 import { handleError } from '../../utils/error/errorHandler.js';
@@ -10,7 +14,7 @@ import { readHeader } from '../../utils/packet-header.utils.js';
 
 const headerSize = headerConstants.TOTAL_LENGTH + headerConstants.PACKET_TYPE_LENGTH;
 
-const MonstersLocationUpdateHandler = function (deserialized) {
+const MonstersLocationUpdateHandler = (deserialized) => {
   // monsterIdx : Vector3 (X,Y,Z)
   const dungeonSession = getDungeonSession(this.dungeonId);
   const { positions } = deserialized;
@@ -32,7 +36,7 @@ const MonstersLocationUpdateHandler = function (deserialized) {
   // dungeonSession.monstersLocationUpdate(deserialized);
 };
 
-const PlayersLocationUpdateHandler = function (deserialized) {
+const PlayersLocationUpdateHandler = (deserialized) => {
   // accountId : Vector3 (X,Y,Z)
   // const dungeonSession = getDungeonSession(this.dungeonId);
   const { positions } = deserialized;
