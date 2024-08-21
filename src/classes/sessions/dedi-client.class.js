@@ -14,8 +14,9 @@ import { readHeader } from '../../utils/packet-header.utils.js';
 
 const headerSize = headerConstants.TOTAL_LENGTH + headerConstants.PACKET_TYPE_LENGTH;
 
-const MonstersLocationUpdateHandler = (deserialized) => {
+const MonstersLocationUpdateHandler = function (deserialized) {
   // monsterIdx : Vector3 (X,Y,Z)
+  console.log('---------', this.dungeonId);
   const dungeonSession = getDungeonSession(this.dungeonId);
   const { positions } = deserialized;
   const monsterTransformInfo = [];
@@ -36,7 +37,7 @@ const MonstersLocationUpdateHandler = (deserialized) => {
   // dungeonSession.monstersLocationUpdate(deserialized);
 };
 
-const PlayersLocationUpdateHandler = (deserialized) => {
+const PlayersLocationUpdateHandler = function (deserialized) {
   // accountId : Vector3 (X,Y,Z)
   // const dungeonSession = getDungeonSession(this.dungeonId);
   const { positions } = deserialized;

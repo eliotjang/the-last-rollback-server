@@ -29,8 +29,8 @@ class Dungeon extends Game {
     this.players = new Map();
     this.roundMonsters = null;
     // this.dediClient = new DediClient(this.id);
-    DediClient.addClient(this.id, new DediClient(this.dungeonCode));
-    DediClient.getClient(this.id).createSession(this.dungeonCode);
+    DediClient.addClient(this.id, new DediClient(this.id));
+    DediClient.getClient(this.id).createSession(this.id);
   }
 
   // #region 유저
