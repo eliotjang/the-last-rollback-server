@@ -6,6 +6,7 @@ import { sendPacketToDediServer } from '../../utils/packet-sender.utils.js';
 import { handleError } from '../../utils/error/errorHandler.js';
 import CustomError from '../../utils/error/customError.js';
 import { getDungeonSession } from '../../session/dungeon.session.js';
+import { readHeader } from '../../utils/packet-header.utils.js';
 
 const headerSize = headerConstants.TOTAL_LENGTH + headerConstants.PACKET_TYPE_LENGTH;
 
@@ -40,6 +41,9 @@ const PlayersLocationUpdateHandler = (deserialized) => {
   // TODO: 이전 위치 저장 및 rotation 계산
 
   for (const [accountId, worldPosition] of Object.entries(positions)) {
+    console.log(
+      `accountId: ${accountId}  x: ${worldPosition.x} y: ${worldPosition.y} z: ${worldPosition.z}`,
+    );
     playerTransformInfo.push({
       accountId,
       transformInfo: {
