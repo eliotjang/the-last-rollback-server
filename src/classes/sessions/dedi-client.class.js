@@ -16,7 +16,6 @@ const headerSize = headerConstants.TOTAL_LENGTH + headerConstants.PACKET_TYPE_LE
 
 const MonstersLocationUpdateHandler = function (deserialized) {
   // monsterIdx : Vector3 (X,Y,Z)
-  console.log('---------', this.dungeonId);
   const dungeonSession = getDungeonSession(this.dungeonId);
   const { positions } = deserialized;
   const monsterTransformInfo = [];
@@ -33,25 +32,22 @@ const MonstersLocationUpdateHandler = function (deserialized) {
     });
   }
 
-  dungeonSession.notifyAll(payloadTypes.S_MONSTERS_LOCATION_UPDATE, monsterTransformInfo);
-  // dungeonSession.monstersLocationUpdate(deserialized);
+  if (monsterTransformInfo.length === 0) return;
+
+  dungeonSession.notifyAll(payloadTypes.S_MONSTERS_LOCATION_UPDATE, {
+    transformInfo: monsterTransformInfo,
+  });
 };
 
 const PlayersLocationUpdateHandler = function (deserialized) {
   // accountId : Vector3 (X,Y,Z)
-  // const dungeonSession = getDungeonSession(this.dungeonId);
+  const dungeonSession = getDungeonSession(this.dungeonId);
   const { positions } = deserialized;
-  const temp = Object.keys(positions)[0];
-  if (!temp) return;
-  const dungeonSession = getDungeonSessionByUserId(temp);
   const playerTransformInfo = [];
 
   // TODO: 이전 위치 저장 및 rotation 계산
 
   for (const [accountId, worldPosition] of Object.entries(positions)) {
-    console.log(
-      `accountId: ${accountId}  x: ${worldPosition.x} y: ${worldPosition.y} z: ${worldPosition.z}`,
-    );
     playerTransformInfo.push({
       accountId,
       transformInfo: {
@@ -63,8 +59,11 @@ const PlayersLocationUpdateHandler = function (deserialized) {
     });
   }
 
-  dungeonSession.notifyAll(payloadTypes.S_PLAYERS_TRANSFORM_UPDATE, playerTransformInfo);
-  // dungeonSession.playersLocationUpdate(map);
+  if (playerTransformInfo.length === 0) return;
+
+  dungeonSession.notifyAll(payloadTypes.S_PLAYERS_TRANSFORM_UPDATE, {
+    transformInfo: playerTransformInfo,
+  });
 };
 
 const handlerMappings = {
@@ -79,8 +78,6 @@ class DediClient {
   constructor(dungeonId) {
     this.init();
     this.dungeonId = dungeonId;
-    // this.dungeon = dungeon;
-    // DediClient.addClient(dungeonId, this);
   }
 
   static addClient = (dungeonId, dediClient) => {
@@ -102,10 +99,6 @@ class DediClient {
       console.log(
         `Connected to dedi-server on ${this.#socket.remoteAddress}:${this.#socket.remotePort}`,
       );
-
-      // this.#socket.send(dediPacketTypes.C_CREATE_SESSION, {
-      //   dungeonCode: this.dungeon.dungeonCode,
-      // });
     });
     this.#socket.on('data', this.onData.bind(this));
     this.#socket.on('end', this.onEnd.bind(this));
@@ -122,7 +115,6 @@ class DediClient {
         if (totalLength > this.#socket.buffer.length) {
           break;
         }
-        console.log('----------------????', dediPacketType, totalLength);
         const packet = this.#socket.buffer.subarray(headerSize, totalLength);
         this.#socket.buffer = this.#socket.buffer.subarray(totalLength);
         const deserialized = deserializePf(dediPacketType, packet);

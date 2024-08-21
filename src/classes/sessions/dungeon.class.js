@@ -30,7 +30,7 @@ class Dungeon extends Game {
     this.roundMonsters = null;
     // this.dediClient = new DediClient(this.id);
     DediClient.addClient(this.id, new DediClient(this.id));
-    DediClient.getClient(this.id).createSession(this.id);
+    DediClient.getClient(this.id).createSession(this.dungeonCode);
   }
 
   // #region 유저

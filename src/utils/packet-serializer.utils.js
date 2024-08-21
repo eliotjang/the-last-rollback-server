@@ -66,7 +66,7 @@ export const deserializeByPacketType = (packetType, data) => {
 export const deserializeTest = (packetType, packet) => {
   const MessageType = getProtoMessages().packet[packetType];
   const decoded = deserialize(MessageType, packet);
-  // console.log('deserialize test:', decoded);
+  console.log('-- deserialize test:', decoded);
   return decoded;
 };
 

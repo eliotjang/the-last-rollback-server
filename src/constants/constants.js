@@ -5,12 +5,18 @@ export const PING_INTERVAL = 10000;
 export const PING_INTERVAL_TYPE = 'ping';
 
 // ------- LOGGER CONSTANTS (temp) -----
+export const loggerConstants = {
+  VERBOSE: false,
+  LOGGING: true,
+};
+
 const loggerBlackList = [
   payloadTypes.S_MOVE,
   payloadTypes.S_MONSTER_MOVE,
   payloadTypes.S_ANIMATION_MONSTER,
   payloadTypes.S_TOWER_ATTACKED,
   payloadTypes.S_ANIMATION_PLAYER,
+  payloadTypes.S_MONSTERS_TRANSFORM_UPDATE,
 ];
 const loggerBlackListSet = new Set(loggerBlackList);
 export const isBlackListed = (payloadType) => loggerBlackListSet.has(payloadType);

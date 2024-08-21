@@ -1,8 +1,8 @@
-import { isBlackListed } from '../constants/constants.js';
+import { isBlackListed, loggerConstants } from '../constants/constants.js';
 import { packetTypes, payloadKeyNames, payloadTypes } from '../constants/packet.constants.js';
 import { getProtoMessages } from '../init/proto.init.js';
 import { handleError } from './error/errorHandler.js';
-import { writeHeader } from './packet-header.utils.js';
+import { readHeader, writeHeader } from './packet-header.utils.js';
 import {
   serializeEx,
   deserializeTest,
@@ -52,7 +52,7 @@ export const sendResponse = async function (code, message, payloadType, payload,
     };
     const serializedPacket = serializeEx(packetTypes.RESPONSE, payloadType, packetData);
 
-    logPacket(payloadType, serializedPacket);
+    logPacket(packetTypes.RESPONSE, payloadType, serializedPacket);
 
     const header = writeHeader(serializedPacket.length, packetTypes.RESPONSE);
     const packet = Buffer.concat([header, serializedPacket]);
@@ -83,7 +83,7 @@ export const sendNotification = async function (payloadType, payload) {
     };
     const serializedPacket = serializeEx(packetTypes.NOTIFICATION, payloadType, packetData);
 
-    logPacket(payloadType, serializedPacket);
+    logPacket(packetTypes.NOTIFICATION, payloadType, serializedPacket);
 
     const header = writeHeader(serializedPacket.length, packetTypes.NOTIFICATION);
     const packet = Buffer.concat([header, serializedPacket]);
@@ -111,12 +111,13 @@ export const sendPacketToDediServer = async function (dediPacketType, data) {
   }
 };
 
-const logPacket = (payloadType, serializedPacket) => {
-  if (!isBlackListed(payloadType)) {
-    console.log(`sendResponse: ${payloadType} ${payloadKeyNames[payloadType]}`);
-    if (payloadType === payloadTypes.S_ENTER || payloadType === payloadTypes.S_SPAWN) {
-      // console.log('SentTo:', this.accountId);
-      deserializeTest(packetTypes.RESPONSE, serializedPacket);
+const logPacket = (packetType, payloadType, serializedPacket) => {
+  if (loggerConstants.LOGGING && !isBlackListed(payloadType)) {
+    const { totalLength } = readHeader(serializedPacket);
+    console.log(`sending: [${payloadType}] ${payloadKeyNames[payloadType]}`);
+    if (loggerConstants.VERBOSE) {
+      console.log(`-- totalLength: ${totalLength}`);
+      deserializeTest(packetType, serializedPacket);
     }
   }
 };
