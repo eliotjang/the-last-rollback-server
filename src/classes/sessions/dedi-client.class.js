@@ -194,7 +194,7 @@ class DediClient {
    */
   setMonsterDest(monsterIdx, target) {
     // TODO: 소켓을 통해 monsterIdx와 target을 담은 데이터 전송하기
-    // 데이터 예시: { monsterIdx, target: { targetPlayer } }
+    // 데이터 예시: { monsterIdx, target: { targetPlayer: { accountId } } }
     // dungeon.class - updateMonsterAttackPlayer
     this.#socket.send(dediPacketTypes.C_SET_MONSTER_DEST, { monsterIdx, target });
   }
