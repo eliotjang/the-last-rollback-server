@@ -160,8 +160,6 @@ class Dungeon extends Game {
 
     monster.attack(player);
 
-    DediClient.getClient(this.id).setMonsterDest(monsterIdx, { player });
-
     if (player.playerInfo.isDead) {
       console.log(`${accountId} 플레이어 사망`);
       this.checkAllDead();
@@ -208,8 +206,6 @@ class Dungeon extends Game {
     const player = this.getPlayer(accountId);
     if (!player) return;
     transform = player.playerInfo.transform.updateTransform(transform);
-    const { posX: x, posY: y, posZ: z } = transform;
-    DediClient.getClient(this.id).setPlayerDest(accountId, { x, y, z });
     super.notifyAll(payloadTypes.S_MOVE, { playerId: accountId, transform });
   }
 
