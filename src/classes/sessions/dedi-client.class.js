@@ -28,7 +28,7 @@ const MonstersLocationUpdateHandler = function (deserialized) {
     });
   }
 
-  dungeonSession.notifyAll(payloadTypes.S_MONSTERS_LOCATION_UPDATE, monsterTransformInfo);
+  dungeonSession.socket.notifyAll(payloadTypes.S_MONSTERS_LOCATION_UPDATE, monsterTransformInfo);
   // dungeonSession.monstersLocationUpdate(deserialized);
 };
 
@@ -55,7 +55,7 @@ const PlayersLocationUpdateHandler = function (deserialized) {
     });
   }
 
-  dungeonSession.notifyAll(payloadTypes.S_PLAYERS_TRANSFORM_UPDATE, playerTransformInfo);
+  dungeonSession.socket.notifyAll(payloadTypes.S_PLAYERS_TRANSFORM_UPDATE, playerTransformInfo);
   // dungeonSession.playersLocationUpdate(map);
 };
 
@@ -111,7 +111,7 @@ class DediClient {
       this.#socket.buffer = Buffer.concat([this.#socket.buffer, data]);
       while (this.#socket.buffer.length >= headerSize) {
         const { totalLength, packetType: dediPacketType } = readHeader(this.#socket.buffer, true);
-        if (totalLength < this.#socket.buffer.length) {
+        if (totalLength > this.#socket.buffer.length) {
           break;
         }
         console.log('----------------????', dediPacketType, totalLength);
