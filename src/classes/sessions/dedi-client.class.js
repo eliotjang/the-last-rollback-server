@@ -10,7 +10,7 @@ import { readHeader } from '../../utils/packet-header.utils.js';
 
 const headerSize = headerConstants.TOTAL_LENGTH + headerConstants.PACKET_TYPE_LENGTH;
 
-const MonstersLocationUpdateHandler = (deserialized) => {
+const MonstersLocationUpdateHandler = function (deserialized) {
   // monsterIdx : Vector3 (X,Y,Z)
   const dungeonSession = getDungeonSession(this.dungeonId);
   const { positions } = deserialized;
@@ -32,7 +32,7 @@ const MonstersLocationUpdateHandler = (deserialized) => {
   // dungeonSession.monstersLocationUpdate(deserialized);
 };
 
-const PlayersLocationUpdateHandler = (deserialized) => {
+const PlayersLocationUpdateHandler = function (deserialized) {
   // accountId : Vector3 (X,Y,Z)
   const dungeonSession = getDungeonSession(this.dungeonId);
   const { positions } = deserialized;
@@ -110,7 +110,7 @@ class DediClient {
     try {
       this.#socket.buffer = Buffer.concat([this.#socket.buffer, data]);
       while (this.#socket.buffer.length >= headerSize) {
-        const { totalLength, packetType: dediPacketType } = readHeader(this.#socket.buffer);
+        const { totalLength, packetType: dediPacketType } = readHeader(this.#socket.buffer, true);
         if (totalLength < this.#socket.buffer.length) {
           break;
         }
