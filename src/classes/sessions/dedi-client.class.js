@@ -110,10 +110,11 @@ class DediClient {
     try {
       this.#socket.buffer = Buffer.concat([this.#socket.buffer, data]);
       while (this.#socket.buffer.length >= headerSize) {
-        const { totalLength, dediPacketType } = readHeader(this.#socket.buffer);
-        if (totalLength > this.#socket.buffer.length) {
+        const { totalLength, packetType: dediPacketType } = readHeader(this.#socket.buffer);
+        if (totalLength < this.#socket.buffer.length) {
           break;
         }
+        console.log('----------------????', dediPacketType, totalLength);
         const packet = this.#socket.buffer.subarray(headerSize, totalLength);
         this.#socket.buffer = this.#socket.buffer.subarray(totalLength);
         const deserialized = deserializePf(dediPacketType, packet);
