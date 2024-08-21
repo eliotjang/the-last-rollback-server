@@ -46,6 +46,8 @@ const PlayersLocationUpdateHandler = function (deserialized) {
   const playerTransformInfo = [];
 
   // TODO: 이전 위치 저장 및 rotation 계산
+  // this.getPrevPosition(accountId); // 가져오기
+  // this.addPrevPosition(accountId, somePositionData); // 저장
 
   for (const [accountId, worldPosition] of Object.entries(positions)) {
     playerTransformInfo.push({
