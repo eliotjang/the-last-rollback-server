@@ -66,6 +66,11 @@ const PlayersLocationUpdateHandler = function (deserialized) {
   });
 };
 
+const MonsterAttackHandler = function (deserialized) {
+  // handle S_MonsterAttack
+  // TODO: 클라이언트로 공격 패킷 전송, 애니메이션 전송
+};
+
 const handlerMappings = {
   [dediPacketTypes.S_MONSTERS_LOCATION_UPDATE]: MonstersLocationUpdateHandler,
   [dediPacketTypes.S_PLAYERS_LOCATION_UPDATE]: PlayersLocationUpdateHandler,
@@ -74,6 +79,7 @@ const handlerMappings = {
 class DediClient {
   static #dediClients = new Map();
   #socket = new net.Socket();
+  #prevPositions = new Map(); // 몬스터 이전 위치
 
   constructor(dungeonId) {
     this.init();
@@ -206,6 +212,14 @@ class DediClient {
     // 데이터 예시: { monsterIdx, target: { targetPlayer: { accountId } } }
     // dungeon.class - updateMonsterAttackPlayer
     this.#socket.send(dediPacketTypes.C_SET_MONSTER_DEST, { monsterIdx, target });
+  }
+
+  addPrevPosition(key, pos) {
+    this.#prevPositions.set(key, value);
+  }
+
+  getPrevPosition(key) {
+    return this.#prevPositions.get(key);
   }
 }
 
