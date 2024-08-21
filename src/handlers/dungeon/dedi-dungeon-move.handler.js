@@ -1,4 +1,5 @@
 import DediClient from '../../classes/sessions/dedi-client.class.js';
+import { getDungeonSessionByUserSocket } from '../../session/dungeon.session.js';
 
 const dediDungeonMoveHandler = ({ socket, accountId, packet }) => {
   // TODO: 클라에서 받은 정보를 토대로 dedi 서버에 C_SetPlayerDest 패킷 전송
