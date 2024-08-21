@@ -22,6 +22,7 @@ import animationStructureHandler from './dungeon/animation-structure.handler.js'
 import testHandler from '../stressTest/test.handler.js';
 import testEnterDungeonSession from '../stressTest/enterDungeonTest.handler.js';
 import locationUpdateTestHandler from '../stressTest/locationUpdateTest.handler.js';
+import testDungeonHandler from '../stressTest/testDungeon.handler.js';
 
 const handlers = {
   [payloadTypes.C_ENTER]: enterTownHandler,
@@ -45,6 +46,7 @@ const handlers = {
   [payloadTypes.TEST]: testHandler,
   [payloadTypes.C_ENTER_DUNGEON]: testEnterDungeonSession,
   [payloadTypes.C_STRESS_TEST_MOVE]: locationUpdateTestHandler,
+  [payloadTypes.TEST_DUNGEON]: testDungeonHandler,
 };
 
 export const getHandlerByPayloadType = (payloadType) => {

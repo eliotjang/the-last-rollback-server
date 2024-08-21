@@ -88,6 +88,7 @@ export const payloadTypes = {
 
   C_STRESS_TEST_MOVE: 500,
   S_STRESS_TEST_MOVE: 501,
+  TEST_DUNGEON: 303,
 };
 
 export const packetNames = Object.fromEntries(

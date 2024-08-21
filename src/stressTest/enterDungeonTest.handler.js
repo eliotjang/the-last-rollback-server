@@ -12,7 +12,10 @@ const testEnterDungeonSession = async ({ socket, accountId, packet }) => {
 
   const dungeonSession = addDungeonSession(dungeonCode);
   const townSession = getTownSessionByUserId(accountId);
-  townSession.removeUser(accountId);
+  if (townSession) {
+    townSession.removeUser(accountId);
+  }
+
   const user = getUserById(accountId);
   dungeonSession.addUser(user);
   await townRedis.removePlayer(accountId, false);
