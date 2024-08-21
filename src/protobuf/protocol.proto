@@ -168,13 +168,7 @@ message C_SetMonsterMoveTarget {
     string accountId = 2;
     int32 structureIdx = 3;
   }
-  TransformInfo transformInfo = 4;
 }
-
-// message LocationUpdate {
-//   repeated PlayerTransformInfo playerTransformInfo = 1;
-//   repeated MonsterTransformInfo monsterTransformInfo = 2;
-// }
 
 message S_PlayersTransformUpdate {
   repeated PlayerTransformInfo transformInfo = 1;
@@ -183,14 +177,6 @@ message S_PlayersTransformUpdate {
 message S_MonstersTransformUpdate {
   repeated MonsterTransformInfo transformInfo = 2;
 }
-
-// message S_PlayersLocationUpdate {
-//   map<string, TransformInfo> playerPositions = 1;
-// }
-
-// message S_MonstersLocationUpdate {
-//   map<uint32, TransformInfo> monsterPositions = 1;
-// }
 
 message PlayerTransformInfo {
   string accountId = 1;
