@@ -5,7 +5,7 @@ import { deserializePf } from '../../utils/packet-serializer.utils.js';
 import { sendPacketToDediServer } from '../../utils/packet-sender.utils.js';
 import { handleError } from '../../utils/error/errorHandler.js';
 import CustomError from '../../utils/error/customError.js';
-import { getDungeonSession } from '../../session/dungeon.session.js';
+import { getDungeonSession, getDungeonSessionByUserId } from '../../session/dungeon.session.js';
 import { readHeader } from '../../utils/packet-header.utils.js';
 
 const headerSize = headerConstants.TOTAL_LENGTH + headerConstants.PACKET_TYPE_LENGTH;
@@ -28,14 +28,17 @@ const MonstersLocationUpdateHandler = function (deserialized) {
     });
   }
 
-  dungeonSession.socket.notifyAll(payloadTypes.S_MONSTERS_LOCATION_UPDATE, monsterTransformInfo);
+  dungeonSession.notifyAll(payloadTypes.S_MONSTERS_LOCATION_UPDATE, monsterTransformInfo);
   // dungeonSession.monstersLocationUpdate(deserialized);
 };
 
 const PlayersLocationUpdateHandler = function (deserialized) {
   // accountId : Vector3 (X,Y,Z)
-  const dungeonSession = getDungeonSession(this.dungeonId);
+  // const dungeonSession = getDungeonSession(this.dungeonId);
   const { positions } = deserialized;
+  const temp = Object.keys(positions)[0];
+  if (!temp) return;
+  const dungeonSession = getDungeonSessionByUserId(temp);
   const playerTransformInfo = [];
 
   // TODO: 이전 위치 저장 및 rotation 계산
@@ -55,7 +58,7 @@ const PlayersLocationUpdateHandler = function (deserialized) {
     });
   }
 
-  dungeonSession.socket.notifyAll(payloadTypes.S_PLAYERS_TRANSFORM_UPDATE, playerTransformInfo);
+  dungeonSession.notifyAll(payloadTypes.S_PLAYERS_TRANSFORM_UPDATE, playerTransformInfo);
   // dungeonSession.playersLocationUpdate(map);
 };
 
