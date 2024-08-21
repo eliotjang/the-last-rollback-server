@@ -52,13 +52,26 @@ const PlayersLocationUpdateHandler = function (deserialized) {
   // this.addPrevPosition(accountId, somePositionData); // 저장
 
   for (const [accountId, worldPosition] of Object.entries(positions)) {
+    const prevPosition = this.getPlayerPrevPosition(accountId);
+    this.addPlayerPrevPosition(accountId, worldPosition);
+
+    let rot = 0;
+    if (prevPosition) {
+      const directionVector = {
+        x: worldPosition.x - prevPosition.x,
+        z: worldPosition.z - prevPosition.z,
+      };
+
+      rot = (Math.atan2(directionVector.x, directionVector.z) * (180 / Math.PI) + 360) % 360;
+    }
+
     playerTransformInfo.push({
       accountId,
       transformInfo: {
         posX: worldPosition.x,
         posY: worldPosition.y,
         posZ: worldPosition.z,
-        rot: 0,
+        rot: rot,
       },
     });
   }
@@ -83,7 +96,7 @@ const handlerMappings = {
 class DediClient {
   static #dediClients = new Map();
   #socket = new net.Socket();
-  #prevPositions = new Map(); // 몬스터 이전 위치
+  #prevPlayerPositions = new Map(); // 플레이어 이전 위치
 
   constructor(dungeonId) {
     this.init();
@@ -218,12 +231,12 @@ class DediClient {
     this.#socket.send(dediPacketTypes.C_SET_MONSTER_DEST, { monsterIdx, target });
   }
 
-  addPrevPosition(key, pos) {
-    this.#prevPositions.set(key, value);
+  addPlayerPrevPosition(key, pos) {
+    this.#prevPlayerPositions.set(key, pos);
   }
 
-  getPrevPosition(key) {
-    return this.#prevPositions.get(key);
+  getPlayerPrevPosition(key) {
+    return this.#prevPlayerPositions.get(key);
   }
 
   setNightRoundStart() {
