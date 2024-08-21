@@ -158,7 +158,7 @@ message S_MonsterMove {
 
 // Unity -> JS (dedi dungeon move handler)
 message C_SetPlayerMoveTarget {
-  TransformInfo transformInfo = 1;
+  optional TransformInfo transformInfo = 1;
 }
 
 // Unity -> JS (dedi monster move handler)
