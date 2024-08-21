@@ -22,7 +22,7 @@ const MonstersLocationUpdateHandler = function (deserialized) {
 
   for (const [monsterIdx, worldPosition] of Object.entries(positions)) {
     monsterTransformInfo.push({
-      monsterIdx,
+      monsterIdx: +monsterIdx,
       transformInfo: {
         posX: worldPosition.x,
         posY: worldPosition.y,
@@ -240,6 +240,7 @@ class DediClient {
   }
 
   setNightRoundStart() {
+    console.log('JS -> 데디 밤 라운드 시작');
     this.#socket.send(dediPacketTypes.C_NIGHT_ROUND_START, { timeStamp: Date.now() });
   }
 }
