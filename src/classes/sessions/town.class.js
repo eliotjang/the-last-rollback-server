@@ -1,6 +1,6 @@
 import { payloadTypes } from '../../constants/packet.constants.js';
 import Game from './game.class.js';
-import { sessionTypes } from '../../constants/session.constants.js';
+import { sessionTypes } from '../../constants/game.constants.js';
 import { handleError } from '../../utils/error/errorHandler.js';
 import { townRedis } from '../../utils/redis/town.redis.js';
 
@@ -22,7 +22,7 @@ class Town extends Game {
         }
         user.getPlayerInfo().then((userInfo) => {
           super.notifyOthers(user.accountId, payloadTypes.S_SPAWN, { players: [userInfo] });
-          this.systemChatAll(user.accountId, `${userInfo.nickname}님이 입장하였습니다.`);
+          super.systemChatAll(user.accountId, `${userInfo.nickname}님이 입장하였습니다.`);
         });
       })
       .catch((err) => {
@@ -42,36 +42,8 @@ class Town extends Game {
     });
   }
 
-  actionPlayer(accountId, animCode) {
-    super.notifyAll(payloadTypes.S_ANIMATION_PLAYER, { playerId: accountId, animCode });
-  }
-
-  chatPlayer(accountId, chatMsg) {
-    super.notifyAll(payloadTypes.S_CHAT, { playerId: accountId, chatMsg });
-  }
-
-  systemChat(accountId, chatMsg) {
-    super.notifyUser(accountId, payloadTypes.S_CHAT, {
-      playerId: accountId,
-      chatMsg,
-      system: true,
-    });
-  }
-
-  systemChatAll(accountId, chatMsg) {
-    super.notifyAll(payloadTypes.S_CHAT, { playerId: accountId, chatMsg, system: true });
-  }
-
-  systemChatOthers(accountId, chatMsg) {
-    super.notifyOthers(accountId, payloadTypes.S_CHAT, {
-      playerId: accountId,
-      chatMsg,
-      system: true,
-    });
-  }
-
-  animationPlayer(animCode, playerId, monsterIdx) {
-    super.notifyAll(payloadTypes.S_ANIMATION_PLAYER, { animCode, playerId, monsterIdx });
+  animationPlayer(animCode, playerId) {
+    super.notifyAll(payloadTypes.S_ANIMATION_PLAYER, { animCode, playerId, monsterIdx: -1 });
   }
 }
 

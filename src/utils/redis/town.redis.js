@@ -26,8 +26,7 @@ export const townRedis = {
    */
   addPlayer: async function (player) {
     try {
-      const { playerId: accountId, nickname, charClass, transform } = player.playerInfo;
-      const { accountLevel } = player;
+      const { playerId: accountId, nickname, charClass, transform, accountLevel } = player;
       const key = PREFIX + ':' + accountId + ':';
       await redisClient.hset(key, FIELD.PLAYER_ID, accountId);
       await redisClient.hset(key, FIELD.NICKNAME, nickname);

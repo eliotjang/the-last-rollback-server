@@ -1,5 +1,5 @@
 import { payloadTypes } from '../../constants/packet.constants.js';
-import { sessionTypes } from '../../constants/session.constants.js';
+import { sessionTypes } from '../../constants/game.constants.js';
 import { getUserById } from '../../session/user.session.js';
 import CustomError from '../../utils/error/customError.js';
 import { ErrorCodes, SuccessCode } from '../../utils/error/errorCodes.js';

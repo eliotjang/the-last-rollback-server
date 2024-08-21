@@ -1,3 +1,4 @@
+import { payloadTypes } from '../../constants/packet.constants.js';
 import { getUserById } from '../../session/user.session.js';
 import CustomError from '../../utils/error/customError.js';
 import { ErrorCodes } from '../../utils/error/errorCodes.js';
@@ -19,6 +20,16 @@ const chattingHandler = async ({ socket, accountId, packet }) => {
     }
 
     gameSession.chatPlayer(accountId, chatMsg);
+
+    if (chatMsg === '/getSession') {
+      socket.sendNotification(payloadTypes.S_CHAT, {
+        playerId: accountId,
+        chatMsg: JSON.stringify({
+          id: gameSession.id,
+          users: gameSession.users.map((user) => user.accountId),
+        }),
+      });
+    }
   } catch (error) {
     handleError(socket, error);
   }

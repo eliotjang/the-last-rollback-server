@@ -1,5 +1,5 @@
+import { sessionTypes } from '../../constants/game.constants.js';
 import { getDungeonSessionByUserId } from '../../session/dungeon.session.js';
-import { sessionTypes } from '../../constants/session.constants.js';
 import CustomError from '../../utils/error/customError.js';
 import { ErrorCodes } from '../../utils/error/errorCodes.js';
 import { handleError } from '../../utils/error/errorHandler.js';

@@ -1,5 +1,5 @@
 import User from '../classes/models/user.class.js';
-import { userSession } from './sessions.js';
+import { userSession, userSocketSession } from './sessions.js';
 
 export const addUser = async (socket, accountId) => {
   let user = getUserById(accountId);
@@ -8,14 +8,16 @@ export const addUser = async (socket, accountId) => {
     user.socket.end('duplicated user');
   }
   user = new User(accountId, socket);
-  userSession.push(user);
+  userSession.set(accountId, user);
+  userSocketSession.set(socket, user);
   return user;
 };
 
 export const removeUser = async (socket) => {
-  const index = userSession.findIndex((user) => user.socket === socket);
-  if (index !== -1) {
-    const user = userSession.splice(index, 1)[0];
+  const user = getUserBySocket(socket);
+  if (!user) {
+    userSocketSession.delete(socket);
+    userSession.delete(user.accountId);
     const gameSession = user.getSession();
     if (gameSession) {
       await user.removePlayerInfo();
@@ -27,9 +29,9 @@ export const removeUser = async (socket) => {
 };
 
 export const getUserById = (accountId) => {
-  return userSession.find((user) => user.accountId === accountId);
+  return userSession.get(accountId);
 };
 
 export const getUserBySocket = (socket) => {
-  return userSession.find((user) => user.socket === socket);
+  return userSocketSession.get(socket);
 };

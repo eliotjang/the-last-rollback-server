@@ -1,4 +1,4 @@
-import { pickUpItemType } from '../../constants/dungeon.constants.js';
+import { pickUpItemType } from '../../constants/game.constants.js';
 import { getDungeonSessionByUserId } from '../../session/dungeon.session.js';
 import dungeonUtils from '../../utils/dungeon/dungeon.utils.js';
 

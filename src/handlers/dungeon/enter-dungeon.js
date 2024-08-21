@@ -10,32 +10,16 @@ export const enterDungeonSession = async (dungeonSession, dungeonCode) => {
   const dungeonInfo = dungeonUtils.fetchDungeonInfo(dungeonCode, 1);
   dungeonSession.setMonsters(dungeonCode, dungeonInfo.monsters);
 
-  const playerInfos = [];
-  const playerStatus = [];
+  const players = [];
 
   for (let i = 0; i < dungeonSession.users.length; i++) {
     const user = dungeonSession.users[i];
     dungeonSession.addPlayer(user.accountId, user.player);
-    const info = dungeonSession.getPlayer(user.accountId).playerInfo;
-    const stat = dungeonSession.getPlayer(user.accountId).playerStatus;
-    playerInfos.push({ ...info });
-    playerStatus.push({
-      playerLevel: stat.playerLevel,
-      playerName: info.nickname,
-      playerFullHp: stat.baseStatInfo.maxHp,
-      playerFullMp: stat.baseStatInfo.maxMp,
-      playerCurHp: stat.playerHp,
-      playerCurMp: stat.playerMp,
-      atk: stat.baseStatInfo.atk,
-      def: stat.baseStatInfo.def,
-      specialAtk: stat.baseStatInfo.specialAtk,
-      speed: stat.baseStatInfo.speed,
-      attackRange: stat.baseStatInfo.attackRange,
-      coolTime: stat.baseStatInfo.coolTime,
-    });
+    const player = dungeonSession.getPlayer(user.accountId);
+    players.push(player);
   }
 
-  const data = { dungeonInfo, playerInfo: playerInfos, players: playerStatus };
+  const data = { dungeonInfo, players };
 
   for (const user of dungeonSession.users) {
     user.socket.sendResponse(

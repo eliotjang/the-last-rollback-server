@@ -1,5 +1,5 @@
 import { PING_INTERVAL, PING_INTERVAL_TYPE } from '../../constants/constants.js';
-import { sessionTypes } from '../../constants/session.constants.js';
+import { sessionTypes } from '../../constants/game.constants.js';
 import IntervalManager from '../../manager/interval.manger.js';
 import { getDungeonSession } from '../../session/dungeon.session.js';
 import { getTownSession } from '../../session/town.session.js';

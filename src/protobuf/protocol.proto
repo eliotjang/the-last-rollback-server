@@ -264,11 +264,7 @@ message S_DungeonMatch {
 // 104 던전 입장 패킷
 message S_EnterDungeon{
   DungeonInfo dungeonInfo = 1;
-	repeated PlayerInfo playerInfo = 2;
-  repeated PlayerStatus players = 3;
-  // repeated StatInfo statInfo = 3; // 전투 시에 사용하는
-  // optional ScreenText screenText = 3;
-  // optional BattleLog battleLog = 4;
+	repeated DungeonPlayerInfo players = 2;
 }
 
 // 106 최초 입장 씬 로딩 완료 패킷
@@ -430,11 +426,16 @@ message PlayerInfo {
   string nickname = 2;  // C_EnterGame 에서 지정한 이름
   int32 charClass = 3;      // C_EnterGame 에서 지정한 직업 정보, 이 정보를 통해 캐릭터가 결정
   TransformInfo transform = 4;
-  int32 gold = 5;
-  int32 mysteryBox = 6;
-  repeated int32 killed = 7;
-  bool isDead = 8;
-  int32 accountLevel = 9;
+  int32 accountLevel = 5;
+
+}
+
+message DungeonPlayerInfo {
+  PlayerInfo playerInfo = 1;
+  PlayerStatus playerStatus = 2;
+  int32 gold = 3;
+  int32 mysteryBox = 4;
+  repeated int32 killed = 5;
 }
 
 // C_Enter 를 통해 입장했을때는 서버에서 랜덤으로 위치값 생성 / 기본값은 하단 밸류 참조
@@ -447,11 +448,15 @@ message TransformInfo {
 }
 
 message StatInfo {
-  int32 level = 1;
-  float hp = 2;
-  float maxHp = 3;
-  float mp = 4;
-  float maxMp = 5;
+  float maxExp = 1;
+  float maxHp = 2;
+  float maxMp = 3;
+  float atk = 4;
+  float def = 5;
+  float specialAtk = 6;
+  float speed = 7; 
+  float attackRange = 8;
+  float coolTime = 9;
 }
 
 
@@ -471,27 +476,17 @@ message MonsterStatus {
 
 
 message PlayerStatus {
-  // int32 playerClass = 1;
-  int32 playerLevel = 2;
-  string playerName = 3; // nickname
-  float playerFullHp = 4;
-  float playerFullMp = 5;
-  float playerCurHp = 6;
-  float playerCurMp = 7;
-  float playerExp = 8;
-  float atk = 9;
-  float def = 10;
-  float specialAtk = 11;
-  float speed = 12; 
-  float attackRange = 13;
-  float coolTime = 14;
+  int32 playerLevel = 1;
+  float playerExp = 2;
+  float playerHp = 3;
+  float playerMp = 4;
+  StatInfo statInfo = 5;
 }
 
 
 
 message RoundResult {
-  PlayerInfo playerInfo = 1;
-  PlayerStatus playerStatus = 2;
+  DungeonPlayerInfo player = 1;
   repeated int32 boxGold = 3;
   int32 roundGold = 4;
 }

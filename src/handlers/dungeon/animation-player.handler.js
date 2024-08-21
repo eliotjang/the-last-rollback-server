@@ -1,3 +1,4 @@
+import { sessionTypes } from '../../constants/game.constants.js';
 import { getUserById } from '../../session/user.session.js';
 import CustomError from '../../utils/error/customError.js';
 import { ErrorCodes } from '../../utils/error/errorCodes.js';
@@ -9,12 +10,21 @@ const animationPlayerHandler = ({ socket, accountId, packet }) => {
     const { animCode, monsterIdx } = packet;
     // console.debug('플레이어 애니메이션 정보 : ', animCode, monsterIdx);
     const user = getUserById(accountId);
-    const dungeonSession = user.getSession();
-    if (!dungeonSession) {
-      throw new CustomError(ErrorCodes.GAME_NOT_FOUND, 'Dungeon Session을 찾을 수 없습니다.');
+    const gameSession = user.getSession();
+    if (!gameSession) {
+      throw new CustomError(ErrorCodes.GAME_NOT_FOUND, 'Game Session을 찾을 수 없습니다.');
     }
 
-    dungeonSession.animationPlayer(animCode, accountId, monsterIdx);
+    switch (gameSession.type) {
+      case sessionTypes.TOWN:
+        gameSession.animationPlayer(animCode, accountId);
+        break;
+      case sessionTypes.DUNGEON:
+        gameSession.animationPlayer(animCode, accountId, monsterIdx);
+        break;
+      default:
+        throw new CustomError(ErrorCodes.GAME_NOT_FOUND, 'Game Session을 찾을 수 없습니다.');
+    }
   } catch (e) {
     handleError(e);
   }

@@ -1,15 +1,15 @@
-import dc, { gameResults } from '../../constants/game.constants.js';
+import dc, { gameResults, playerAnimTypes, sessionTypes } from '../../constants/game.constants.js';
 import { payloadTypes } from '../../constants/packet.constants.js';
-import { sessionTypes } from '../../constants/session.constants.js';
 import pickUpHandler from '../../handlers/dungeon/pick-up.handler.js';
 import dungeonUtils from '../../utils/dungeon/dungeon.utils.js';
-import CustomError from '../../utils/error/customError.js';
-import { ErrorCodes } from '../../utils/error/errorCodes.js';
 import Game from './game.class.js';
 import { userDB } from '../../db/user/user.db.js';
 import { handleError } from '../../utils/error/errorHandler.js';
-import { DungeonPlayer } from '../models/player.class.js';
+import { DungeonPlayer, Player } from '../models/player.class.js';
 import { Monster } from '../models/monster.class.js';
+import { removeDungeonSession } from '../../session/dungeon.session.js';
+import { getGameAssets } from '../../init/assets.js';
+import { Base } from '../models/structure.class.js';
 
 class Dungeon extends Game {
   constructor(id, dungeonCode) {
@@ -20,7 +20,6 @@ class Dungeon extends Game {
     this.readyStates = [];
     this.round = 1;
     this.roundKillCount = 0;
-    this.timers = new Map();
     this.startTime = Date.now();
     this.structureIdx = 0;
     this.structures = new Map();
@@ -28,15 +27,36 @@ class Dungeon extends Game {
     this.roundMonsters = null;
   }
 
+  init() {
+    this.addStructure(new Base(this.dungeonCode));
+    this.initRound(1);
+  }
+
+  initRound(round) {
+    const dungeonInfo = dungeonUtils.fetchDungeonInfo(this.dungeonCode, round);
+    if (dungeonInfo) return null;
+
+    this.round = round;
+    this.setMonsters(this.dungeonCode, dungeonInfo.monsters);
+    this.roundKillCount = 0;
+
+    return dungeonInfo;
+  }
+
   // #region 유저
   addUser(user) {
     super.addUser(user);
+    // this.addPlayer(user.accountId, user.player);
   }
 
   removeUser(accountId) {
+    this.players.delete(accountId);
     super.removeUser(accountId);
   }
 
+  removeThis() {
+    removeDungeonSession(this.id);
+  }
   // #endregion
 
   // #region 구조물
@@ -72,7 +92,7 @@ class Dungeon extends Game {
   }
 
   updateStructureHp(structureIdx, monsterIdx) {
-    const monsterInfo = this.roundMonsters.get(monsterIdx);
+    const monsterInfo = this.getMonster(monsterIdx);
     const structure = this.getStructure(structureIdx);
     structure.updateStructureHp(monsterInfo.atk);
     if (structureIdx > 0) {
@@ -149,7 +169,7 @@ class Dungeon extends Game {
 
     monster.attack(player);
 
-    if (player.playerInfo.isDead) {
+    if (player.isDead) {
       console.log(`${accountId} 플레이어 사망`);
       this.checkAllDead();
     }
@@ -190,19 +210,19 @@ class Dungeon extends Game {
 
   addHpPotion(accountId, hp) {
     const playerHp = this.getPlayer(accountId).updateHp(hp);
-    this.systemChat(accountId, 'HP 물약 획득');
+    super.systemChat(accountId, 'HP 물약 획득');
     super.notifyAll(payloadTypes.S_PICK_UP_ITEM_HP, { playerId: accountId, playerHp });
   }
 
   addMpPotion(accountId, mp) {
     const playerMp = this.getPlayer(accountId).updateMp(mp);
-    this.systemChat(accountId, 'MP 물약 획득');
+    super.systemChat(accountId, 'MP 물약 획득');
     super.notifyAll(payloadTypes.S_PICK_UP_ITEM_MP, { playerId: accountId, playerMp });
   }
 
   addMysteryBox(accountId, n) {
     const mysteryBox = this.getPlayer(accountId).updateBox(n);
-    this.systemChat(accountId, '미스테리 박스 획득');
+    super.systemChat(accountId, '미스테리 박스 획득');
     super.notifyAll(payloadTypes.S_PICK_UP_ITEM_BOX, {
       playerId: accountId,
       updateBox: mysteryBox,
@@ -212,7 +232,7 @@ class Dungeon extends Game {
   checkAllDead() {
     let isAllDead = true;
     for (const player of this.players.values()) {
-      if (!player.playerInfo.isDead) {
+      if (!player.isDead) {
         isAllDead = false;
         break;
       }
@@ -244,10 +264,10 @@ class Dungeon extends Game {
 
   killMonster(monsterIdx, accountId) {
     const monster = this.getMonster(monsterIdx);
-    this.systemChat(accountId, `${monster.monsterName}를 처치`);
+    super.systemChat(accountId, `${monster.monsterName}를 처치`);
     this.roundKillCount++;
     const player = this.players.get(accountId);
-    player.playerInfo.killed.push(monsterIdx);
+    player.killed.push(monsterIdx);
     pickUpHandler(accountId, this.dungeonCode, this.round);
     console.log('------------KILL MONSTER----------', this.roundKillCount, this.roundMonsters.size);
     // 모든 몬스터 처치 시 밤 라운드 종료
@@ -258,9 +278,26 @@ class Dungeon extends Game {
   }
 
   animationPlayer(animCode, playerId, monsterIdx) {
-    if (this.getPlayer(playerId).playerInfo.isDead && animCode !== 1) {
-      console.log('해당 플레이어가 행동불가 상태');
+    const player = this.getPlayer(playerId);
+    if (player.isDead && animCode !== playerAnimTypes.DIE) {
+      console.log(`해당 플레이어(${playerId})가 행동불가 상태 ${animCode}, ${monsterIdx}`);
       return;
+    }
+
+    if (monsterIdx !== -1 && Object.values(playerAnimTypes.ATTACK).includes(animCode)) {
+      const monster = this.getMonster(monsterIdx);
+      if (!player.verifyAttack(monster)) {
+        console.log('공격 실패!!!!!!!!!!!!!!!!!!!');
+        return;
+      }
+    }
+    if (animCode === playerAnimTypes.SKILL) {
+      if (player.useSkill()) {
+        super.notifyAll(payloadTypes.S_PICK_UP_ITEM_MP, {
+          playerId,
+          playerMp: player.playerStatus.playerMp,
+        });
+      } else return;
     }
     super.notifyAll(payloadTypes.S_ANIMATION_PLAYER, { animCode, playerId, monsterIdx });
   }
@@ -275,23 +312,11 @@ class Dungeon extends Game {
    */
   async sceneReady(accountId) {
     if (this.phase !== dc.phases.STANDBY) return;
-    let found = false;
-    Promise.all(
-      this.users.map(async (user) => {
-        if (user.accountId === accountId) {
-          found = true;
-          this.readyStates.push(false);
-        }
-      }),
-    ).then(() => {
-      if (!found) {
-        throw new CustomError(ErrorCodes.USER_NOT_FOUND, `유저가 세션에 없습니다: ${accountId}`);
-      }
-      if (this.readyStates.length >= dc.general.MAX_USERS && this.phase === dc.phases.STANDBY) {
-        this.phase = dc.phases.DAY;
-        this.startDayRoundTimer();
-      }
-    });
+    this.readyStates.push(accountId);
+    if (this.readyStates.length >= this.maxUser && this.phase === dc.phases.STANDBY) {
+      this.phase = dc.phases.DAY;
+      this.startDayRoundTimer();
+    }
   }
 
   /**
@@ -331,40 +356,21 @@ class Dungeon extends Game {
       Promise.all(
         this.users.map(async (user) => {
           const player = this.players.get(user.accountId);
-          const boxGold = dungeonUtils.openMysteryBox(player.playerInfo.mysteryBox);
+          const boxGold = dungeonUtils.openMysteryBox(player.mysteryBox);
           const totalBoxGold = boxGold.reduce((acc, cur) => acc + cur, 0);
-          const roundExp = player.playerInfo.killed.reduce(
+          const roundGold = getGameAssets().stage.data.find((e) => e.round === this.round).reward;
+          const roundExp = player.killed.reduce(
             (acc, cur) => acc + this.getMonster(cur).killExp,
             0,
           );
-          player.updateAccountExp(roundExp + this.round * 10);
+          player.updateGold(totalBoxGold + roundGold);
+          player.playerInfo.updateAccountExp(roundExp + this.round * 10);
           player.updateExp(roundExp);
-          player.updateLevel();
-          player.updateGold(totalBoxGold);
-          const roundGold = player.updateRoundGold(this.round);
 
           const roundResult = {
             boxGold,
             roundGold,
-          };
-          roundResult.playerInfo = {
-            ...player.playerInfo,
-            accountLevel: player.accountLevel,
-          };
-          const stat = player.playerStatus;
-          roundResult.playerStatus = {
-            playerLevel: stat.playerLevel,
-            playerName: player.playerInfo.nickname,
-            playerFullHp: stat.baseStatInfo.maxHp,
-            playerFullMp: stat.baseStatInfo.maxMp,
-            playerCurHp: stat.playerHp,
-            playerCurMp: stat.playerMp,
-            atk: stat.baseStatInfo.atk,
-            def: stat.baseStatInfo.def,
-            specialAtk: stat.baseStatInfo.specialAtk,
-            speed: stat.baseStatInfo.speed,
-            attackRange: stat.baseStatInfo.attackRange,
-            coolTime: stat.baseStatInfo.coolTime,
+            player,
           };
           return roundResult;
         }),
@@ -378,17 +384,18 @@ class Dungeon extends Game {
           this.endGame(gameResults.codes.GAME_WIN, gameResults.bonusExp.GAME_WIN);
         } else {
           this.setMonsters(this.dungeonCode, dungeonInfo.monsters);
+          const data = {
+            dungeonInfo,
+            roundResults,
+          };
+          this.notifyAll(payloadTypes.S_NIGHT_ROUND_END, data);
+
           this.users.forEach((user) => {
             const player = this.getPlayer(user.accountId);
             player.resetKilled();
             player.resetBox();
           });
 
-          const data = {
-            dungeonInfo,
-            roundResults,
-          };
-          this.notifyAll(payloadTypes.S_NIGHT_ROUND_END, data);
           setTimeout(this.startDayRoundTimer.bind(this), 10000);
         }
       })
@@ -401,9 +408,9 @@ class Dungeon extends Game {
     Promise.all(
       this.users.map(async (user) => {
         const player = this.getPlayer(user.accountId);
-        player.updateAccountExp(exp);
-        await userDB.updateLevel(user.accountId, player.accountLevel);
-        user = await userDB.updateExp(user.accountId, player.accountExp);
+        player.playerInfo.updateAccountExp(exp);
+        await userDB.updateLevel(user.accountId, player.playerInfo.accountLevel);
+        user = await userDB.updateExp(user.accountId, player.playerInfo.accountExp);
         return {
           playerId: user.accountId,
           accountLevel: user.userLevel,
@@ -416,39 +423,9 @@ class Dungeon extends Game {
         playersResult: data,
       });
       console.log('playersResultArray : ', data);
-      this.users.forEach((user) => {
-        super.removeUser(user.accountId);
-      });
+      this.removeThis();
     });
   }
-
-  // #region 채팅
-
-  chatPlayer(accountId, chatMsg) {
-    super.notifyAll(payloadTypes.S_CHAT, { playerId: accountId, chatMsg });
-  }
-
-  systemChat(accountId, chatMsg) {
-    super.notifyUser(accountId, payloadTypes.S_CHAT, {
-      playerId: accountId,
-      chatMsg,
-      system: true,
-    });
-  }
-
-  systemChatAll(accountId, chatMsg) {
-    super.notifyAll(payloadTypes.S_CHAT, { playerId: accountId, chatMsg, system: true });
-  }
-
-  systemChatOthers(accountId, chatMsg) {
-    super.notifyOthers(accountId, payloadTypes.S_CHAT, {
-      playerId: accountId,
-      chatMsg,
-      system: true,
-    });
-  }
-
-  // #endregion
 }
 
 export default Dungeon;

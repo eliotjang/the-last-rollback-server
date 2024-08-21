@@ -13,7 +13,6 @@ const enterTownHandler = async ({ socket, accountId, packet }) => {
   // C_ENTER
   try {
     let message;
-
     const user = getUserById(accountId);
     if (!user.player) {
       const { nickname, charClass } = packet;
@@ -45,15 +44,13 @@ const enterTownHandler = async ({ socket, accountId, packet }) => {
       message = '기존 캐릭터 로드';
     }
 
-    user.player.playerInfo.transform.setTownSpawn();
+    user.player.transform.setTownSpawn();
     await townRedis.addPlayer(user.player);
 
     enqueueEnterTownJob({ accountId });
 
-    const data = { ...user.player.playerInfo, accountLevel: user.player.accountLevel };
-
     socket.sendResponse(SuccessCode.Success, message, payloadTypes.S_ENTER, {
-      player: data,
+      player: user.player,
     });
   } catch (error) {
     handleError(socket, error);

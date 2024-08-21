@@ -1,4 +1,5 @@
-import { sessionTypes } from '../../constants/session.constants.js';
+import { payloadTypes } from '../../constants/packet.constants.js';
+import { sessionTypes } from '../../constants/game.constants.js';
 
 class Game {
   constructor(id, maxUser) {
@@ -37,19 +38,6 @@ class Game {
     return this.users.find((user) => user.socket === socket);
   }
 
-  getAllLocation(accountId) {
-    const locationData = [];
-    this.users.forEach((user) => {
-      if (user.accountId === accountId) {
-        locationData.push({
-          playerId: user.accountId,
-          TransformInfo: user.getPlayerInfo().transform,
-        });
-      }
-    });
-    return locationData;
-  }
-
   // socket.write() in session
   notifyUser(accountId, payloadType, data) {
     const user = this.users.find((user) => user.accountId === accountId);
@@ -81,6 +69,38 @@ class Game {
   isFull() {
     return this.users.length >= this.maxUser;
   }
+
+  movePlayer(accountId, transform) {
+    throw new Error('Method not implemented.');
+  }
+
+  // #region 채팅
+
+  chatPlayer(accountId, chatMsg) {
+    this.notifyAll(payloadTypes.S_CHAT, { playerId: accountId, chatMsg });
+  }
+
+  systemChat(accountId, chatMsg) {
+    this.notifyUser(accountId, payloadTypes.S_CHAT, {
+      playerId: accountId,
+      chatMsg,
+      system: true,
+    });
+  }
+
+  systemChatAll(accountId, chatMsg) {
+    this.notifyAll(payloadTypes.S_CHAT, { playerId: accountId, chatMsg, system: true });
+  }
+
+  systemChatOthers(accountId, chatMsg) {
+    this.notifyOthers(accountId, payloadTypes.S_CHAT, {
+      playerId: accountId,
+      chatMsg,
+      system: true,
+    });
+  }
+
+  // #endregion
 }
 
 export default Game;

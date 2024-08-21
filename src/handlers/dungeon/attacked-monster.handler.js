@@ -1,6 +1,5 @@
 import { enqueueMonsterHitJob } from '../../bull/monster/monster-kill.js';
-import { attackTypes } from '../../constants/game.constants.js';
-import { sessionTypes } from '../../constants/session.constants.js';
+import { attackTypes, sessionTypes } from '../../constants/game.constants.js';
 import { getUserById } from '../../session/user.session.js';
 import { getGameAssets } from '../../init/assets.js';
 import CustomError from '../../utils/error/customError.js';
@@ -27,10 +26,10 @@ const attackedMonsterHandler = ({ socket, accountId, packet }) => {
     let damage;
     switch (attackType) {
       case attackTypes.NORMAL:
-        damage = player.playerStatus.getStatInfo().atk;
+        damage = player.playerStatus.statInfo.atk;
         break;
       case attackTypes.SKILL:
-        damage = player.playerStatus.getStatInfo().specialAtk;
+        damage = player.playerStatus.statInfo.specialAtk;
         break;
       case attackTypes.BALLISTA:
         const ballista = structureInfo.data.find(
@@ -43,7 +42,7 @@ const attackedMonsterHandler = ({ socket, accountId, packet }) => {
         damage = laser.power;
         break;
       default:
-        damage = player.playerStatus.getStatInfo().atk;
+        damage = player.playerStatus.statInfo.atk;
     }
 
     const jobData = {

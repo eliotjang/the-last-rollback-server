@@ -5,29 +5,32 @@ import Town from '../classes/sessions/town.class.js';
 export const addTownSession = () => {
   const id = uuidv4();
   const session = new Town(id);
-  townSessions.push(session);
+  townSessions.set(id, session);
   return session;
 };
 
 export const removeTownSession = (id) => {
-  const index = townSessions.findIndex((session) => session.id === id);
-  if (index !== -1) {
-    return townSessions.splice(index, 1)[0];
+  const session = townSessions.get(id);
+  if (session) {
+    townSessions.delete(id);
+    return session;
   }
 };
 
 export const getTownSession = (id) => {
-  return townSessions.find((session) => session.id === id);
+  return townSessions.get(id);
 };
 
 export const getTownSessionByUserId = (accountId) => {
-  return townSessions.find((session) => session.getUser(accountId));
+  const user = getUserById(accountId);
+  return user.getSession();
 };
 
 export const getTownSessionByUserSocket = (socket) => {
-  return townSessions.find((session) => session.getUserBySocket(socket));
+  const user = getUserBySocket(socket);
+  return user.getSession();
 };
 
 export const getAllTownSessions = () => {
-  return townSessions;
+  return Array.from(townSessions.values());
 };

@@ -1,10 +1,9 @@
-import { getGameAssets } from '../../init/assets.js';
 import { getDungeonSessionByUserId } from '../../session/dungeon.session.js';
-import { sessionTypes } from '../../constants/session.constants.js';
 import CustomError from '../../utils/error/customError.js';
 import { ErrorCodes } from '../../utils/error/errorCodes.js';
 import { handleError } from '../../utils/error/errorHandler.js';
 import { Fort } from '../../classes/models/structure.class.js';
+import { sessionTypes } from '../../constants/game.constants.js';
 
 const structureHandler = ({ socket, accountId, packet }) => {
   try {
