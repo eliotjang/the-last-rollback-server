@@ -71,7 +71,7 @@ message Player {
 }
 
 message Monster {
-    string monsterIdx = 1;
+    uint32 monsterIdx = 1;
     uint32 monsterModel = 2;
 }
 

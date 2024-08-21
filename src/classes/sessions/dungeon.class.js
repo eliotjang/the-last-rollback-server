@@ -11,6 +11,7 @@ import { handleError } from '../../utils/error/errorHandler.js';
 import { DungeonPlayer } from '../models/player.class.js';
 import { Monster } from '../models/monster.class.js';
 import DediClient from '../../classes/sessions/dedi-client.class.js';
+import dungeonConstants from '../../constants/game.constants.js';
 
 class Dungeon extends Game {
   constructor(id, dungeonCode) {
@@ -182,15 +183,15 @@ class Dungeon extends Game {
   // #region 플레이어
   addPlayer(accountId, player) {
     this.players.set(accountId, new DungeonPlayer(player));
-
-    if (this.players.size === 4) {
+    console.log('????');
+    if (this.players.size === dungeonConstants.general.MAX_USERS) {
       const data = [];
 
       for (const [accountId, dungeonPlayer] of this.players.entries()) {
         data.push({ accountId, charClass: dungeonPlayer.playerInfo.charClass });
         // data[accountId] = dungeonPlayer.playerInfo.charClass;
       }
-
+      console.log('????', data);
       DediClient.getClient(this.id).setPlayers(data);
     }
   }

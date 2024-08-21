@@ -164,7 +164,7 @@ class DediClient {
    */
   setPlayers(players) {
     // dungeon.class - addPlayer
-    this.#socket.send(dediPacketTypes.C_SET_PLAYERS, players);
+    this.#socket.send(dediPacketTypes.C_SET_PLAYERS, { players });
   }
 
   /**
@@ -174,7 +174,7 @@ class DediClient {
    */
   setMonsters(monsters) {
     // dungeon.class - setMonsters
-    this.#socket.send(dediPacketTypes.C_SET_MONSTERS, monsters);
+    this.#socket.send(dediPacketTypes.C_SET_MONSTERS, { monsters });
   }
 
   /**
