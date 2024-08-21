@@ -1,4 +1,5 @@
 import DediClient from '../../classes/sessions/dedi-client.class.js';
+import { getDungeonSessionByUserSocket } from '../../session/dungeon.session.js';
 
 const dediMonsterMoveHandler = ({ socket, accountId, packet }) => {
   // TODO: 클라에서 받은 정보를 토대로 DediClient의 setMonsterDest 메서드 호출
