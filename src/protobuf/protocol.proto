@@ -622,6 +622,7 @@ message RequestPacket {
     C_AnimationStructure cAnimationStructure = 33;
 
     C_SetPlayerMoveTarget cSetPlayerMoveTarget = 50;
+    C_SetMonsterMoveTarget cSetMonsterMoveTarget = 51;
   }
 }
 
