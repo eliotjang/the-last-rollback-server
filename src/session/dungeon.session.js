@@ -17,7 +17,7 @@ export const removeDungeonSession = (id) => {
 };
 
 export const getDungeonSession = (id) => {
-  return dungeonSessions.find((session) => session.id.toString() === id);
+  return dungeonSessions.find((session) => session.id === id);
 };
 
 export const getDungeonSessionByUserId = (accountId) => {
