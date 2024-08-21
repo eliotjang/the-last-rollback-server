@@ -46,20 +46,6 @@ message S_MonstersLocationUpdate {
     map<uint32, WorldPosition> positions = 1;
 }
 
-message S_PlayerMove {
-    string accountId = 1;
-    float x = 2;
-    float y = 3;
-    float z = 4;
-}
-
-message S_MonsterMove {
-    uint32 monsterIdx = 1;
-    float x = 2;
-    float y = 3;
-    float z = 4;
-}
-
 message S_MonsterAttack {
     uint32 monsterIdx = 1;
     oneof targetType {
