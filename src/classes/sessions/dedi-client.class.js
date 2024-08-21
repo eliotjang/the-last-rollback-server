@@ -60,10 +60,7 @@ const PlayersLocationUpdateHandler = function (deserialized) {
         z: worldPosition.z - prevPosition.z,
       };
 
-      rot = (Math.atan2(directionVector.z, directionVector.x) * (180 / Math.PI) + 360 - 90) % 360;
-      if (rot < 0) {
-        rot += 360;
-      }
+      rot = (Math.atan2(directionVector.x, directionVector.z) * (180 / Math.PI) + 360) % 360;
     }
 
     playerTransformInfo.push({
