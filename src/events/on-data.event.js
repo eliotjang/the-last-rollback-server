@@ -9,6 +9,7 @@ import { config } from '../config/config.js';
 import CustomError from '../utils/error/customError.js';
 import { getUserBySocket } from '../session/user.session.js';
 import { addDungeonSession } from '../session/dungeon.session.js';
+import testDungeonHandler from '../stressTest/testDungeon.handler.js';
 
 const headerSize = headerConstants.TOTAL_LENGTH + headerConstants.PACKET_TYPE_LENGTH;
 
@@ -16,13 +17,14 @@ const onData = (socket) => async (data) => {
   try {
     const message = data.toString().trim();
     if (message === 'dungeon') {
-      const payloadType = payloadTypes.C_ENTER_DUNGEON;
+      const payloadType = payloadTypes.TEST_DUNGEON;
       const dungeonSession = addDungeonSession(1);
-      const payload = { dungeonSession: dungeonSession, dungeonCode: 1 };
+      const payload = {
+        accountId: 'a' + socket.remotePort,
+      };
 
       const handler = getHandlerByPayloadType(payloadType || 0);
       await handler({ socket, accountId: payload.accountId, packet: payload });
-
       return;
     }
     if (message === 'enter') {
