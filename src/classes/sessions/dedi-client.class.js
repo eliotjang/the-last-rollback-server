@@ -47,7 +47,7 @@ const MonstersLocationUpdateHandler = function (deserialized) {
 
   if (monsterTransformInfo.length === 0) return;
 
-  console.log('데디 -> 유니티 몬스터 정보 : ', monsterTransformInfo);
+  //console.log('데디 -> 유니티 몬스터 정보 : ', monsterTransformInfo);
 
   dungeonSession.notifyAll(payloadTypes.S_MONSTERS_TRANSFORM_UPDATE, {
     transformInfo: monsterTransformInfo,
