@@ -139,6 +139,10 @@ class DediClient {
     }
   }
 
+  /**
+   *
+   * @returns the private member #socket
+   */
   getSocket() {
     return this.#socket;
   }
