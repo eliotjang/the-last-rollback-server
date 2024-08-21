@@ -21,13 +21,26 @@ const MonstersLocationUpdateHandler = function (deserialized) {
   const monsterTransformInfo = [];
 
   for (const [monsterIdx, worldPosition] of Object.entries(positions)) {
+    const prevPosition = this.getMonsterPrevPosition(monsterIdx);
+    this.addMonsterPrevPosition(monsterIdx, worldPosition);
+
+    let rot = 0;
+    if (prevPosition) {
+      const directionVector = {
+        x: worldPosition.x - prevPosition.x,
+        z: worldPosition.z - prevPosition.z,
+      };
+
+      rot = (Math.atan2(directionVector.x, directionVector.z) * (180 / Math.PI) + 360) % 360;
+    }
+
     monsterTransformInfo.push({
       monsterIdx: +monsterIdx,
       transformInfo: {
         posX: worldPosition.x,
         posY: worldPosition.y,
         posZ: worldPosition.z,
-        rot: 0,
+        rot: rot,
       },
     });
   }
@@ -97,6 +110,7 @@ class DediClient {
   static #dediClients = new Map();
   #socket = new net.Socket();
   #prevPlayerPositions = new Map(); // 플레이어 이전 위치
+  #prevMonsterPositions = new Map(); // 몬스터 이전 위치
 
   constructor(dungeonId) {
     this.init();
@@ -237,6 +251,14 @@ class DediClient {
 
   getPlayerPrevPosition(key) {
     return this.#prevPlayerPositions.get(key);
+  }
+
+  addMonsterPrevPosition(key, pos) {
+    this.#prevMonsterPositions.set(key, pos);
+  }
+
+  getMonsterPrevPosition(key) {
+    return this.#prevMonsterPositions.get(key);
   }
 
   setNightRoundStart() {
