@@ -20,11 +20,13 @@ message C_CreateSession {
 }
 
 message C_SetPlayers {
-    map<string, uint32> players = 1;
+    repeated Player players = 1;
+    // map<string, uint32> players = 1;
 }
 
 message C_SetMonsters {
-    map<uint32, uint32> monsters = 1;
+    repeated Monster monsters = 1;
+    // map<uint32, uint32> monsters = 1;
 }
 
 message C_SetPlayerDest {
@@ -61,6 +63,16 @@ message WorldPosition {
     float x = 1;
     float y = 2;
     float z = 3;
+}
+
+message Player {
+    string accountId = 1;
+    uint32 charClass = 2;
+}
+
+message Monster {
+    string monsterIdx = 1;
+    uint32 monsterModel = 2;
 }
 
 message Target {

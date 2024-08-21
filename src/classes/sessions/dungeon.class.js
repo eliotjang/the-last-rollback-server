@@ -108,7 +108,7 @@ class Dungeon extends Game {
   // #region 몬스터
   setMonsters(dungeonCode, monsters) {
     this.roundMonsters = new Map();
-    const data = new Map();
+    const data = [];
 
     monsters.forEach((monsterData) => {
       const { monsterIdx } = monsterData;
@@ -116,7 +116,7 @@ class Dungeon extends Game {
       monsterData.monsterTransform = monster.setSpawnLocate(dungeonCode);
       this.roundMonsters.set(monsterIdx, monster);
 
-      data.set(monsterIdx, monsterData.monsterModel);
+      data.push({ monsterIdx, monsterModel: monsterData.monsterModel });
       // data[monsterIdx] = monsterData.monsterModel;
     });
 
@@ -184,10 +184,10 @@ class Dungeon extends Game {
     this.players.set(accountId, new DungeonPlayer(player));
 
     if (this.players.size === 4) {
-      const data = new Map();
+      const data = [];
 
       for (const [accountId, dungeonPlayer] of this.players.entries()) {
-        data.set(accountId, dungeonPlayer.playerInfo.charClass);
+        data.push({ accountId, charClass: dungeonPlayer.playerInfo.charClass });
         // data[accountId] = dungeonPlayer.playerInfo.charClass;
       }
 

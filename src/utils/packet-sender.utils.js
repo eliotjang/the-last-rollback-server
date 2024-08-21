@@ -3,7 +3,12 @@ import { packetTypes, payloadKeyNames, payloadTypes } from '../constants/packet.
 import { getProtoMessages } from '../init/proto.init.js';
 import { handleError } from './error/errorHandler.js';
 import { writeHeader } from './packet-header.utils.js';
-import { serializeEx, deserializeTest, serializePf } from './packet-serializer.utils.js';
+import {
+  serializeEx,
+  deserializeTest,
+  serializePf,
+  deserializePf,
+} from './packet-serializer.utils.js';
 
 /**
  * Bind this function to a socket. Sends ping packet to the connected client.
@@ -96,6 +101,7 @@ export const sendNotification = async function (payloadType, payload) {
 export const sendPacketToDediServer = async function (dediPacketType, data) {
   try {
     const serializedPacket = serializePf(dediPacketType, data);
+    console.log('===== ', deserializePf(dediPacketType, serializedPacket));
     const header = writeHeader(serializedPacket.length, dediPacketType);
     const packet = Buffer.concat([header, serializedPacket]);
     this.write(packet);
