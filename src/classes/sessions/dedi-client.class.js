@@ -229,6 +229,10 @@ class DediClient {
     // TODO: 소켓을 통해 accountId와 pos를 담은 데이터 전송하기
     // 데이터 예시: { accountId, pos: { x, y, z } }
     // dungeon.class - movePlayer
+    if (!pos) {
+      this.#socket.send(dediPacketTypes.C_SET_PLAYER_DEST, { accountId });
+      return;
+    }
     this.#socket.send(dediPacketTypes.C_SET_PLAYER_DEST, { accountId, pos });
   }
 
@@ -242,6 +246,10 @@ class DediClient {
     // TODO: 소켓을 통해 monsterIdx와 target을 담은 데이터 전송하기
     // 데이터 예시: { monsterIdx, target: { targetPlayer: { accountId } } }
     // dungeon.class - updateMonsterAttackPlayer
+    if (!target) {
+      this.#socket.send(dediPacketTypes.C_SET_MONSTER_DEST, { monsterIdx });
+      return;
+    }
     this.#socket.send(dediPacketTypes.C_SET_MONSTER_DEST, { monsterIdx, target });
   }
 
