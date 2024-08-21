@@ -31,6 +31,27 @@ export class Transform {
     this.posX = Math.random() * (MAX_X - MIN_X) + MIN_X;
     this.posY = POS_Y;
     this.posZ = Math.random() * (MAX_Z - MIN_Z) + MIN_Z;
+    this.setPosY(this.posZ);
     this.rot = Math.random() * (MAX_ROT - MIN_ROT) + MIN_ROT;
+  }
+
+  setPosY(posZ) {
+    if (posZ < 6) {
+      this.posY = 0.36;
+    } else if (posZ < 4) {
+      this.posY = 0.56;
+    } else if (posZ < 2) {
+      this.posY = 0.67;
+    } else if (posZ < 0) {
+      this.posY = 0.77 + 0.2;
+    } else if (posZ < -2) {
+      this.posY = 0.75 + 0.2;
+    } else if (posZ < -4) {
+      this.posY = 0.74 + 0.2;
+    } else if (posZ < -6) {
+      this.posY = 0.71 + 0.2;
+    } else {
+      this.posY = 0.69;
+    }
   }
 }

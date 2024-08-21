@@ -38,7 +38,15 @@ class Town extends Game {
 
   movePlayer(accountId, transform) {
     townRedis.updatePlayerTransform(transform, accountId).then(() => {
+      // console.log(accountId, ' 이동');
       super.notifyAll(payloadTypes.S_MOVE, { playerId: accountId, transform });
+    });
+  }
+
+  moveStressTestPlayer(stressTestPlayerId, transform) {
+    townRedis.updatePlayerTransform(transform, stressTestPlayerId).then(() => {
+      // console.log(stressTestPlayerId, '스트레스 테스트 이동');
+      super.notifyAll(payloadTypes.S_STRESS_TEST_MOVE, { playerId: stressTestPlayerId, transform });
     });
   }
 

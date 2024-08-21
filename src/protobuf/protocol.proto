@@ -84,6 +84,9 @@ enum MsgId {
     S_SOME_NOTIFICATION = 300;
     
     C_ENTER_DUNGEON = 302;
+
+    C_STRESS_TEST_MOVE = 500;
+    S_STRESS_TEST_MOVE = 501;
 }
 
 message C_SignUp {
@@ -133,8 +136,18 @@ message C_Move {
   TransformInfo transform = 1;
 }
 
+message C_StressTestMove {
+  string playerId = 1;
+  TransformInfo transform = 2;
+}
+
 // ALL
 message S_Move {
+  string playerId = 1;
+  TransformInfo transform = 2;
+}
+
+message S_StressTestMove {
   string playerId = 1;
   TransformInfo transform = 2;
 }
@@ -587,6 +600,7 @@ message RequestPacket {
     C_AnimationStructure cAnimationStructure = 33;
 
     C_EnterDungeon cEnterDungeon = 34;
+    C_StressTestMove cStressTestMove = 35;
   }
 }
 
@@ -659,5 +673,6 @@ message NotificationPacket {
     S_Structure sStructure = 17;
     S_StructureAttacked sStructureAttacked = 18;
     S_AnimationStructure sAnimationStructure = 19;
+    S_StressTestMove sStressTestMove = 20;
   }
 }

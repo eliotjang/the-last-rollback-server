@@ -1,6 +1,6 @@
 services:
   game-server:
-    # build: .
+    build: .
     image: eliotjang/the-last-rollback-server:game-server-1.0
     ports:
       - '3000:3000'
