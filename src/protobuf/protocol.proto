@@ -156,12 +156,18 @@ message S_MonsterMove {
 
 // ----- Dedi 서버용 move -----
 
+// Unity -> JS (dedi dungeon move handler)
 message C_SetPlayerMoveTarget {
   TransformInfo transformInfo = 1;
 }
 
+// Unity -> JS (dedi monster move handler)
 message C_SetMonsterMoveTarget {
-  // oneof? player / structure
+  int32 monsterIdx = 1;
+  oneof payload {
+    string accountId = 2;
+    int32 structureIdx = 3;
+  }
 }
 
 // message LocationUpdate {
