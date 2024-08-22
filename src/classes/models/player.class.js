@@ -143,8 +143,7 @@ export class DungeonPlayer extends Player {
   }
 
   updateTransform(transform) {
-    this.playerInfo.transform.updateTransform(transform);
-    return this.playerInfo.transform.getTransform();
+    return this.playerInfo.transform.updateTransform(transform);
   }
 
   toPlayer() {
