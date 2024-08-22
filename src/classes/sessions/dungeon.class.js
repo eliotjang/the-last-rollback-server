@@ -310,6 +310,14 @@ class Dungeon extends Game {
       return;
     }
 
+    if (monsterIdx !== -1 && Object.values(playerAnimTypes.ATTACK).includes(animCode)) {
+      const monster = this.getMonster(monsterIdx);
+      if (!player.verifyAttack(monster)) {
+        console.log('공격 실패');
+        return;
+      }
+    }
+
     if (animCode === playerAnimTypes.SKILL) {
       if (player.useSkill()) {
         super.notifyAll(payloadTypes.S_PICK_UP_ITEM_MP, {

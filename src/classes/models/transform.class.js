@@ -33,4 +33,12 @@ export class Transform {
     this.posZ = Math.random() * (MAX_Z - MIN_Z) + MIN_Z;
     this.rot = Math.random() * (MAX_ROT - MIN_ROT) + MIN_ROT;
   }
+
+  calculateDistance(transform) {
+    const x = transform.posX - this.posX;
+    const y = transform.posY - this.posY;
+    const z = transform.posZ - this.posZ;
+
+    return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2));
+  }
 }
