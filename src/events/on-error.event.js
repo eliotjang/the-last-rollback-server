@@ -5,7 +5,7 @@ import { handleError } from '../utils/error/errorHandler.js';
 const onError = (socket) => async (err) => {
   try {
     console.error('소켓 오류:', err);
-    removeUser(socket);
+    await removeUser(socket);
   } catch (error) {
     handleError(socket, new CustomError(500, `소켓 오류: ${err.message}`));
   }

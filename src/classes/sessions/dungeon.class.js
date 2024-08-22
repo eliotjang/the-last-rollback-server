@@ -12,6 +12,7 @@ import { DungeonPlayer } from '../models/player.class.js';
 import { Monster } from '../models/monster.class.js';
 import DediClient from '../../classes/sessions/dedi-client.class.js';
 import dungeonConstants from '../../constants/game.constants.js';
+import { removeDungeonSession } from '../../session/dungeon.session.js';
 
 class Dungeon extends Game {
   constructor(id, dungeonCode) {
@@ -476,8 +477,11 @@ class Dungeon extends Game {
       });
       console.log('playersResultArray : ', data);
       this.users.forEach((user) => {
+        const dungeonPlayer = this.getPlayer(user.accountId);
+        user.player = dungeonPlayer.toPlayer();
         super.removeUser(user.accountId);
       });
+      removeDungeonSession(this.id);
     });
   }
 
