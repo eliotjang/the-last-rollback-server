@@ -12,6 +12,9 @@ const dediMonsterMoveHandler = ({ socket, accountId, packet }) => {
     target = { targetStructure: { structureIdx } };
   } else if (player) {
     target = { targetPlayer: { accountId: player } };
+  } else {
+    DediClient.getClient(dungeonSession.id).setMonsterDest(monsterIdx);
+    return;
   }
 
   DediClient.getClient(dungeonSession.id).setMonsterDest(monsterIdx, target);
