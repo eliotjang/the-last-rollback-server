@@ -1,4 +1,5 @@
 import User from '../classes/models/user.class.js';
+import { matchDequeue } from '../match_queue/producers/match-queue.producer.js';
 import { userSession, userSocketSession } from './sessions.js';
 
 export const addUser = async (socket, accountId) => {
@@ -15,7 +16,8 @@ export const addUser = async (socket, accountId) => {
 
 export const removeUser = async (socket) => {
   const user = getUserBySocket(socket);
-  if (!user) {
+  if (user) {
+    await matchDequeue(user.accountId);
     userSocketSession.delete(socket);
     userSession.delete(user.accountId);
     const gameSession = user.getSession();

@@ -4,6 +4,8 @@ import { getTownSessionByUserId } from '../session/town.session.js';
 import { addDungeonSession } from '../session/dungeon.session.js';
 import { getUserById } from '../session/user.session.js';
 import { enterDungeonSession } from '../handlers/dungeon/enter-dungeon.js';
+import { handleError } from '../utils/error/errorHandler.js';
+import { matchEnqueue } from './producers/match-queue.producer.js';
 
 let waitingLists;
 
@@ -27,7 +29,7 @@ export const addToWaitingList = (data) => {
 };
 
 export const clearFromWaitingLists = (accountId) => {
-  for (const dungeonCode in Object.keys(waitingLists)) {
+  for (const dungeonCode of Object.keys(waitingLists)) {
     const idx = getWaitingListIndex(dungeonCode, accountId);
     if (idx !== -1) {
       waitingLists[dungeonCode]?.splice(idx, 1);
@@ -66,8 +68,13 @@ export const checkWaitingList = async (dungeonCode) => {
         dungeonSession.addUser(user);
         await townRedis.removePlayer(accountId, false);
       }),
-    ).then(() => {
-      enterDungeonSession(dungeonSession, dungeonCode);
-    });
+    )
+      .then(() => {
+        enterDungeonSession(dungeonSession, dungeonCode);
+      })
+      .catch((err) => {
+        handleError(err);
+        // matchEnqueue(dungeonCode,accountId);
+      });
   }
 };

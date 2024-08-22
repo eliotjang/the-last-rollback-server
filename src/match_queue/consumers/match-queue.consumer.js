@@ -9,7 +9,7 @@ import DequeueProcessor from '../processors/match-dequeue.processor.js';
 import { initWaitingLists } from '../match-queue.js';
 import { config } from '../../config/config.js';
 
-const matchQueue = new Bull('MATCH_QUEUE_NAME', {
+const matchQueue = new Bull(MATCH_QUEUE_NAME, {
   redis: {
     host: config.redis.redisHost,
     port: config.redis.redisPort,
