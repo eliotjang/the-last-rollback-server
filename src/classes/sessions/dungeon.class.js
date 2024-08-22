@@ -1,5 +1,5 @@
-import dc, { gameResults } from '../../constants/game.constants.js';
-import { payloadTypes } from '../../constants/packet.constants.js';
+import dc, { gameResults, playerAnimTypes } from '../../constants/game.constants.js';
+import { payloadTypes, dediPacketTypes } from '../../constants/packet.constants.js';
 import { sessionTypes } from '../../constants/session.constants.js';
 import pickUpHandler from '../../handlers/dungeon/pick-up.handler.js';
 import dungeonUtils from '../../utils/dungeon/dungeon.utils.js';
@@ -10,6 +10,8 @@ import { userDB } from '../../db/user/user.db.js';
 import { handleError } from '../../utils/error/errorHandler.js';
 import { DungeonPlayer } from '../models/player.class.js';
 import { Monster } from '../models/monster.class.js';
+import DediClient from '../../classes/sessions/dedi-client.class.js';
+import dungeonConstants from '../../constants/game.constants.js';
 import { removeDungeonSession } from '../../session/dungeon.session.js';
 
 class Dungeon extends Game {
@@ -27,6 +29,9 @@ class Dungeon extends Game {
     this.structures = new Map();
     this.players = new Map();
     this.roundMonsters = null;
+    // this.dediClient = new DediClient(this.id);
+    DediClient.addClient(this.id, new DediClient(this.id));
+    DediClient.getClient(this.id).createSession(this.dungeonCode);
   }
 
   // #region 유저
@@ -63,8 +68,14 @@ class Dungeon extends Game {
         gold: playerGold,
         playerId: accountId,
       });
+
       return;
     }
+    DediClient.getClient(this.id).addStructure(this.structureIdx, structure.structureModel, {
+      x: 0, // pos values won't matter for the base
+      y: 0,
+      z: 0,
+    });
     this.structures.set(this.structureIdx++, structure);
   }
 
@@ -76,6 +87,12 @@ class Dungeon extends Game {
     const monsterInfo = this.roundMonsters.get(monsterIdx);
     const structure = this.getStructure(structureIdx);
     structure.updateStructureHp(monsterInfo.atk);
+
+    if (structure.hp <= 0) {
+      DediClient.getClient(this.id).removeStructure(structure.structureIdx);
+      this.structures.delete(structure.structureIdx);
+    }
+
     if (structureIdx > 0) {
       this.notifyAll(payloadTypes.S_STRUCTURE_ATTACKED, {
         monsterIdx,
@@ -105,12 +122,21 @@ class Dungeon extends Game {
   // #region 몬스터
   setMonsters(dungeonCode, monsters) {
     this.roundMonsters = new Map();
-    monsters.forEach((data) => {
-      const { monsterIdx } = data;
-      const monster = new Monster(data.monsterModel);
-      data.monsterTransform = monster.setSpawnLocate(dungeonCode);
+    const data = [];
+
+    monsters.forEach((monsterData) => {
+      const { monsterIdx } = monsterData;
+      const monster = new Monster(monsterData.monsterModel);
+      monsterData.monsterTransform = monster.setSpawnLocate(dungeonCode);
       this.roundMonsters.set(monsterIdx, monster);
+
+      data.push({ monsterIdx, monsterModel: monsterData.monsterModel });
+      // data[monsterIdx] = monsterData.monsterModel;
     });
+
+    console.log('JS -> 데디 몬스터 정보 : ', data);
+    DediClient.getClient(this.id).setMonsters(data);
+
     return monsters;
   }
 
@@ -171,6 +197,15 @@ class Dungeon extends Game {
   // #region 플레이어
   addPlayer(accountId, player) {
     this.players.set(accountId, new DungeonPlayer(player));
+    if (this.players.size === dungeonConstants.general.MAX_USERS) {
+      const data = [];
+
+      for (const [accountId, dungeonPlayer] of this.players.entries()) {
+        data.push({ accountId, charClass: dungeonPlayer.playerInfo.charClass });
+        // data[accountId] = dungeonPlayer.playerInfo.charClass;
+      }
+      DediClient.getClient(this.id).setPlayers(data);
+    }
   }
 
   getPlayer(accountId) {
@@ -231,6 +266,10 @@ class Dungeon extends Game {
     }
     console.log(`[${monsterIdx}] monster hit, damage: -${damage}`);
     monster.hit(damage);
+    if (monster.isDead) {
+      return;
+    }
+
     (async () => {
       if (monster.monsterHp <= 0) {
         this.killMonster(monsterIdx, accountId);
@@ -249,8 +288,12 @@ class Dungeon extends Game {
     this.roundKillCount++;
     const player = this.players.get(accountId);
     player.playerInfo.killed.push(monsterIdx);
-    pickUpHandler(accountId, this.dungeonCode, this.round);
+    DediClient.getClient(this.id).killMonster({
+      monsterIdx,
+      monsterModel: monster.monsterModel,
+    });
     console.log('------------KILL MONSTER----------', this.roundKillCount, this.roundMonsters.size);
+    pickUpHandler(accountId, this.dungeonCode, this.round);
     // 모든 몬스터 처치 시 밤 라운드 종료
     if (this.roundMonsters.size === this.roundKillCount) {
       this.roundKillCount = 0;
@@ -258,12 +301,27 @@ class Dungeon extends Game {
     }
   }
 
-  animationPlayer(animCode, playerId, monsterIdx) {
-    if (this.getPlayer(playerId).playerInfo.isDead && animCode !== 1) {
-      console.log('해당 플레이어가 행동불가 상태');
+  animationPlayer(animCode, playerId, monsterIdx, mousePoint) {
+    const player = this.getPlayer(playerId);
+    if (player.playerInfo.isDead && animCode !== playerAnimTypes.DIE) {
+      console.log(`해당 플레이어(${playerId})가 행동불가 상태 ${animCode}, ${monsterIdx}`);
       return;
     }
-    super.notifyAll(payloadTypes.S_ANIMATION_PLAYER, { animCode, playerId, monsterIdx });
+
+    if (animCode === playerAnimTypes.SKILL) {
+      if (player.useSkill()) {
+        super.notifyAll(payloadTypes.S_PICK_UP_ITEM_MP, {
+          playerId,
+          playerMp: player.playerStatus.playerMp,
+        });
+      } else return;
+    }
+    super.notifyAll(payloadTypes.S_ANIMATION_PLAYER, {
+      animCode,
+      playerId,
+      monsterIdx,
+      mousePoint,
+    });
   }
 
   // #endregion
@@ -305,6 +363,7 @@ class Dungeon extends Game {
       setTimeout(() => {
         this.phase = dc.phases.NIGHT;
         this.notifyAll(payloadTypes.S_NIGHT_ROUND_START, {});
+        DediClient.getClient(this.id).setNightRoundStart();
       }, dc.general.DAY_DURATION);
     })();
     const now = Date.now();

@@ -19,6 +19,8 @@ import towerHpUpdateHandler from './dungeon/tower.handler.js';
 import structureHandler from './dungeon/structure.handler.js';
 import structureAttackedMonsterHandler from './dungeon/structure-attacked.handler.js';
 import animationStructureHandler from './dungeon/animation-structure.handler.js';
+import dediDungeonMoveHandler from './dungeon/dedi-dungeon-move.handler.js';
+import dediMonsterMoveHandler from './dungeon/dedi-monster-move.handler.js';
 
 const handlers = {
   [payloadTypes.C_ENTER]: enterTownHandler,
@@ -39,6 +41,8 @@ const handlers = {
   [payloadTypes.C_STRUCTURE]: structureHandler,
   [payloadTypes.C_STRUCTURE_ATTACKED]: structureAttackedMonsterHandler,
   [payloadTypes.C_ANIMATION_STRUCTURE]: animationStructureHandler,
+  [payloadTypes.C_SET_PLAYER_MOVE_TARGET]: dediDungeonMoveHandler,
+  [payloadTypes.C_SET_MONSTER_MOVE_TARGET]: dediMonsterMoveHandler,
 };
 
 export const getHandlerByPayloadType = (payloadType) => {

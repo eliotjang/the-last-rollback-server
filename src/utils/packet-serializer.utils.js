@@ -1,65 +1,35 @@
-import { payloadKeyNames, typeMappings } from '../constants/packet.constants.js';
+import { packetTypes, payloadKeyNames } from '../constants/packet.constants.js';
 import { getProtoMessages } from '../init/proto.init.js';
 import CustomError from './error/customError.js';
 import { ErrorCodes } from './error/errorCodes.js';
-import { writeHeader } from './packet-header.utils.js';
 
-/**
- *
- * @deprecated
- * @param {number} payloadType packetTypes에 매핑된 패킷 타입
- * @param {object} data 직렬화할 데이터
- * @param {boolean} withoutHeader 비워둘 시 직렬화 시 헤더를 자동으로 추가, true 시 헤더 없이 반환
- * @returns 버퍼 바이트 배열 반환
- */
-export const serialize = (packetType, data, withoutHeader) => {
-  const MessageType = getProtoMessages().packet[packetType];
-  if (!MessageType) {
+export const serialize = (messageType, data) => {
+  if (!messageType) {
     throw new CustomError(
       ErrorCodes.INVALID_PACKET,
-      `직렬화 에러: 잘 못된 packetType ${packetType}`,
+      `직렬화 에러: empty messageType ${messageType}.`,
     );
   }
-
-  const msg = MessageType.verify(data);
+  const msg = messageType.verify(data);
   if (msg) {
-    throw new CustomError(ErrorCodes.INVALID_PACKET, '직렬화 에러:', msg);
+    const errorMessage = `직렬화 검증 실패: ${msg}\r\nfailed data: ${JSON.stringify(data, null, 2)}\r\n`;
+    throw new CustomError(ErrorCodes.INVALID_PACKET, errorMessage);
   }
 
-  const encoded = MessageType.encode(data).finish();
-
-  if (withoutHeader) {
-    return encoded;
-  }
-
-  const header = writeHeader(encoded.length, packetType);
-  return Buffer.concat([header, encoded]);
+  const created = messageType.create(data);
+  return messageType.encode(created).finish();
 };
 
 export const serializeEx = (packetType, payloadType, data) => {
   const MessageType = getProtoMessages().packet[packetType];
   data[payloadKeyNames[payloadType]] = data.payload;
   data.payload = null;
-  if (!MessageType) {
-    throw new CustomError(
-      ErrorCodes.INVALID_PACKET,
-      `직렬화 에러: 잘 못된 payloadType ${payloadType}`,
-    );
-  }
+  return serialize(MessageType, data);
+};
 
-  const msg = MessageType.verify(data);
-  if (msg) {
-    const errorMessage = `
-      직렬화 검증 실패: ${msg}
-      failed data: ${JSON.stringify(data, null, 2)}
-    `;
-    throw new CustomError(ErrorCodes.INVALID_PACKET, errorMessage);
-  }
-
-  const created = MessageType.create(data);
-  const encoded = MessageType.encode(created).finish();
-  // console.log('ex deserialize:', deserializeEx(payloadType, encoded));
-  return encoded;
+export const serializePf = (dediPacketType, data) => {
+  const MessageType = getProtoMessages().pathfinding[dediPacketType];
+  return serialize(MessageType, data);
 };
 
 /**
@@ -67,22 +37,22 @@ export const serializeEx = (packetType, payloadType, data) => {
  * @param {Bytes} data
  * @returns decoded data
  */
-export const deserialize = (packetType, data) => {
-  const MessageType = getProtoMessages().packet[packetType];
-  if (!MessageType) {
-    throw new CustomError(ErrorCodes.INVALID_PACKET, `잘 못된 payloadType: ${payloadType}`);
+export const deserialize = (messageType, data) => {
+  if (!messageType) {
+    throw new CustomError(
+      ErrorCodes.INVALID_PACKET,
+      `역직렬화 에러: empty messageType (${messageType})`,
+    );
   }
-  const decoded = MessageType.decode(data);
-
-  return decoded;
+  return messageType.decode(data);
 };
 
 export const deserializeByPacketType = (packetType, data) => {
   const MessageType = getProtoMessages().packet[packetType];
-  if (!MessageType) {
-    throw new CustomError(ErrorCodes.INVALID_PACKET, `잘 못된 packetType: ${packetType}`);
+  const decoded = deserialize(MessageType, data);
+  if (packetType === packetTypes.PING) {
+    return decoded;
   }
-  const decoded = MessageType.decode(data);
 
   const obj = {
     ...decoded,
@@ -95,10 +65,14 @@ export const deserializeByPacketType = (packetType, data) => {
 
 export const deserializeTest = (packetType, packet) => {
   const MessageType = getProtoMessages().packet[packetType];
-  if (!MessageType) {
-    throw new CustomError('역직렬화 문제 발생');
-  }
-  const decoded = MessageType.decode(packet);
-  // console.log('deserialize test:', decoded);
+  const decoded = deserialize(MessageType, packet);
+  console.log('-- deserialize test:', decoded);
   return decoded;
+};
+
+export const deserializePf = (dediPacketType, packet) => {
+  const MessageType = getProtoMessages().pathfinding[dediPacketType];
+  const deserialized = deserialize(MessageType, packet);
+  // console.log('-- deseriailzePf:', deserialized);
+  return deserialized;
 };

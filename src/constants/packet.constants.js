@@ -82,8 +82,39 @@ export const payloadTypes = {
   C_ANIMATION_STRUCTURE: 137,
   S_ANIMATION_STRUCTURE: 138,
 
+  C_SET_PLAYER_MOVE_TARGET: 200,
+  C_SET_MONSTER_MOVE_TARGET: 201,
+  S_PLAYERS_TRANSFORM_UPDATE: 208,
+  S_MONSTERS_TRANSFORM_UPDATE: 209,
+
   S_SOME_NOTIFICATION: 300,
 };
+
+export const dediPacketTypes = {
+  C_NIGHT_ROUND_START: 5,
+
+  C_CREATE_SESSION: 10,
+
+  C_SET_PLAYERS: 11,
+  C_SET_MONSTERS: 12,
+  C_SET_PLAYER_DEST: 13,
+  C_SET_MONSTER_DEST: 14,
+  C_ADD_STRUCTURE: 15,
+  C_REMOVE_STRUCTURE: 16,
+
+  S_PLAYERS_LOCATION_UPDATE: 31,
+  S_MONSTERS_LOCATION_UPDATE: 32,
+
+  C_KILL_MONSTER: 40,
+};
+
+export const dediPacketNames = Object.fromEntries(
+  Object.entries(dediPacketTypes).map(([key, value]) => {
+    const prefix = key.slice(0, 2);
+    const str = stringToPascalCase(key.slice(2));
+    return [value, prefix.concat(str)];
+  }),
+);
 
 export const packetNames = Object.fromEntries(
   Object.entries(packetTypes).map(([key, value]) => {

@@ -4,9 +4,9 @@ import { headerConstants } from '../constants/packet.constants.js';
  *
  * @param {Buffer} packet packet with header attached
  */
-export const readHeader = (packet) => {
+export const readHeader = (packet, isReverse) => {
   //
-  const totalLength = packet.readInt32LE(0);
+  const totalLength = isReverse ? packet.readInt32BE(0) : packet.readInt32LE(0);
   const packetType = packet.readInt8(headerConstants.TOTAL_LENGTH);
   return {
     totalLength,

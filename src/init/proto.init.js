@@ -2,7 +2,12 @@ import fs from 'fs';
 import path from 'path';
 import url from 'url';
 import protobuf from 'protobufjs';
-import { packetNames, packetTypes, payloadNames } from '../constants/packet.constants.js';
+import {
+  dediPacketNames,
+  packetNames,
+  packetTypes,
+  payloadNames,
+} from '../constants/packet.constants.js';
 import { stringToPascalCase } from '../utils/transform-case.utils.js';
 
 const __filename = url.fileURLToPath(import.meta.url);
@@ -35,16 +40,20 @@ export const loadProtoFiles = async () => {
     protoMessages.packet = {};
     protoMessages.payload = {};
 
-    // protoMessages.payload['Temp'] = root.lookupType('Google.Protobuf.Protocol.Temp');
-    // protoMessages.payload['Temp2'] = root.lookupType('Google.Protobuf.Protocol.Temp2');
-
     for (const [key, value] of Object.entries(packetNames)) {
       protoMessages.packet[key] = root.lookupType(value);
     }
 
+    protoMessages.pathfinding = {};
+
+    for (const [key, value] of Object.entries(dediPacketNames)) {
+      protoMessages.pathfinding[key] = root.lookupType(value);
+    }
+
     Object.freeze(protoMessages);
     console.log(`Successfully loaded protobuf files.`);
-    // console.log(Object.values(protoMessages.packet).map((message) => message.name));
+    console.log(Object.values(protoMessages.packet).map((message) => message.name));
+    console.log(Object.values(protoMessages.pathfinding).map((message) => message.name));
   } catch (err) {
     console.error(err);
   }

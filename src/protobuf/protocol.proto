@@ -81,6 +81,11 @@ enum MsgId {
     C_ANIMATION_STRUCTURE = 137;
     S_ANIMATION_STRUCTURE = 138;
 
+    C_SET_PLAYER_MOVE_TARGET = 200;
+    C_SET_MONSTER_MOVE_TARGET = 201;
+    S_PLAYERS_TRANSFORM_UPDATE = 208;
+    S_MONSTERS_TRANSFORM_UPDATE = 209;
+
     S_SOME_NOTIFICATION = 300;
 }
 
@@ -149,6 +154,42 @@ message S_MonsterMove {
   TransformInfo transform = 2;
 }
 
+// ----- Dedi 서버용 move -----
+
+// Unity -> JS (dedi dungeon move handler)
+message C_SetPlayerMoveTarget {
+  optional TransformInfo transformInfo = 1;
+}
+
+// Unity -> JS (dedi monster move handler)
+message C_SetMonsterMoveTarget {
+  int32 monsterIdx = 1;
+  oneof payload {
+    string accountId = 2;
+    int32 structureIdx = 3;
+  }
+}
+
+message S_PlayersTransformUpdate {
+  repeated PlayerTransformInfo transformInfo = 1;
+}
+
+message S_MonstersTransformUpdate {
+  repeated MonsterTransformInfo transformInfo = 2;
+}
+
+message PlayerTransformInfo {
+  string accountId = 1;
+  TransformInfo transformInfo = 2;
+}
+
+message MonsterTransformInfo {
+  int32 monsterIdx = 1;
+  TransformInfo transformInfo = 2;
+}
+
+// ----- -----
+
 message C_Animation {
   int32 animCode = 1;
 }
@@ -162,6 +203,7 @@ message S_Animation {
 message C_AnimationPlayer {
   int32 animCode = 2;
   optional int32 monsterIdx = 3;
+  optional TransformInfo mousePoint = 4;
 }
 
 // ALL
@@ -169,6 +211,7 @@ message S_AnimationPlayer {
   string playerId = 1;
   int32 animCode = 2;
   optional int32 monsterIdx = 3;
+  optional TransformInfo mousePoint = 4;
 }
 
 // 응답 패킷 - S_Animation
@@ -579,6 +622,9 @@ message RequestPacket {
     C_Structure cStructure = 31;
     C_StructureAttacked cStructureAttacked = 32;
     C_AnimationStructure cAnimationStructure = 33;
+
+    C_SetPlayerMoveTarget cSetPlayerMoveTarget = 50;
+    C_SetMonsterMoveTarget cSetMonsterMoveTarget = 51;
   }
 }
 
@@ -651,5 +697,8 @@ message NotificationPacket {
     S_Structure sStructure = 17;
     S_StructureAttacked sStructureAttacked = 18;
     S_AnimationStructure sAnimationStructure = 19;
+
+    S_PlayersTransformUpdate sPlayersTransformUpdate = 50;
+    S_MonstersTransformUpdate sMonstersTransformUpdate = 51;
   }
 }

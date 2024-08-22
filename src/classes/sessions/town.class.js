@@ -1,4 +1,4 @@
-import { payloadTypes } from '../../constants/packet.constants.js';
+import { payloadTypes, dediPacketTypes } from '../../constants/packet.constants.js';
 import Game from './game.class.js';
 import { sessionTypes } from '../../constants/session.constants.js';
 import { handleError } from '../../utils/error/errorHandler.js';
@@ -40,6 +40,11 @@ class Town extends Game {
     townRedis.updatePlayerTransform(transform, accountId).then(() => {
       super.notifyAll(payloadTypes.S_MOVE, { playerId: accountId, transform });
     });
+  }
+
+  // ------------ 추가 ------------
+  playersLocationUpdate(deserialized) {
+    super.notifyAll(dediPacketTypes.S_PLAYERS_LOCATION_UPDATE, { positions: deserialized });
   }
 
   actionPlayer(accountId, animCode) {

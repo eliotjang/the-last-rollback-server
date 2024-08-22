@@ -40,6 +40,13 @@ export class DungeonPlayer extends Player {
     targetMonster.hit(this.playerStatus.getStatInfo().atk);
   }
 
+  useSkill() {
+    const useMp = 50;
+    if (this.playerStatus.playerMp < useMp) return false;
+    this.updateMp(-useMp);
+    return true;
+  }
+
   hit(damage) {
     if (this.playerInfo.isDead) {
       console.log(`플레이어(${this.playerInfo.playerId})가 이미 사망함`);
@@ -74,27 +81,21 @@ export class DungeonPlayer extends Player {
   }
 
   updateHp(hp) {
-    if (this.playerStatus.playerHp + hp < 0) {
-      return null;
-    }
     this.playerStatus.playerHp += hp;
-    const data =
-      getGameAssets().charStatInfo[this.playerInfo.charClass][this.playerStatus.playerLevel - 1];
-    if (this.playerStatus.playerHp > data.maxHp) {
-      this.playerStatus.playerHp = data.maxHp;
+    if (this.playerStatus.playerHp <= 0) {
+      this.playerStatus.playerHp = 0;
+    } else if (this.playerStatus.playerHp > this.playerStatus.getStatInfo().maxHp) {
+      this.playerStatus.playerHp = this.playerStatus.getStatInfo().maxHp;
     }
     return this.playerStatus.playerHp;
   }
 
   updateMp(mp) {
-    if (this.playerStatus.playerMp + mp < 0) {
-      return null;
-    }
     this.playerStatus.playerMp += mp;
-    const data =
-      getGameAssets().charStatInfo[this.playerInfo.charClass][this.playerStatus.playerLevel - 1];
-    if (this.playerStatus.playerMp > data.maxMp) {
-      this.playerStatus.playerMp = data.maxMp;
+    if (this.playerStatus.playerMp <= 0) {
+      this.playerStatus.playerMp = 0;
+    } else if (this.playerStatus.playerMp > this.playerStatus.getStatInfo().maxMp) {
+      this.playerStatus.playerMp = this.playerStatus.getStatInfo().maxMp;
     }
     return this.playerStatus.playerMp;
   }

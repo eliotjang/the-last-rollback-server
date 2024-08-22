@@ -1,6 +1,6 @@
 const dungeonConstants = {
   general: {
-    MAX_USERS: 4,
+    MAX_USERS: 1,
     DAY_DURATION: 12000,
   },
   phases: {
@@ -28,6 +28,24 @@ export const gameResults = {
   bonusExp: {
     GAME_OVER: 10,
     GAME_WIN: 100,
+  },
+};
+
+export const playerAnimTypes = {
+  IDLE: -1,
+  DIE: 1,
+  ATTACK: {
+    SWORD: 3,
+    MAGIC: 0,
+    SPEAR: 4,
+    ARROW: 5,
+    HAMMER: 6,
+  },
+  SKILL: 10,
+  EMOTION: {
+    HAPPY: 7,
+    CRYING: 8,
+    HI: 9,
   },
 };
 

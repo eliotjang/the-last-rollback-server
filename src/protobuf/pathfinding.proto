@@ -1,0 +1,99 @@
+syntax = "proto3";
+
+// ----- DEDI IN -----
+message C_CreateSession {
+    uint32 dungeonCode = 1;
+}
+
+message C_SetPlayers {
+    repeated Player players = 1;
+    // map<string, uint32> players = 1;
+}
+
+message C_SetMonsters {
+    repeated Monster monsters = 1;
+    // map<uint32, uint32> monsters = 1;
+}
+
+message C_SetPlayerDest {
+    string accountId = 1;
+    optional WorldPosition pos = 2;
+}
+
+message C_SetMonsterDest {
+    uint32 monsterIdx = 1;
+    optional Target target = 2;
+}
+
+message C_AddStructure {
+    WorldPosition worldPosition = 2;
+    Structure structure = 3;
+}
+
+message C_RemoveStructure {
+    int32 structureIdx = 1;
+}
+
+message C_NightRoundStart {
+    uint64 timestamp = 1;
+}
+
+message C_KillMonster {
+    uint32 monsterIdx = 1;
+}
+
+// ----- DEDI OUT -----
+message S_PlayersLocationUpdate {
+    map<string, WorldPosition> positions = 1;
+}
+
+message S_MonstersLocationUpdate {
+    map<uint32, WorldPosition> positions = 1;
+}
+
+message S_MonsterAttack {
+    uint32 monsterIdx = 1;
+    oneof targetType {
+        TargetPlayer targetPlayer = 2;
+        TargetStructure targetStructure = 3;
+    }
+    float rotation = 4;
+}
+
+// ----- ETC -----
+
+message WorldPosition {
+    float x = 1;
+    float y = 2;
+    float z = 3;
+}
+
+message Player {
+    string accountId = 1;
+    uint32 charClass = 2;
+}
+
+message Monster {
+    uint32 monsterIdx = 1;
+    uint32 monsterModel = 2;
+}
+
+message Structure {
+    int32 structureIdx = 1;
+    uint32 structureModel = 2;
+}
+
+message Target {
+    oneof targetType {
+        TargetPlayer targetPlayer = 1;
+        TargetStructure targetStructure = 2;
+    }
+}
+
+message TargetPlayer {
+    string accountId = 1;
+}
+
+message TargetStructure {
+    int32 structureIdx = 2;
+}
