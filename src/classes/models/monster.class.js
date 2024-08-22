@@ -12,6 +12,7 @@ export class Monster {
     this.killExp = data.killExp;
     this.atk = data.atk;
     this.transform = new Transform();
+    this.isDead = false;
   }
 
   setSpawnLocate(dungeonCode) {
@@ -29,6 +30,7 @@ export class Monster {
   hit(damage) {
     if (this.monsterHp <= 0) {
       console.log(`몬스터(${this.monsterName})가 이미 사망함`);
+      this.isDead = true;
       return null;
     }
     this.monsterHp -= damage;

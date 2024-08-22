@@ -184,7 +184,6 @@ class Dungeon extends Game {
   // #region 플레이어
   addPlayer(accountId, player) {
     this.players.set(accountId, new DungeonPlayer(player));
-    console.log('????');
     if (this.players.size === dungeonConstants.general.MAX_USERS) {
       const data = [];
 
@@ -192,7 +191,6 @@ class Dungeon extends Game {
         data.push({ accountId, charClass: dungeonPlayer.playerInfo.charClass });
         // data[accountId] = dungeonPlayer.playerInfo.charClass;
       }
-      console.log('????', data);
       DediClient.getClient(this.id).setPlayers(data);
     }
   }
@@ -255,6 +253,10 @@ class Dungeon extends Game {
     }
     console.log(`[${monsterIdx}] monster hit, damage: -${damage}`);
     monster.hit(damage);
+    if (monster.isDead) {
+      return;
+    }
+
     (async () => {
       if (monster.monsterHp <= 0) {
         this.killMonster(monsterIdx, accountId);
@@ -273,8 +275,12 @@ class Dungeon extends Game {
     this.roundKillCount++;
     const player = this.players.get(accountId);
     player.playerInfo.killed.push(monsterIdx);
-    pickUpHandler(accountId, this.dungeonCode, this.round);
+    DediClient.getClient(this.id).killMonster({
+      monsterIdx,
+      monsterModel: monster.monsterModel,
+    });
     console.log('------------KILL MONSTER----------', this.roundKillCount, this.roundMonsters.size);
+    pickUpHandler(accountId, this.dungeonCode, this.round);
     // 모든 몬스터 처치 시 밤 라운드 종료
     if (this.roundMonsters.size === this.roundKillCount) {
       this.roundKillCount = 0;

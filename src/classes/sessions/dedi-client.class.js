@@ -15,6 +15,7 @@ import { readHeader } from '../../utils/packet-header.utils.js';
 const headerSize = headerConstants.TOTAL_LENGTH + headerConstants.PACKET_TYPE_LENGTH;
 
 const MonstersLocationUpdateHandler = function (deserialized) {
+  // S_MONSTERS_LOCATION_UPDATE
   // monsterIdx : Vector3 (X,Y,Z)
   const dungeonSession = getDungeonSession(this.dungeonId);
   const { positions } = deserialized;
@@ -34,7 +35,7 @@ const MonstersLocationUpdateHandler = function (deserialized) {
 
   if (monsterTransformInfo.length === 0) return;
 
-  console.log('데디 -> 유니티 몬스터 정보 : ', monsterTransformInfo);
+  // console.log('데디 -> 유니티 몬스터 정보 길이 : ', monsterTransformInfo.length);
 
   dungeonSession.notifyAll(payloadTypes.S_MONSTERS_TRANSFORM_UPDATE, {
     transformInfo: monsterTransformInfo,
@@ -240,8 +241,14 @@ class DediClient {
   }
 
   setNightRoundStart() {
-    console.log('JS -> 데디 밤 라운드 시작');
+    console.log('JS -> 데디 : 밤 라운드 시작');
     this.#socket.send(dediPacketTypes.C_NIGHT_ROUND_START, { timeStamp: Date.now() });
+  }
+
+  killMonster(monster) {
+    console.log(`JS -> 데디 : 몬스터 처치`);
+    console.log(monster);
+    this.#socket.send(dediPacketTypes.C_KILL_MONSTER, monster);
   }
 }
 

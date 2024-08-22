@@ -102,6 +102,8 @@ export const dediPacketTypes = {
 
   S_PLAYERS_LOCATION_UPDATE: 31,
   S_MONSTERS_LOCATION_UPDATE: 32,
+
+  C_KILL_MONSTER: 40,
 };
 
 export const dediPacketNames = Object.fromEntries(
