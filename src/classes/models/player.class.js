@@ -52,7 +52,8 @@ export class DungeonPlayer extends Player {
       console.log(`플레이어(${this.playerInfo.playerId})가 이미 사망함`);
       return null;
     }
-    this.playerStatus.playerHp -= damage;
+    const dmg = Math.round(damage * (50 / (50 + this.playerStatus.getStatInfo().def)));
+    this.playerStatus.playerHp -= dmg;
     if (this.playerStatus.playerHp <= 0) {
       this.playerStatus.playerHp = 0;
       this.playerInfo.isDead = true;
