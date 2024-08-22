@@ -31,4 +31,22 @@ export const gameResults = {
   },
 };
 
+export const playerAnimTypes = {
+  IDLE: -1,
+  DIE: 1,
+  ATTACK: {
+    SWORD: 3,
+    MAGIC: 0,
+    SPEAR: 4,
+    ARROW: 5,
+    HAMMER: 6,
+  },
+  SKILL: 10,
+  EMOTION: {
+    HAPPY: 7,
+    CRYING: 8,
+    HI: 9,
+  },
+};
+
 export default dungeonConstants;
