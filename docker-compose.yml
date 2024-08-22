@@ -6,12 +6,12 @@ services:
       - '3000:3000'
     environment:
       - PORT=3000
-      - HOST=0.0.0.0
-      - DB1_HOST=db1
+      - HOST=${HOST}
+      - DB1_HOST=${DB1_HOST}
       - DB1_USER=${DB1_USER}
       - DB1_PASSWORD=${DB1_PASSWORD}
       - DB1_NAME=${DB1_NAME}
-      - DB2_HOST=db2
+      - DB2_HOST=${DB2_HOST}
       - DB2_USER=${DB2_USER}
       - DB2_PASSWORD=${DB2_PASSWORD}
       - DB2_NAME=${DB2_NAME}
