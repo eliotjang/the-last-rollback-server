@@ -7,7 +7,7 @@ import {
 import { setProcessors } from '../consumers/match-queue.consumer.js';
 import { config } from '../../config/config.js';
 
-const matchQueue = new Bull('MATCH_QUEUE_NAME', {
+const matchQueue = new Bull(MATCH_QUEUE_NAME, {
   redis: {
     host: config.redis.redisHost,
     port: config.redis.redisPort,
