@@ -458,6 +458,7 @@ class Dungeon extends Game {
   }
 
   endGame(result, exp) {
+    DediClient.removeClient(this.id);
     Promise.all(
       this.users.map(async (user) => {
         const player = this.getPlayer(user.accountId);
