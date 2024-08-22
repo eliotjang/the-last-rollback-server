@@ -35,14 +35,17 @@ const MonstersLocationUpdateHandler = function (deserialized) {
       rot = (Math.atan2(directionVector.x, directionVector.z) * (180 / Math.PI) + 360) % 360;
     }
 
+    const transformInfo = {
+      posX: worldPosition.x,
+      posY: worldPosition.y,
+      posZ: worldPosition.z,
+      rot: rot,
+    };
+    dungeonSession.getMonster(monsterIdx).transform.updateTransform(transformInfo);
+
     monsterTransformInfo.push({
       monsterIdx: +monsterIdx,
-      transformInfo: {
-        posX: worldPosition.x,
-        posY: worldPosition.y,
-        posZ: worldPosition.z,
-        rot: rot,
-      },
+      transformInfo,
     });
   }
 
@@ -79,14 +82,18 @@ const PlayersLocationUpdateHandler = function (deserialized) {
       rot = (Math.atan2(directionVector.x, directionVector.z) * (180 / Math.PI) + 360) % 360;
     }
 
+    const transformInfo = {
+      posX: worldPosition.x,
+      posY: worldPosition.y,
+      posZ: worldPosition.z,
+      rot: rot,
+    };
+
+    dungeonSession.getPlayer(accountId).updateTransform(transformInfo);
+
     playerTransformInfo.push({
       accountId,
-      transformInfo: {
-        posX: worldPosition.x,
-        posY: worldPosition.y,
-        posZ: worldPosition.z,
-        rot: rot,
-      },
+      transformInfo,
     });
   }
 
