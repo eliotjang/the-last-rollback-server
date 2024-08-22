@@ -1,4 +1,4 @@
-import dc, { gameResults } from '../../constants/game.constants.js';
+import dc, { gameResults, playerAnimTypes } from '../../constants/game.constants.js';
 import { payloadTypes, dediPacketTypes } from '../../constants/packet.constants.js';
 import { sessionTypes } from '../../constants/session.constants.js';
 import pickUpHandler from '../../handlers/dungeon/pick-up.handler.js';
@@ -289,9 +289,19 @@ class Dungeon extends Game {
   }
 
   animationPlayer(animCode, playerId, monsterIdx) {
-    if (this.getPlayer(playerId).playerInfo.isDead && animCode !== 1) {
-      console.log('해당 플레이어가 행동불가 상태');
+    const player = this.getPlayer(playerId);
+    if (player.playerInfo.isDead && animCode !== playerAnimTypes.DIE) {
+      console.log(`해당 플레이어(${playerId})가 행동불가 상태 ${animCode}, ${monsterIdx}`);
       return;
+    }
+
+    if (animCode === playerAnimTypes.SKILL) {
+      if (player.useSkill()) {
+        super.notifyAll(payloadTypes.S_PICK_UP_ITEM_MP, {
+          playerId,
+          playerMp: player.playerStatus.playerMp,
+        });
+      } else return;
     }
     super.notifyAll(payloadTypes.S_ANIMATION_PLAYER, { animCode, playerId, monsterIdx });
   }
