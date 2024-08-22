@@ -203,6 +203,7 @@ message S_Animation {
 message C_AnimationPlayer {
   int32 animCode = 2;
   optional int32 monsterIdx = 3;
+  optional TransformInfo mousePoint = 4;
 }
 
 // ALL
@@ -210,6 +211,7 @@ message S_AnimationPlayer {
   string playerId = 1;
   int32 animCode = 2;
   optional int32 monsterIdx = 3;
+  optional TransformInfo mousePoint = 4;
 }
 
 // 응답 패킷 - S_Animation

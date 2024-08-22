@@ -293,7 +293,12 @@ class Dungeon extends Game {
       console.log('해당 플레이어가 행동불가 상태');
       return;
     }
-    super.notifyAll(payloadTypes.S_ANIMATION_PLAYER, { animCode, playerId, monsterIdx });
+    super.notifyAll(payloadTypes.S_ANIMATION_PLAYER, {
+      animCode,
+      playerId,
+      monsterIdx,
+      mousePoint,
+    });
   }
 
   // #endregion
