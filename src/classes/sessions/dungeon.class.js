@@ -67,8 +67,14 @@ class Dungeon extends Game {
         gold: playerGold,
         playerId: accountId,
       });
+
       return;
     }
+    DediClient.getClient(this.id).addStructure(this.structureIdx, structure.structureModel, {
+      x: 0, // pos values won't matter for the base
+      y: 0,
+      z: 0,
+    });
     this.structures.set(this.structureIdx++, structure);
   }
 
@@ -80,6 +86,12 @@ class Dungeon extends Game {
     const monsterInfo = this.roundMonsters.get(monsterIdx);
     const structure = this.getStructure(structureIdx);
     structure.updateStructureHp(monsterInfo.atk);
+
+    if (structure.hp <= 0) {
+      DediClient.getClient(this.id).removeStructure(structure.structureIdx);
+      this.structures.delete(structure.structureIdx);
+    }
+
     if (structureIdx > 0) {
       this.notifyAll(payloadTypes.S_STRUCTURE_ATTACKED, {
         monsterIdx,

@@ -114,7 +114,7 @@ class DediClient {
   #prevMonsterPositions = new Map(); // 몬스터 이전 위치
 
   constructor(dungeonId) {
-    this.init();
+    this.#init();
     this.dungeonId = dungeonId;
   }
 
@@ -132,20 +132,20 @@ class DediClient {
     return DediClient.#dediClients.delete(dungeonId);
   };
 
-  init() {
+  #init() {
     this.#socket.connect(config.dediServer.port, config.dediServer.host, () => {
       console.log(
         `Connected to dedi-server on ${this.#socket.remoteAddress}:${this.#socket.remotePort}`,
       );
     });
-    this.#socket.on('data', this.onData.bind(this));
-    this.#socket.on('end', this.onEnd.bind(this));
-    this.#socket.on('error', this.onError.bind(this));
+    this.#socket.on('data', this.#onData.bind(this));
+    this.#socket.on('end', this.#onEnd.bind(this));
+    this.#socket.on('error', this.#onError.bind(this));
     this.#socket.buffer = Buffer.alloc(0);
     this.#socket.send = sendPacketToDediServer.bind(this.#socket);
   }
 
-  onData(data) {
+  #onData(data) {
     try {
       this.#socket.buffer = Buffer.concat([this.#socket.buffer, data]);
       while (this.#socket.buffer.length >= headerSize) {
@@ -164,7 +164,7 @@ class DediClient {
     }
   }
 
-  onEnd() {
+  #onEnd() {
     try {
       DediClient.removeClient(this.dungeonId);
       console.log('Dedicated client shut down');
@@ -173,7 +173,7 @@ class DediClient {
     }
   }
 
-  onError(error) {
+  #onError(error) {
     try {
       console.error('소켓 오류:', error);
       DediClient.removeClient(this.dungeonId);
@@ -224,7 +224,7 @@ class DediClient {
    * 플레이어의 이동 목표 지정
    *
    * @param {string} accountId
-   * @param {WorldPosition} pos pathfinding.proto 내 'WorldPosition' 구조 확인
+   * @param {WorldPosition} pos (nullable) pathfinding.proto 내 'WorldPosition' 구조 확인
    */
   setPlayerDest(accountId, pos) {
     // TODO: 소켓을 통해 accountId와 pos를 담은 데이터 전송하기
@@ -241,7 +241,7 @@ class DediClient {
    * 몬스터의 이동 목표 지정
    *
    * @param {uint32} monsterIdx
-   * @param {Target} target pathfinding.proto 내 'Target' 구조 확인
+   * @param {Target} target (nullable) pathfinding.proto 내 'Target' 구조 확인
    */
   setMonsterDest(monsterIdx, target) {
     // TODO: 소켓을 통해 monsterIdx와 target을 담은 데이터 전송하기
@@ -252,6 +252,29 @@ class DediClient {
       return;
     }
     this.#socket.send(dediPacketTypes.C_SET_MONSTER_DEST, { monsterIdx, target });
+  }
+
+  /**
+   * Dedi 서버에 건물을 추가하는 메서드
+   *
+   * @param {int32} structureIdx 세션에서 건물을 식별할 idx
+   * @param {uint32} structureModel 건물의 model 번호
+   * @param {WorldPosition} worldPosition 건물이 위치할 world 좌표
+   */
+  addStructure(structureIdx, structureModel, worldPosition) {
+    this.#socket.send(dediPacketTypes.C_ADD_STRUCTURE, {
+      worldPosition,
+      structure: { structureIdx, structureModel },
+    });
+  }
+
+  /**
+   * Dedi 서버에서 건물을 제거하는 메서드
+   *
+   * @param {int32} structureIdx 세션에서 관리하는 건물 idx
+   */
+  removeStructure(structureIdx) {
+    this.#socket.send(dediPacketTypes.C_REMOVE_STRUCTURE, { structureIdx });
   }
 
   addPlayerPrevPosition(key, pos) {
