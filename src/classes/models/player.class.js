@@ -137,6 +137,16 @@ export class DungeonPlayer extends Player {
     this.playerInfo.transform.updateTransform(transform);
     return this.playerInfo.transform.getTransform();
   }
+
+  toPlayer() {
+    return new Player(
+      this.playerInfo.playerId,
+      this.playerInfo.nickname,
+      this.playerInfo.charClass,
+      this.accountLevel,
+      this.accountExp,
+    );
+  }
 }
 
 export class PlayerInfo {
