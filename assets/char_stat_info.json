@@ -9,11 +9,11 @@
     { "id": 5, "level": 5, "maxExp": 110, "hp": 140, "maxHp": 140, "mp": 140, "maxMp": 140, "atk": 55, "def": 27, "specialAtk": 90, "speed": 5, "attackRange": 4, "coolTime": 1.2 }
   ],
   "1002": [
-    { "id": 1, "level": 1, "maxExp": 30, "hp": 100, "maxHp": 100, "mp": 100, "maxMp": 100, "atk": 40, "def": 20, "specialAtk": 35, "speed": 5.3, "attackRange": 3, "coolTime": 1 },
-    { "id": 2, "level": 2, "maxExp": 50, "hp": 110, "maxHp": 110, "mp": 110, "maxMp": 110, "atk": 45, "def": 22, "specialAtk": 40, "speed": 5.3, "attackRange": 3, "coolTime": 1 },
-    { "id": 3, "level": 3, "maxExp": 70, "hp": 120, "maxHp": 120, "mp": 120, "maxMp": 120, "atk": 50, "def": 25, "specialAtk": 45, "speed": 5.3, "attackRange": 3, "coolTime": 1 },
-    { "id": 4, "level": 4, "maxExp": 90, "hp": 130, "maxHp": 130, "mp": 130, "maxMp": 130, "atk": 55, "def": 27, "specialAtk": 50, "speed": 5.3, "attackRange": 3, "coolTime": 1 },
-    { "id": 5, "level": 5, "maxExp": 110, "hp": 140, "maxHp": 140, "mp": 140, "maxMp": 140, "atk": 60, "def": 30, "specialAtk": 55, "speed": 5.3, "attackRange": 3, "coolTime": 1 }
+    { "id": 1, "level": 1, "maxExp": 30, "hp": 100, "maxHp": 100, "mp": 100, "maxMp": 100, "atk": 40, "def": 20, "specialAtk": 70, "speed": 5.3, "attackRange": 3, "coolTime": 1 },
+    { "id": 2, "level": 2, "maxExp": 50, "hp": 110, "maxHp": 110, "mp": 110, "maxMp": 110, "atk": 45, "def": 22, "specialAtk": 75, "speed": 5.3, "attackRange": 3, "coolTime": 1 },
+    { "id": 3, "level": 3, "maxExp": 70, "hp": 120, "maxHp": 120, "mp": 120, "maxMp": 120, "atk": 50, "def": 25, "specialAtk": 80, "speed": 5.3, "attackRange": 3, "coolTime": 1 },
+    { "id": 4, "level": 4, "maxExp": 90, "hp": 130, "maxHp": 130, "mp": 130, "maxMp": 130, "atk": 55, "def": 27, "specialAtk": 85, "speed": 5.3, "attackRange": 3, "coolTime": 1 },
+    { "id": 5, "level": 5, "maxExp": 110, "hp": 140, "maxHp": 140, "mp": 140, "maxMp": 140, "atk": 60, "def": 30, "specialAtk": 90, "speed": 5.3, "attackRange": 3, "coolTime": 1 }
   ],
   "1003": [
     { "id": 1, "level": 1, "maxExp": 30, "hp": 100, "maxHp": 100, "mp": 100, "maxMp": 100, "atk": 30, "def": 15, "specialAtk": 60, "speed": 4.2, "attackRange": 6.5, "coolTime": 1.25 },
