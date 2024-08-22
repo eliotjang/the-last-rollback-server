@@ -128,7 +128,7 @@ class DediClient {
 
   static removeClient = (dungeonId) => {
     const client = DediClient.getClient(dungeonId);
-    client.getSocket().end();
+    client?.getSocket().end();
     return DediClient.#dediClients.delete(dungeonId);
   };
 

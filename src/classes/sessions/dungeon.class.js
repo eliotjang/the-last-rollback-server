@@ -109,6 +109,7 @@ class Dungeon extends Game {
 
   checkBaseHp(structure) {
     if (structure.hp <= 0) {
+      DediClient.removeClient(this.id);
       this.endGame(gameResults.codes.GAME_OVER, gameResults.bonusExp.GAME_OVER);
     }
   }
@@ -254,6 +255,7 @@ class Dungeon extends Game {
       }
     }
     if (isAllDead) {
+      DediClient.removeClient(this.id);
       this.endGame(gameResults.codes.GAME_OVER, gameResults.bonusExp.GAME_OVER);
     }
   }
@@ -435,6 +437,7 @@ class Dungeon extends Game {
         this.round++;
 
         if (!dungeonInfo) {
+          DediClient.removeClient(this.id);
           this.endGame(gameResults.codes.GAME_WIN, gameResults.bonusExp.GAME_WIN);
         } else {
           this.setMonsters(this.dungeonCode, dungeonInfo.monsters);
