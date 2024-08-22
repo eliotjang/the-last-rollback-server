@@ -2,9 +2,9 @@
   "name": "structure_info",
   "version": "1.0.0",
   "data": [
-    { "structureModel": 1, "structureName": "woodenFence", "hp": 35, "maxHp": 35, "power": 0, "gold": 700 },
-    { "structureModel": 2, "structureName": "metalFence", "hp": 75, "maxHp": 75, "power": 0, "gold": 1300 },
-    { "structureModel": 3, "structureName": "ballista", "hp": 35, "maxHp": 35, "power": 40, "gold": 3000 },
-    { "structureModel": 4, "structureName": "laser", "hp": 45, "maxHp": 45, "power": 50, "gold": 4000 }
+    { "structureModel": 1, "structureName": "woodenFence", "hp": 30, "maxHp": 30, "power": 0, "gold": 700 },
+    { "structureModel": 2, "structureName": "metalFence", "hp": 60, "maxHp": 60, "power": 0, "gold": 1300 },
+    { "structureModel": 3, "structureName": "ballista", "hp": 30, "maxHp": 30, "power": 30, "gold": 4000 },
+    { "structureModel": 4, "structureName": "laser", "hp": 40, "maxHp": 40, "power": 40, "gold": 5000 }
   ]
 }
