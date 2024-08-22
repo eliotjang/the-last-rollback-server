@@ -36,8 +36,15 @@ export class DungeonPlayer extends Player {
     this.playerStatus = new DungeonPlayerStatus(this.playerInfo.charClass);
   }
 
-  attack(targetMonster) {
-    targetMonster.hit(this.playerStatus.getStatInfo().atk);
+  /**
+   * 플레이어의 공격 사거리 안에 타겟 몬스터가 있는 지 확인.
+   * @param {Monster} targetMonster 타겟 몬스터
+   * @return {Boolean} true: 공격 사거리 안에 타겟 몬스터가 존재.
+   */
+  verifyAttack(targetMonster) {
+    const distance = this.playerInfo.transform.calculateDistance(targetMonster.transform);
+    if (distance <= this.playerStatus.getStatInfo().attackRange + 1) return true;
+    return false;
   }
 
   useSkill() {
