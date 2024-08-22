@@ -2,8 +2,8 @@
   "name": "pick_up_item_info",
   "version": "1.0.0",
   "data": [
-    { "itemModel": 101, "itemName": "hpPotion", "hp": 50, "weight": 60 },
+    { "itemModel": 101, "itemName": "hpPotion", "hp": 30, "weight": 50 },
     { "itemModel": 102, "itemName": "mpPotion", "mp": 50, "weight": 20 },
-    { "itemModel": 103, "itemName": "mysteryBox", "weight": 20 }
+    { "itemModel": 103, "itemName": "mysteryBox", "weight": 30 }
   ]
 }
