@@ -303,7 +303,12 @@ class Dungeon extends Game {
         });
       } else return;
     }
-    super.notifyAll(payloadTypes.S_ANIMATION_PLAYER, { animCode, playerId, monsterId, mousePoint });
+    super.notifyAll(payloadTypes.S_ANIMATION_PLAYER, {
+      animCode,
+      playerId,
+      monsterIdx,
+      mousePoint,
+    });
   }
 
   // #endregion
