@@ -11,15 +11,18 @@ const dediDungeonMoveHandler = ({ socket, accountId, packet }) => {
 
   if (!packet.transformInfo) {
     const dungeonSession = getDungeonSessionByUserSocket(socket);
-
-    DediClient.getClient(dungeonSession.id).setPlayerDest(accountId);
+    if (dungeonSession) {
+      DediClient.getClient(dungeonSession.id)?.setPlayerDest(accountId);
+    }
     return;
   }
   // TODO: 클라에서 받은 정보를 토대로 dedi 서버에 C_SetPlayerDest 패킷 전송
   const { posX: x, posY: y, posZ: z } = packet.transformInfo;
 
   const dungeonSession = getDungeonSessionByUserSocket(socket);
-  DediClient.getClient(dungeonSession.id).setPlayerDest(accountId, { x, y, z });
+  if (dungeonSession) {
+    DediClient.getClient(dungeonSession.id)?.setPlayerDest(accountId, { x, y, z });
+  }
 };
 
 export default dediDungeonMoveHandler;

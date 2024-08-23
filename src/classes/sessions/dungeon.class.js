@@ -109,6 +109,7 @@ class Dungeon extends Game {
 
   checkBaseHp(structure) {
     if (structure.hp <= 0) {
+      this.phase = dc.phases.ENDING;
       DediClient.removeClient(this.id);
       this.endGame(gameResults.codes.GAME_OVER, gameResults.bonusExp.GAME_OVER);
     }
@@ -445,6 +446,7 @@ class Dungeon extends Game {
         this.round++;
 
         if (!dungeonInfo) {
+          this.phase = dc.phases.ENDING;
           DediClient.removeClient(this.id);
           this.endGame(gameResults.codes.GAME_WIN, gameResults.bonusExp.GAME_WIN);
         } else {
@@ -469,6 +471,7 @@ class Dungeon extends Game {
   }
 
   endGame(result, exp) {
+    this.phase = dc.phases.ENDING;
     DediClient.removeClient(this.id);
     Promise.all(
       this.users.map(async (user) => {
