@@ -1,7 +1,7 @@
 import { addTownSession, getAllTownSessions } from '../../../session/town.session.js';
 import { getUserById } from '../../../session/user.session.js';
 
-const EnterTownProcessor = (job, done) => {
+const EnterTownProcessor = async (job) => {
   const { accountId } = job.data;
   const user = getUserById(accountId);
   const townSessions = getAllTownSessions();
@@ -9,8 +9,7 @@ const EnterTownProcessor = (job, done) => {
   if (!townSession) {
     townSession = addTownSession();
   }
-  townSession.addUser(user);
-  done();
+  await townSession.addUser(user);
 };
 
 export default EnterTownProcessor;

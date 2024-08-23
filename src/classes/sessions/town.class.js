@@ -12,22 +12,25 @@ class Town extends Game {
     this.type = sessionTypes.TOWN;
   }
 
-  addUser(user) {
-    Promise.all(this.users.map(async (curUser) => curUser.getPlayerInfo()))
-      .then((playerInfos) => {
-        super.addUser(user);
+  async addUser(user) {
+    const playerInfos = await Promise.all(this.users.map((curUser) => curUser.getPlayerInfo()));
+    super.addUser(user);
 
-        if (playerInfos.length) {
-          super.notifyUser(user.accountId, payloadTypes.S_SPAWN, { players: playerInfos });
-        }
-        user.getPlayerInfo().then((userInfo) => {
-          super.notifyOthers(user.accountId, payloadTypes.S_SPAWN, { players: [userInfo] });
-          this.systemChatAll(user.accountId, `${userInfo.nickname}님이 입장하였습니다.`);
-        });
-      })
-      .catch((err) => {
-        handleError(user?.socket, err);
-      });
+    if (playerInfos.length) {
+      super.notifyUser(user.accountId, payloadTypes.S_SPAWN, { players: playerInfos });
+    }
+
+    const userInfo = await user.getPlayerInfo();
+    super.notifyOthers(user.accountId, payloadTypes.S_SPAWN, { players: [userInfo] });
+    this.systemChatAll(user.accountId, `${userInfo.nickname}님이 입장하였습니다.`);
+    this.systemChat(
+      user.accountId,
+      `Town 세션에 입장하였습니다. 현재 세션 유저 수 : ${this.users.length}`,
+    );
+    console.log(
+      'in town',
+      this.users.map((user) => user.accountId),
+    );
   }
 
   removeUser(accountId) {
