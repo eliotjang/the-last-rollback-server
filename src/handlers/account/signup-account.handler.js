@@ -16,6 +16,7 @@ const signupAccountHandler = async ({ socket, userId, packet }) => {
     const msg = verifyNameString(accountId);
     if (msg) {
       socket.sendResponse(ErrorCodes.INVALID_ARGUMENT, msg, payloadTypes.S_SIGN_UP);
+      return;
     }
 
     const hashedPwd = await bcrypt.hash(accountPwd, config.account.saltRounds);
