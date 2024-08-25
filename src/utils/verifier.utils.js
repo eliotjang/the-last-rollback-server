@@ -4,9 +4,12 @@ export const verifyAccountId = (accountId) => {
     return '영문만 사용 가능합니다.';
   }
   if (!isNaN(accountId)) {
-    return '숫자만 사용할 수 없습니다.';
+    return '사용할 수 없습니다.';
   }
   if (/^[+-]?\d+(\.\d+)?(e[+-]?\d+)?$/i.test(accountId)) {
+    return '사용할 수 없습니다.';
+  }
+  if (['true', 'false', 'null', 'undefined'].includes(string)) {
     return '사용할 수 없습니다.';
   }
 };
@@ -51,13 +54,17 @@ export const verifyKoreanString = (string) => {
  * @return {boolean} False if: only numbers, includes spaces, includes special characters, 'true', 'false', 'null', or 'undefined'. True otherwise.
  */
 export const verifyString = (string) => {
+  if (['true', 'false', 'null', 'undefined'].includes(string)) {
+    return '사용할 수 없습니다.';
+  }
+
   const alphanumericPattern = /^[a-zA-Z가-힣]{2,10}$/;
 
   if (!alphanumericPattern.test(string) && !/^\d+$/.test(string)) {
     return '잘 못된 닉네임입니다.';
   }
 
-  if (/^[+-]?\d+(\.\d+)?(e[+-]?\d+)?$/i.test(string)) {
+  if (/^[+-]?\d+(\.\d+)?(eE[+-]?\d+)?$/i.test(string)) {
     return '사용할 수 없습니다.';
   }
 };
