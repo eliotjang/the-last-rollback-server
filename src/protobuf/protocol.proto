@@ -61,6 +61,7 @@ enum MsgId {
     C_DUNGEON_MATCH = 100;
     S_DUNGEON_MATCH = 101;
     S_DUNGEON_MATCH_COUNT = 102;
+    C_MATCH_CANCEL = 103;
     S_ENTER_DUNGEON = 104;
     S_LEAVE_DUNGEON = 105;
 
@@ -308,6 +309,8 @@ message S_DungeonMatch {
 message S_DungeonMatchCount {
   uint32 count = 1;
 }
+
+message C_MatchCancle {}
 
 // 104 던전 입장 패킷
 message S_EnterDungeon{
@@ -619,6 +622,7 @@ message RequestPacket {
     C_AnimationPlayer cAnimationPlayer = 29;
 
     C_DungeonMatch cDungeonMatch = 9;
+    C_MatchCancle cMatchCancle = 10;
     C_DayRoundReady cDayRoundReady = 15;
     C_DungeonSceneReady cDungeonSceneReady = 16;
 
