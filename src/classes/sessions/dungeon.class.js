@@ -281,16 +281,14 @@ class Dungeon extends Game {
       return;
     }
 
-    (async () => {
-      if (monster.monsterHp <= 0) {
-        this.killMonster(monsterIdx, accountId);
-      }
+    if (monster.monsterHp <= 0) {
+      this.killMonster(monsterIdx, accountId);
+    }
 
-      this.notifyAll(payloadTypes.S_MONSTER_ATTACKED, {
-        monsterIdx: monsterIdx,
-        monsterHp: monster.monsterHp,
-      });
-    })();
+    this.notifyAll(payloadTypes.S_MONSTER_ATTACKED, {
+      monsterIdx: monsterIdx,
+      monsterHp: monster.monsterHp,
+    });
   }
 
   killMonster(monsterIdx, accountId) {
