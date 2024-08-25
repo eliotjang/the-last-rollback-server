@@ -15,27 +15,17 @@ const headerSize = headerConstants.TOTAL_LENGTH + headerConstants.PACKET_TYPE_LE
 
 const onData = (socket) => async (data) => {
   try {
-    const message = data.toString().trim();
-    if (message === 'dungeon') {
-      const payloadType = payloadTypes.TEST_DUNGEON;
-      const dungeonSession = addDungeonSession(1);
-      const payload = {
-        accountId: 'a' + socket.remotePort,
-      };
+    // const message = data.toString().trim();
 
-      const handler = getHandlerByPayloadType(payloadType || 0);
-      await handler({ socket, accountId: payload.accountId, packet: payload });
-      return;
-    }
-    if (message === 'enter') {
-      const payloadType = payloadTypes.TEST;
-      const payload = { accountId: 'a' + socket.remotePort, accountPwd: 1000 };
+    // if (message === 'enter') {
+    //   const payloadType = payloadTypes.TEST;
+    //   const payload = { accountId: 'a' + socket.remotePort, accountPwd: 1000 };
 
-      const handler = getHandlerByPayloadType(payloadType || 0);
-      await handler({ socket, accountId: payload.accountId, packet: payload });
+    //   const handler = getHandlerByPayloadType(payloadType || 0);
+    //   await handler({ socket, accountId: payload.accountId, packet: payload });
 
-      return;
-    }
+    //   return;
+    // }
 
     socket.buffer = Buffer.concat([socket.buffer, data]);
     while (socket.buffer.length >= headerSize) {

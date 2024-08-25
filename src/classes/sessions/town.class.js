@@ -4,7 +4,7 @@ import { sessionTypes } from '../../constants/session.constants.js';
 import { handleError } from '../../utils/error/errorHandler.js';
 import { townRedis } from '../../utils/redis/town.redis.js';
 
-const MAX_USERS = 1000;
+const MAX_USERS = 20;
 
 class Town extends Game {
   constructor(id) {
