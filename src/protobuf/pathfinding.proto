@@ -95,5 +95,5 @@ message TargetPlayer {
 }
 
 message TargetStructure {
-    int32 structureIdx = 2;
+    int32 structureIdx = 1;
 }
