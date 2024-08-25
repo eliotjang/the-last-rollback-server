@@ -48,7 +48,7 @@ class Dungeon extends Game {
   // #region 구조물
   addStructure(structure, transform, accountId) {
     if (transform) {
-      const currentIdx = this.structureIdx++;
+      const currentIdx = this.structureIdx;
       this.structures.set(currentIdx, structure);
       const structureStatus = {
         structureModel: structure.structureModel,
@@ -68,7 +68,7 @@ class Dungeon extends Game {
         gold: playerGold,
         playerId: accountId,
       });
-      DediClient.getClient(this.id).addStructure(this.structureIdx, structure.structureModel, {
+      DediClient.getClient(this.id).addStructure(this.structureIdx++, structure.structureModel, {
         x: transform.posX,
         y: transform.posY,
         z: transform.posZ,
