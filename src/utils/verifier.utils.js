@@ -1,20 +1,11 @@
 export const verifyAccountId = (string) => {
-  const alphanumericPattern = /^(?!0)[a-zA-Z0-9]+$/;
-  if (!alphanumericPattern.test(string)) {
-    return '영문으로 시작하는 영문+숫자 조합만 사용 가능합니다.';
-  }
-
-  if (!isNaN(string)) {
-    return '사용할 수 없습니다.';
-  }
-
-  const invalidPattern = /^(?!0?!\d)\w+$/;
-  if (!invalidPattern.test(string)) {
-    return '사용할 수 없습니다.';
-  }
-
   if (['true', 'false', 'null', 'undefined'].includes(string)) {
     return '사용할 수 없습니다.';
+  }
+
+  const regex = /^(?!0\d)(?!e\d)(?=.*[a-zA-Z])(?!\d+$)[a-zA-Z]*[0-9]*$/i;
+  if (!regex.test(string)) {
+    return '영문으로 시작하는 영문+숫자 조합만 사용 가능합니다.';
   }
 };
 
@@ -62,14 +53,14 @@ export const verifyString = (string) => {
     return '사용할 수 없습니다.';
   }
 
-  const alphanumericPattern = /^(?!0)[a-zA-Z가-힣]{2,10}$/;
-
-  if (!alphanumericPattern.test(string)) {
-    return '잘 못된 닉네임입니다.';
-  }
-
-  const invalidPattern = /^(?!0?!\d)\w+$/;
-  if (!invalidPattern.test(string)) {
+  const regex = /^(?!0\d)(?!e\d)(?=.*[a-zA-Z가-힣])(?!\d+$)[a-zA-Z가-힣]*[0-9]*$/i;
+  if (!regex.test(string)) {
     return '사용할 수 없습니다.';
   }
+  //   const pattern = /^(?!0)[a-zA-Z0-9가-힣]{2,10}$/;
+  //   const invalidPattern = /^(?!0?!\d)\w가-힣+$/;
+
+  //   if (!pattern.test(string) || !invalidPattern.test(string)) {
+  //     return '잘 못된 닉네임입니다.';
+  //   }
 };
