@@ -1,4 +1,5 @@
 import { payloadTypes } from '../../constants/packet.constants.js';
+import { sessionTypes } from '../../constants/session.constants.js';
 import { matchDequeue, matchEnqueue } from '../../match_queue/producers/match-queue.producer.js';
 import { getUserById } from '../../session/user.session.js';
 import CustomError from '../../utils/error/customError.js';
@@ -14,6 +15,11 @@ const dungeonMatchHandler = async ({ socket, accountId, packet }) => {
       ErrorCodes.USER_NOT_FOUND,
       `유저를 찾을 수 없습니다. accountId: ${accountId}`,
     );
+  }
+
+  const gameSession = user.getSession();
+  if (gameSession.type !== sessionTypes.TOWN) {
+    return;
   }
 
   matchDequeue(accountId);
