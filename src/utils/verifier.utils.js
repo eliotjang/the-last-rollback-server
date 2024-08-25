@@ -1,12 +1,12 @@
-export const verifyAccountId = (accountId) => {
+export const verifyAccountId = (string) => {
   const alphanumericPattern = /^[a-zA-Z0-9]+$/;
-  if (!alphanumericPattern.test(accountId)) {
+  if (!alphanumericPattern.test(string)) {
     return '영문만 사용 가능합니다.';
   }
-  if (!isNaN(accountId)) {
+  if (!isNaN(string)) {
     return '사용할 수 없습니다.';
   }
-  if (/^[+-]?\d+(\.\d+)?(e[+-]?\d+)?$/i.test(accountId)) {
+  if (/^[+-]?\d+(\.\d+)?(e[+-]?\d+)?$/i.test(string)) {
     return '사용할 수 없습니다.';
   }
   if (['true', 'false', 'null', 'undefined'].includes(string)) {
@@ -64,7 +64,7 @@ export const verifyString = (string) => {
     return '잘 못된 닉네임입니다.';
   }
 
-  if (/^[+-]?\d+(\.\d+)?(eE[+-]?\d+)?$/i.test(string)) {
+  if (/^[+-]?\d+(\.\d+)?(e[+-]?\d+)?$/i.test(string)) {
     return '사용할 수 없습니다.';
   }
 };
