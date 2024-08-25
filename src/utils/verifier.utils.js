@@ -3,7 +3,7 @@ export const verifyAccountId = (accountId) => {
   if (!alphanumericPattern.test(accountId)) {
     return '영문+숫자 조합만 사용 가능합니다.';
   }
-  if (typeof accountId == 'number') {
+  if (!isNaN(accountId)) {
     return '사용할 수 없습니다.';
   }
 };
