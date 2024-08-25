@@ -9,7 +9,7 @@ export const verifyAccountId = (string) => {
   }
 
   const invalidPattern = /^(?!0?!\d)\w+$/;
-  if (invalidPattern.test(string)) {
+  if (!invalidPattern.test(string)) {
     return '사용할 수 없습니다.';
   }
 
@@ -69,7 +69,7 @@ export const verifyString = (string) => {
   }
 
   const invalidPattern = /^(?!0?!\d)\w+$/;
-  if (invalidPattern.test(string)) {
+  if (!invalidPattern.test(string)) {
     return '사용할 수 없습니다.';
   }
 };
