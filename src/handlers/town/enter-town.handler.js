@@ -17,6 +17,10 @@ const enterTownHandler = async ({ socket, accountId, packet }) => {
     const user = getUserById(accountId);
     if (!user.player) {
       const { nickname, charClass } = packet;
+      const msg = verifyNameString(nickname);
+      if (msg) {
+        socket.sendResponse(ErrorCodes.INVALID_ARGUMENT, msg, payloadTypes.S_SIGN_UP);
+      }
       const isExistPlayerNickname = await gameCharDB.getGameCharByNickname(nickname);
       if (!lodash.isEmpty(isExistPlayerNickname)) {
         socket.sendResponse(
