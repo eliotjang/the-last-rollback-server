@@ -68,7 +68,11 @@ class Dungeon extends Game {
         gold: playerGold,
         playerId: accountId,
       });
-
+      DediClient.getClient(this.id).addStructure(this.structureIdx, structure.structureModel, {
+        x: transform.posX,
+        y: transform.posY,
+        z: transform.posZ,
+      });
       return;
     }
     DediClient.getClient(this.id).addStructure(this.structureIdx, structure.structureModel, {
