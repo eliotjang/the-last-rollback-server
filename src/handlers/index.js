@@ -21,7 +21,7 @@ import structureAttackedMonsterHandler from './dungeon/structure-attacked.handle
 import animationStructureHandler from './dungeon/animation-structure.handler.js';
 import dediDungeonMoveHandler from './dungeon/dedi-dungeon-move.handler.js';
 import dediMonsterMoveHandler from './dungeon/dedi-monster-move.handler.js';
-import dungeonMatchCancleHandler from './town/dungeon-match-cancle.handler.js';
+import dungeonMatchCancelHandler from './town/dungeon-match-cancel.handler.js';
 
 const handlers = {
   [payloadTypes.C_ENTER]: enterTownHandler,
@@ -30,7 +30,7 @@ const handlers = {
   [payloadTypes.C_MOVE]: locationUpdateHandler,
   [payloadTypes.C_MONSTER_MOVE]: monsterMoveHandler,
   [payloadTypes.C_DUNGEON_MATCH]: dungeonMatchHandler,
-  [payloadTypes.C_MATCH_CANCEL]: dungeonMatchCancleHandler,
+  [payloadTypes.C_MATCH_CANCEL]: dungeonMatchCancelHandler,
   [payloadTypes.C_CHAT]: chattingHandler,
   [payloadTypes.C_DAY_ROUND_READY]: dayRoundReadyHandler, // 레거시 코드
   [payloadTypes.C_PLAYER_ATTACK]: attackMonsterHandler, // 레거시 코드
