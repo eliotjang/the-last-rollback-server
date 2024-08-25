@@ -93,8 +93,9 @@ class Dungeon extends Game {
     structure.updateStructureHp(monsterInfo.atk);
 
     if (structure.hp <= 0) {
-      DediClient.getClient(this.id).removeStructure(structure.structureIdx);
-      this.structures.delete(structure.structureIdx);
+      console.log('remove structure index:', structureIdx);
+      DediClient.getClient(this.id).removeStructure(structureIdx);
+      this.structures.delete(structureIdx);
     }
 
     if (structureIdx > 0) {
