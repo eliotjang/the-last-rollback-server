@@ -6,7 +6,7 @@ export const verifyAccountId = (accountId) => {
   if (!isNaN(accountId)) {
     return '숫자만 사용할 수 없습니다.';
   }
-  if (/^[+-]?\d+(\.\d+)?(e[+-]?\d+)?$/i.test(string)) {
+  if (/^[+-]?\d+(\.\d+)?(e[+-]?\d+)?$/i.test(accountId)) {
     return '사용할 수 없습니다.';
   }
 };
