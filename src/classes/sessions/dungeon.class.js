@@ -1,4 +1,4 @@
-import dc, { gameResults, playerAnimTypes } from '../../constants/game.constants.js';
+import dc, { gameResults, playerAnimTypes, REVIVE_GOLD } from '../../constants/game.constants.js';
 import { payloadTypes, dediPacketTypes } from '../../constants/packet.constants.js';
 import { sessionTypes } from '../../constants/session.constants.js';
 import pickUpHandler from '../../handlers/dungeon/pick-up.handler.js';
@@ -231,13 +231,17 @@ class Dungeon extends Game {
   }
 
   addHpPotion(accountId, hp) {
-    const playerHp = this.getPlayer(accountId).updateHp(hp);
+    const player = this.getPlayer(accountId);
+    if (player.playerInfo.isDead) return;
+    const playerHp = player.updateHp(hp);
     this.systemChat(accountId, 'HP 물약 획득');
     super.notifyAll(payloadTypes.S_PICK_UP_ITEM_HP, { playerId: accountId, playerHp });
   }
 
   addMpPotion(accountId, mp) {
-    const playerMp = this.getPlayer(accountId).updateMp(mp);
+    const player = this.getPlayer(accountId);
+    if (player.playerInfo.isDead) return;
+    const playerMp = player.updateMp(mp);
     this.systemChat(accountId, 'MP 물약 획득');
     super.notifyAll(payloadTypes.S_PICK_UP_ITEM_MP, { playerId: accountId, playerMp });
   }
@@ -336,6 +340,26 @@ class Dungeon extends Game {
       playerId,
       monsterIdx,
       mousePoint,
+    });
+  }
+
+  revivePlayer(playerId, targetPlayerId) {
+    const targetPlayer = this.getPlayer(targetPlayerId);
+    if (!targetPlayer.playerInfo.isDead) return null;
+
+    const player = this.getPlayer(playerId);
+    const playerGold = player.updateGold(-REVIVE_GOLD);
+    if (playerGold === null) {
+      this.systemChat(playerId, `골드가 부족합니다.`);
+      return null;
+    }
+
+    targetPlayer.revive();
+
+    super.notifyAll(payloadTypes.S_REVIVE_PLAYER, {
+      playerId: targetPlayerId,
+      playerHp: targetPlayer.playerStatus.playerHp,
+      playerMp: targetPlayer.playerStatus.playerMp,
     });
   }
 

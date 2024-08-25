@@ -6,6 +6,7 @@ import { getUserById } from '../session/user.session.js';
 import { enterDungeonSession } from '../handlers/dungeon/enter-dungeon.js';
 import { handleError } from '../utils/error/errorHandler.js';
 import { matchEnqueue } from './producers/match-queue.producer.js';
+import { payloadTypes } from '../constants/packet.constants.js';
 
 let waitingLists;
 
@@ -35,6 +36,13 @@ export const clearFromWaitingLists = (accountId) => {
       waitingLists[dungeonCode]?.splice(idx, 1);
     }
   }
+};
+
+export const getWaitingList = (dungeonCode) => {
+  if (waitingLists[dungeonCode]) {
+    return waitingLists[dungeonCode];
+  }
+  return null;
 };
 
 const getWaitingListIndex = (dungeonCode, accountId) => {
@@ -76,5 +84,16 @@ export const checkWaitingList = async (dungeonCode) => {
         handleError(err);
         // matchEnqueue(dungeonCode,accountId);
       });
+  }
+};
+
+export const notifyWaitingListCount = (dungeonCode) => {
+  const waitingList = getWaitingList(dungeonCode);
+  if (!waitingList) return;
+
+  for (const accountId of waitingList) {
+    const user = getUserById(accountId);
+    // console.log(user);
+    user.socket.sendNotification(payloadTypes.S_DUNGEON_MATCH_COUNT, { count: waitingList.length });
   }
 };

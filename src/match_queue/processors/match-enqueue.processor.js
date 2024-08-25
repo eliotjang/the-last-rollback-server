@@ -1,4 +1,4 @@
-import { addToWaitingList, checkWaitingList } from '../match-queue.js';
+import { addToWaitingList, checkWaitingList, notifyWaitingListCount } from '../match-queue.js';
 
 const enqueueProcessor = (job, done) => {
   try {
@@ -6,6 +6,9 @@ const enqueueProcessor = (job, done) => {
 
     // 대기열에 유저 추가
     addToWaitingList(job.data);
+
+    // 대기열 인원 알림
+    notifyWaitingListCount(job.data.dungeonCode);
 
     // 유저 인원 충분할 시 매칭
     checkWaitingList(job.data.dungeonCode);

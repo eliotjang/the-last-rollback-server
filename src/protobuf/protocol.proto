@@ -60,6 +60,7 @@ enum MsgId {
     S_PICK_UP_ITEM_BOX = 64;
     C_DUNGEON_MATCH = 100;
     S_DUNGEON_MATCH = 101;
+    S_DUNGEON_MATCH_COUNT = 102;
     S_ENTER_DUNGEON = 104;
     S_LEAVE_DUNGEON = 105;
 
@@ -302,6 +303,10 @@ message C_DungeonMatch {
 message S_DungeonMatch {
   uint32 dungeonCode = 1;
   // ScreenText screenText = 2;
+}
+
+message S_DungeonMatchCount {
+  uint32 count = 1;
 }
 
 // 104 던전 입장 패킷
@@ -700,5 +705,7 @@ message NotificationPacket {
 
     S_PlayersTransformUpdate sPlayersTransformUpdate = 50;
     S_MonstersTransformUpdate sMonstersTransformUpdate = 51;
+
+    S_DungeonMatchCount sDungeonMatchCount = 60;
   }
 }

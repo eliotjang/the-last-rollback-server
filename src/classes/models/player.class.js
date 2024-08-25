@@ -1,4 +1,5 @@
 import { maxBox } from '../../constants/dungeon.constants.js';
+import { SKILL_USE_MP } from '../../constants/game.constants.js';
 import { getGameAssets } from '../../init/assets.js';
 import { Transform } from './transform.class.js';
 
@@ -48,9 +49,8 @@ export class DungeonPlayer extends Player {
   }
 
   useSkill() {
-    const useMp = 50;
-    if (this.playerStatus.playerMp < useMp) return false;
-    this.updateMp(-useMp);
+    if (this.playerStatus.playerMp < SKILL_USE_MP) return false;
+    this.updateMp(-SKILL_USE_MP);
     return true;
   }
 
@@ -144,6 +144,12 @@ export class DungeonPlayer extends Player {
 
   updateTransform(transform) {
     return this.playerInfo.transform.updateTransform(transform);
+  }
+
+  revive() {
+    this.playerInfo.isDead = false;
+    this.updateHp(this.playerStatus.getStatInfo().maxHp);
+    this.updateMp(this.playerStatus.getStatInfo().maxMp);
   }
 
   toPlayer() {

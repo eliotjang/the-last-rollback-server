@@ -49,4 +49,7 @@ export const playerAnimTypes = {
   },
 };
 
+export const SKILL_USE_MP = 50;
+export const REVIVE_GOLD = 4000;
+
 export default dungeonConstants;
