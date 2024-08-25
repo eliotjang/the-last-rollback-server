@@ -26,8 +26,8 @@ message C_SetMonsterDest {
 }
 
 message C_AddStructure {
-    WorldPosition worldPosition = 2;
-    Structure structure = 3;
+    WorldPosition worldPosition = 1;
+    Structure structure = 2;
 }
 
 message C_RemoveStructure {
