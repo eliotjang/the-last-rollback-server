@@ -8,6 +8,7 @@ import { gameCharDB } from '../../db/game-char/game-char.db.js';
 import lodash from 'lodash';
 import { Player } from '../../classes/models/player.class.js';
 import { enqueueEnterTownJob } from '../../bull/player/enter-town.js';
+import { verifyString } from '../../utils/verifier.utils.js';
 
 const enterTownHandler = async ({ socket, accountId, packet }) => {
   // C_ENTER
@@ -17,7 +18,7 @@ const enterTownHandler = async ({ socket, accountId, packet }) => {
     const user = getUserById(accountId);
     if (!user.player) {
       const { nickname, charClass } = packet;
-      const msg = verifyNameString(nickname);
+      const msg = verifyString(nickname);
       if (msg) {
         socket.sendResponse(ErrorCodes.INVALID_ARGUMENT, msg, payloadTypes.S_SIGN_UP);
         return;
