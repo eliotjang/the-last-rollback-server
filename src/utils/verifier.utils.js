@@ -51,9 +51,7 @@ export const verifyKoreanString = (string) => {
 export const verifyString = (string) => {
   const alphanumericPattern = /^[a-zA-Z0-9가-힣]{2,10}$/;
 
-  if (alphanumericPattern.test(string) && !/^\d+$/.test(string)) {
-    return true; // Valid string
+  if (!alphanumericPattern.test(string) && !/^\d+$/.test(string)) {
+    return '잘 못된 닉네임입니다.';
   }
-
-  return false; // Invalid string
 };
