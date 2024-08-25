@@ -6,14 +6,14 @@ import { ErrorCodes, SuccessCode } from '../../utils/error/errorCodes.js';
 import { handleError } from '../../utils/error/errorHandler.js';
 import bcrypt from 'bcrypt';
 import lodash from 'lodash';
-import { verifyNameString } from '../../utils/verifier.utils.js';
+import { verifyAccountId } from '../../utils/verifier.utils.js';
 
 const signupAccountHandler = async ({ socket, userId, packet }) => {
   // C_SIGN_UP
   try {
     const { accountId, accountPwd } = packet;
 
-    const msg = verifyNameString(accountId);
+    const msg = verifyAccountId(accountId);
     if (msg) {
       socket.sendResponse(ErrorCodes.INVALID_ARGUMENT, msg, payloadTypes.S_SIGN_UP);
       return;
