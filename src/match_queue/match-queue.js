@@ -34,6 +34,7 @@ export const clearFromWaitingLists = (accountId) => {
     const idx = getWaitingListIndex(dungeonCode, accountId);
     if (idx !== -1) {
       waitingLists[dungeonCode]?.splice(idx, 1);
+      notifyWaitingListCount(dungeonCode);
     }
   }
 };
@@ -89,7 +90,7 @@ export const checkWaitingList = async (dungeonCode) => {
 
 export const notifyWaitingListCount = (dungeonCode) => {
   const waitingList = getWaitingList(dungeonCode);
-  if (!waitingList) return;
+  if (!waitingList || !waitingList.length) return;
 
   for (const accountId of waitingList) {
     const user = getUserById(accountId);
