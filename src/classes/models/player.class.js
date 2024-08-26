@@ -175,7 +175,7 @@ export class PlayerInfo {
 export class DungeonPlayerInfo extends PlayerInfo {
   constructor(playerInfo) {
     super(playerInfo.playerId, playerInfo.nickname, playerInfo.charClass);
-    this.gold = 3000;
+    this.gold = 99999;
     this.mysteryBox = 0;
     this.killed = []; // 처치 몬스터 index
     this.isDead = false; // 플레이어 상태, (생존: false, 죽음: true)
@@ -183,7 +183,7 @@ export class DungeonPlayerInfo extends PlayerInfo {
 }
 
 export class DungeonPlayerStatus {
-  constructor(charClass, playerLevel = 1, playerExp = 0, addStatInfo = new StatInfo({})) {
+  constructor(charClass, playerLevel = 3, playerExp = 0, addStatInfo = new StatInfo({})) {
     this.playerLevel = playerLevel;
     this.playerExp = playerExp;
     this.baseStatInfo = new StatInfo(getGameAssets().charStatInfo[charClass][playerLevel - 1]);
