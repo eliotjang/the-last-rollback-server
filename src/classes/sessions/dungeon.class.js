@@ -275,13 +275,14 @@ class Dungeon extends Game {
       console.log('해당 몬스터가 존재하지 않음');
       return null;
     }
-    console.log(`[${monsterIdx}] monster hit, damage: -${damage}`);
-    monster.hit(damage);
     if (monster.isDead) {
+      console.log(`몬스터(${monster.monsterName})가 이미 사망함`);
       return;
     }
+    console.log(`[${monsterIdx}] monster hit, damage: -${damage}`);
+    monster.hit(damage);
 
-    if (monster.monsterHp <= 0) {
+    if (monster.isDead) {
       this.killMonster(monsterIdx, accountId);
     }
 

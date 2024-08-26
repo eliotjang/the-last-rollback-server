@@ -28,12 +28,12 @@ export class Monster {
   }
 
   hit(damage) {
-    if (this.monsterHp <= 0) {
-      console.log(`몬스터(${this.monsterName})가 이미 사망함`);
-      this.isDead = true;
-      return null;
-    }
+    if (this.isDead) return null;
+
     this.monsterHp -= damage;
+    if (this.monsterHp <= 0) {
+      this.isDead = true;
+    }
 
     return this.monsterHp;
   }

@@ -41,7 +41,9 @@ const MonstersLocationUpdateHandler = function (deserialized) {
       posZ: worldPosition.z,
       rot: rot,
     };
-    dungeonSession.getMonster(+monsterIdx).transform.updateTransform(transformInfo);
+    const monster = dungeonSession.getMonster(+monsterIdx);
+    if (monster.isDead) continue;
+    monster.transform.updateTransform(transformInfo);
 
     monsterTransformInfo.push({
       monsterIdx: +monsterIdx,
