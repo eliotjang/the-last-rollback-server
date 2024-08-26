@@ -9,7 +9,7 @@
     { "dungeonCode": 2, "round": 2, "reward": 2000, "monsterUnlock": [2007, 2008, 2009, 2010], "spawnCount": [5, 5, 5, 5], "itemUnlock": [101, 102, 103] },
     { "dungeonCode": 2, "round": 3, "reward": 2500, "monsterUnlock": [2008, 2009, 2010, 2011], "spawnCount": [6, 6, 6, 6], "itemUnlock": [101, 102, 103] },
     { "dungeonCode": 2, "round": 4, "reward": 3000, "monsterUnlock": [2009, 2010, 2011, 2013], "spawnCount": [7, 7, 7, 1], "itemUnlock": [101, 102] },
-    { "dungeonCode": 3, "round": 1, "reward": 3000, "monsterUnlock": [2021, 2022, 2023, 2024], "spawnCount": [7, 7, 7, 7], "itemUnlock": [101, 102, 103] },
-    { "dungeonCode": 3, "round": 2, "reward": 3500, "monsterUnlock": [2025, 2026, 2027, 2028, 2029], "spawnCount": [8, 8, 8, 1, 1], "itemUnlock": [101, 102] }
+    { "dungeonCode": 3, "round": 1, "reward": 3000, "monsterUnlock": [2021, 2022, 2023, 2024], "spawnCount": [4, 4, 4, 4], "itemUnlock": [101, 102, 103] },
+    { "dungeonCode": 3, "round": 2, "reward": 3500, "monsterUnlock": [2025, 2026, 2027, 2029], "spawnCount": [4, 4, 4, 1], "itemUnlock": [101, 102] }
   ]
 }
