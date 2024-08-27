@@ -4,6 +4,9 @@
 
 ## 프로젝트 소개
 
+![project-logo_01](https://github.com/user-attachments/assets/5880a9e8-5cb9-4d35-a188-e70374c3d1cd)
+
+
 ### 프롤로그 
 
 코르딩딩 마을에서 버그를 퇴치하기 위해 마을을 나선 르탄이 용사들이 실종된 지 어언 1년…
