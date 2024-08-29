@@ -159,3 +159,7 @@
 ## 관련 링크
 
 - [팀 노션](https://eliotjang.notion.site/12-4e3e631c584d4531802dc6811208dec6?pvs=4)
+
+## 상장
+
+![The Last Roll Back-최우수상](https://github.com/user-attachments/assets/ee103d6f-0fea-4107-ae4d-b92b2c778bd2)
