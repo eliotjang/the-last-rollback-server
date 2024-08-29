@@ -29,7 +29,7 @@ services:
     image: mysql:latest
     environment:
       MYSQL_ROOT_PASSWORD: ${DB1_PASSWORD}
-      MYSQL_DATABASE: ${DB1_NAME} 
+      MYSQL_DATABASE: ${DB1_NAME}
     ports:
       - '3307:3306'
     volumes:
