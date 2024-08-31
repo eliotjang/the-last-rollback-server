@@ -163,3 +163,14 @@
 ## 상장
 
 ![The Last Roll Back-최우수상](https://github.com/user-attachments/assets/ee103d6f-0fea-4107-ae4d-b92b2c778bd2)
+
+## 팀원
+
+| 이름           | email    | github              |
+|----------------|-------------------------------|-----------------------------|
+|장성원          | eliotjang2@gmail.com | [https://github.com/eliotjang](https://github.com/eliotjang) |
+|김동균          | donkim0122@gmail.com | [https://github.com/donkim1212](https://github.com/donkim1212) |
+|윤동협          | ydh23203727@gmail.com | [https://github.com/ydh1503](https://github.com/ydh1503) |
+|박지호          | bjh1157@naver.com | [https://github.com/Hoji1998](https://github.com/Hoji1998) |
+|양현언          | kkx3695@naver.com | [https://github.com/HyuneonY](https://github.com/HyuneonY) |
+|황정민          | gwa446@gmail.com | [https://github.com/mimihimesama](https://github.com/mimihimesama) |
